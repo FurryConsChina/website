@@ -234,7 +234,7 @@ export default function OrganizationDetail(props: {
       </div>
 
       {!!events.length && (
-        <section className="mt-8 p-6 bg-white rounded-xl border">
+        <section className="mt-8 p-6 bg-gray-100/80 rounded-xl shadow">
           <h2 className="text-xl text-slate-600 mb-4">
             {t("organization.passedEvent")}
           </h2>

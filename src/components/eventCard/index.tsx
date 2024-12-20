@@ -59,7 +59,7 @@ export default function EventCard({
           })
         }
         className={clsx(
-          "bg-white rounded-xl h-48 md:h-[400px] relative group md:outline md:outline-[5px] outline-white md:shadow-md transition-all duration-300 hover:shadow-2xl hover:-translate-y-2",
+          "bg-white rounded-xl h-48 md:h-[300px] relative group md:outline md:outline-[5px] outline-white transition-all duration-300 drop-shadow-sm hover:shadow-2xl hover:-translate-y-2",
           "hover:outline-red-400"
         )}
       >
@@ -92,8 +92,8 @@ export default function EventCard({
             className={clsx(
               "w-1/2",
               "md:w-full md:h-2/5 group-hover:md:h-[90%]",
-              "p-2 md:p-4 transition-all duration-300 md:rounded-b-xl z-10 w-full",
-              !isDefaultCover && "backdrop-blur-md"
+              "p-2 md:p-4 transition-all duration-300 md:rounded-xl z-10 bg-white/90 group-hover:md:bg-white/60",
+              styles.eventCardDescContainer
             )}
           >
             <h5
@@ -115,7 +115,7 @@ export default function EventCard({
               <i
                 className={clsx(
                   styles.calendarIcon,
-                  "mr-1 flex-shrink-0 text-xs h-5"
+                  "hidden md:block mr-1 flex-shrink-0 text-xs h-5"
                 )}
               />
               <EventDate event={event} />
@@ -191,7 +191,8 @@ function EventCover({
     <div
       className={clsx(
         "relative w-1/2 flex-grow-0 flex items-center justify-center",
-        "md:w-full md:h-3/5"
+        "md:w-full md:h-3/5",
+        "group-hover:brightness-50 transition-all duration-300"
       )}
     >
       <div className="relative flex items-center justify-center z-10 h-full md:w-full">
@@ -208,19 +209,48 @@ function EventCover({
         />
       </div>
 
-      {
-        <Image
-          src={imageUrl}
-          alt={`${eventName} mask filter`}
-          containerClassName="absolute top-0 left-0 h-full w-full"
-          className={clsx("object-cover h-full w-full blur")}
-          sizes={sizes}
-          autoFormat
-          priority={instancesCount <= 3}
-          fallbackHeight={fallbackHeight}
-          fallbackWidth={fallbackWidth}
-        />
-      }
+      <Image
+        src={imageUrl}
+        alt={`${eventName} mask filter`}
+        containerClassName="absolute top-0 left-0 h-full w-full"
+        className={clsx("object-cover h-full w-full blur-3xl")}
+        sizes={sizes}
+        autoFormat
+        priority={instancesCount <= 3}
+        fallbackHeight={fallbackHeight}
+        fallbackWidth={fallbackWidth}
+      />
+    </div>
+  );
+}
+
+function EventBackgroundBlur({
+  imageUrl,
+  eventName,
+  sizes,
+  fallbackHeight,
+  fallbackWidth,
+}: {
+  imageUrl: string;
+  eventName: string;
+  isDefault: boolean;
+  sizes?: string;
+  fallbackWidth?: number;
+  fallbackHeight?: number;
+}) {
+  return (
+    <div>
+      <Image
+        src={imageUrl}
+        alt={`${eventName} mask filter`}
+        containerClassName="absolute top-0 left-0 h-full w-full"
+        className={clsx("object-cover h-full w-full blur-3xl")}
+        sizes={sizes}
+        autoFormat
+        priority={instancesCount <= 3}
+        fallbackHeight={fallbackHeight}
+        fallbackWidth={fallbackWidth}
+      />
     </div>
   );
 }
