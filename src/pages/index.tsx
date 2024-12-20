@@ -18,12 +18,10 @@ import { sendTrack } from "@/utils/track";
 import { DurationType } from "@/types/list";
 import { EventScale, EventStatus, type EventType } from "@/types/event";
 
-
-
 export default function Home(props: { events: EventType[] }) {
   const { t } = useTranslation();
   const [selectedFilter, setFilter] = useState({
-    onlyAvailable: false,
+    onlyAvailable: true,
     eventScale: ["all"],
   });
 
@@ -89,21 +87,9 @@ function DurationSection({
       : Object.keys(groupByDateEvent);
 
   return (
-    <section className1="my-8 border rounded-xl p-3 md:p-6 bg-white">
-      {/* <h2 className="text-xl md:text-2xl text-red-400 font-bold md:mb-6">
-        {durationType === DurationType.Passed &&
-          t("homepage.group.status.passed")}
-        {durationType === DurationType.Now && t("homepage.group.status.now")}
-        {durationType === DurationType.Soon && t("homepage.group.status.soon")}
-        {durationType === DurationType.Next && t("homepage.group.status.next")}
-        {durationType === DurationType.NextYear &&
-          t("homepage.group.status.nextYear")}
-      </h2> */}
+    <>
       {months.map((month) => (
-        <div
-          key={month}
-          className="rounded-xl bg-gray-100/80 p-2 md:p-6 my-4"
-        >
+        <div key={month} className="rounded-xl bg-gray-100/80 p-2 md:p-6 my-4">
           <h3 className="text-lg md:text-xl text-red-400 font-bold mb-2 md:mb-6">
             {month !== "unknown"
               ? durationType === DurationType.NextYear
@@ -126,7 +112,7 @@ function DurationSection({
           </div>
         </div>
       ))}
-    </section>
+    </>
   );
 }
 

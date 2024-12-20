@@ -24,6 +24,7 @@ export default function LocaleMenu() {
                 href={pathname}
                 locale="zh-Hans"
                 className="px-4 py-2 w-full block text-center  hover:bg-gray-100 rounded-md"
+                onClick={() => setOpen(false)}
               >
                 中文
               </Link>
@@ -33,6 +34,7 @@ export default function LocaleMenu() {
                 href={pathname}
                 locale="en"
                 className="px-4 py-2 w-full block text-center  hover:bg-gray-100 rounded-md"
+                onClick={() => setOpen(false)}
               >
                 English
               </Link>

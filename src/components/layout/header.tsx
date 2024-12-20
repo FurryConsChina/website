@@ -219,7 +219,7 @@ function HeaderRight() {
   return (
     <div className="hidden md:flex items-center justify-end px-4 py-2 h-full lg:basis-1/4">
       <div className="border-l border-gray-200 pl-6">
-        <div className="bg-gray-100 rounded-md px-2 py-2 flex gap-8 flex justify-center">
+        <div className="bg-gray-100 rounded-md px-2 py-2 flex gap-8 justify-center">
           <LocaleMenu />
         </div>
       </div>
