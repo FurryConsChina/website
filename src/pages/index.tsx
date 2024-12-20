@@ -1,25 +1,27 @@
+import { useMemo, useState } from "react";
+import { Field, Label, Switch } from "@headlessui/react";
+import groupBy from "lodash-es/groupBy";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { z } from "zod";
+
+import wfetch from "@/api";
 import EventCard from "@/components/eventCard";
 import { FriendSiteBlock } from "@/components/layout/footer";
-import groupBy from "lodash-es/groupBy";
-import { useMemo, useState } from "react";
-import { EventScale, EventStatus, EventType } from "@/types/event";
-import { Field, Label, Switch } from "@headlessui/react";
-import { sendTrack } from "@/utils/track";
-import { DurationType } from "@/types/list";
 import {
   filteringEvents,
   groupByCustomDurationEvent,
   sortEvents,
 } from "@/utils/event";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useTranslation } from "next-i18next";
-import wfetch from "@/api";
-import { z } from "zod";
+import { sendTrack } from "@/utils/track";
+
+import { DurationType } from "@/types/list";
+import { EventScale, EventStatus, type EventType } from "@/types/event";
 
 export default function Home(props: { events: EventType[] }) {
   const { t } = useTranslation();
   const [selectedFilter, setFilter] = useState({
-    onlyAvailable: false,
+    onlyAvailable: true,
     eventScale: ["all"],
   });
 
@@ -85,21 +87,9 @@ function DurationSection({
       : Object.keys(groupByDateEvent);
 
   return (
-    <section className="my-8 border rounded-xl p-3 md:p-6 bg-white">
-      <h2 className="text-xl md:text-2xl text-red-400 font-bold md:mb-6">
-        {durationType === DurationType.Passed &&
-          t("homepage.group.status.passed")}
-        {durationType === DurationType.Now && t("homepage.group.status.now")}
-        {durationType === DurationType.Soon && t("homepage.group.status.soon")}
-        {durationType === DurationType.Next && t("homepage.group.status.next")}
-        {durationType === DurationType.NextYear &&
-          t("homepage.group.status.nextYear")}
-      </h2>
+    <>
       {months.map((month) => (
-        <div
-          key={month}
-          className="border rounded-xl bg-gray-100 p-2 md:p-6 my-4"
-        >
+        <div key={month} className="rounded-xl bg-gray-100/80 p-2 md:p-6 my-4">
           <h3 className="text-lg md:text-xl text-red-400 font-bold mb-2 md:mb-6">
             {month !== "unknown"
               ? durationType === DurationType.NextYear
@@ -110,7 +100,7 @@ function DurationSection({
               {t("homepage.total", { total: groupByDateEvent[month].length })}
             </span>
           </h3>
-          <div className="grid gap-4 md:gap-10 grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid gap-4 md:gap-8 grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {sortEvents(groupByDateEvent[month], "asc").map((event) => (
               <EventCard
                 key={event.name}
@@ -122,7 +112,7 @@ function DurationSection({
           </div>
         </div>
       ))}
-    </section>
+    </>
   );
 }
 

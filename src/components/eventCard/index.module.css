@@ -1,44 +1,19 @@
-@keyframes moveImage {
-  from {
-    object-position: 50% 50%;
-  }
-
-  50% {
-    object-position: 100% 100%;
-  }
-
-  75% {
-    object-position: 50% 50%;
-  }
-
-  to {
-    object-position: 0% 0%;
-  }
+.locationIcon {
+  background: url(data:image/svg+xml;base64,PHN2ZyBzdHJva2U9ImN1cnJlbnRDb2xvciIgZmlsbD0iIzQ3NTU2OSIgc3Ryb2tlLXdpZHRoPSIwIiB2aWV3Qm94PSIwIDAgNTEyIDUxMiIgaGVpZ2h0PSIyMDBweCIgd2lkdGg9IjIwMHB4IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxjaXJjbGUgY3g9IjI1NiIgY3k9IjE5MiIgcj0iMzIiPjwvY2lyY2xlPjxwYXRoIGQ9Ik0yNTYgMzJjLTg4LjIyIDAtMTYwIDY4LjY1LTE2MCAxNTMgMCA0MC4xNyAxOC4zMSA5My41OSA1NC40MiAxNTguNzggMjkgNTIuMzQgNjIuNTUgOTkuNjcgODAgMTIzLjIyYTMxLjc1IDMxLjc1IDAgMCAwIDUxLjIyIDBjMTcuNDItMjMuNTUgNTEtNzAuODggODAtMTIzLjIyQzM5Ny42OSAyNzguNjEgNDE2IDIyNS4xOSA0MTYgMTg1YzAtODQuMzUtNzEuNzgtMTUzLTE2MC0xNTN6bTAgMjI0YTY0IDY0IDAgMSAxIDY0LTY0IDY0LjA3IDY0LjA3IDAgMCAxLTY0IDY0eiI+PC9wYXRoPjwvc3ZnPg==);
+  width: 12px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center center;
 }
 
-.event-card {
-  @media (max-width: 768px) {
-    .event-vertical-cover {
-      animation-duration: 6s;
-      animation-name: moveImage;
-      animation-iteration-count: infinite;
-      animation-direction: alternate;
-      animation-timing-function: frames(10);
-    }
-  }
-  @media (min-width: 768px) {
-    &:hover {
-      .event-vertical-cover {
-        animation-duration: 6s;
-        animation-name: moveImage;
-        animation-iteration-count: infinite;
-        animation-direction: alternate;
-        animation-timing-function: frames(10);
-      }
-    }
-  }
+.calendarIcon {
+  background: url(data:image/svg+xml;base64,PHN2ZyBzdHJva2U9IiM0NzU1NjkiIGZpbGw9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIwIiB2aWV3Qm94PSIwIDAgNTEyIDUxMiIgaGVpZ2h0PSIyMDBweCIgd2lkdGg9IjIwMHB4IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik00ODAgMTI4YTY0IDY0IDAgMCAwLTY0LTY0aC0xNlY0OC40NWMwLTguNjEtNi42Mi0xNi0xNS4yMy0xNi40M0ExNiAxNiAwIDAgMCAzNjggNDh2MTZIMTQ0VjQ4LjQ1YzAtOC42MS02LjYyLTE2LTE1LjIzLTE2LjQzQTE2IDE2IDAgMCAwIDExMiA0OHYxNkg5NmE2NCA2NCAwIDAgMC02NCA2NHYxMmE0IDQgMCAwIDAgNCA0aDQ0MGE0IDQgMCAwIDAgNC00ek0zMiA0MTZhNjQgNjQgMCAwIDAgNjQgNjRoMzIwYTY0IDY0IDAgMCAwIDY0LTY0VjE4MGE0IDQgMCAwIDAtNC00SDM2YTQgNCAwIDAgMC00IDR6Ij48L3BhdGg+PC9zdmc+);
+  width: 12px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center center;
 }
 
-.event-card__desc-container {
-  box-shadow: 0px -2px 4px 0px rgb(0 0 0 / 5%);
+.eventCardDescContainer {
+  box-shadow: 0 -1px 5px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
 }

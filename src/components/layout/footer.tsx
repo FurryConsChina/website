@@ -10,20 +10,39 @@ export default function Footer({ isCNRegion }: { isCNRegion: boolean }) {
   const { t } = useTranslation();
 
   return (
-    <footer className="mt-8 bg-white rounded-t-xl p-6 text-sm text-center md:text-left">
-      <h5 className="text-gray-600 mb-4 text-sm flex flex-col md:flex-row">
-        <span className="font-bold mr-2">{t("header.title")}</span>
-        <span className="">
-          {isCNRegion ? "FURRYCONS.CN" : "FURRYEVENTCHINA.COM"} ©️
-          {new Date().getFullYear()}
+    <footer className="mt-8 bg-white shadow rounded-t-xl p-6 text-sm text-left">
+      <h5 className="text-gray-600 mb-4 text-sm flex flex-col">
+        <span className="font-bold text-base mr-2">{t("header.title")}</span>
+        <span className="flex items-center">
+          {t("footer.use")}
+          <img
+            alt="smiling-face-with-hearts"
+            src="/svgs/smiling-face-with-hearts.svg"
+            className="w-6 mx-1"
+            fetchPriority="low"
+            loading="lazy"
+            width={32}
+            height={32}
+          />
+          {t("footer.and")}
+          <img
+            alt="steaming-bowl"
+            src="/svgs/steaming-bowl.svg"
+            className="w-6 mx-1"
+            fetchPriority="low"
+            loading="lazy"
+            width={32}
+            height={32}
+          />
+          {t("footer.made")}
         </span>
       </h5>
 
-      <div className="flex flex-col md:flex-row justify-between items-center md:items-start">
+      <div className="flex flex-col md:flex-row justify-between items-start">
         <div>
           <div className="flex flex-col md:flex-row items-center md:items-start">
-            <div className="mt-4 md:mt-0 text-center md:text-left md:mr-4">
-              <h3 className="text-gray-700">{t("footer.friendsLink")}</h3>
+            <div className="hidden md:block mt-4 md:mt-0 text-center md:text-left md:mr-4">
+              <h3 className="text-gray-700 mb-2">{t("footer.friendsLink")}</h3>
               <div className="flex flex-col">
                 {FriendSiteLinks.map((link) => (
                   <FriendLink
@@ -35,9 +54,9 @@ export default function Footer({ isCNRegion }: { isCNRegion: boolean }) {
               </div>
             </div>
 
-            <div className="mt-4 md:mt-0 text-center md:text-left">
-              <h3 className="text-gray-700">{t("footer.aboutUs")}</h3>
-              <ul className="flex flex-col">
+            <div className="text-left">
+              <h3 className="text-gray-700 hidden md:block mb-2">{t("footer.aboutUs")}</h3>
+              <ul className="flex md:flex-col">
                 {AboutUsLinks.map((link) => (
                   <li key={link.link}>
                     <FriendLink
@@ -52,42 +71,27 @@ export default function Footer({ isCNRegion }: { isCNRegion: boolean }) {
           </div>
         </div>
 
-        <div className="flex flex-col text-gray-700 text-center md:text-right text-xs mt-4 md:mt-0">
+        <div className="flex flex-col text-gray-700 text-left md:text-right text-xs mt-4 md:mt-0">
+          <span>
+            ©️ {isCNRegion ? "FURRYCONS.CN" : "FURRYEVENTCHINA.COM"} {2023}-
+            {new Date().getFullYear()}
+          </span>
+          {/* <span className="ml-2" suppressHydrationWarning>
+            build.{COMMITHASH} {dateString}
+          </span> */}
           <span className="block">{t("footer.disclaimer")}</span>
-          <div className="mt-1 flex flex-col md:flex-row1 justify-center md:justify-end items-center md:items-end">
-            <span className="flex items-center">
-              {t("footer.use")}
-              <img
-                alt="smiling-face-with-hearts"
-                src="/svgs/smiling-face-with-hearts.svg"
-                className="w-6 mx-1"
-                fetchPriority="low"
-                loading="lazy"
-                width={32}
-                height={32}
-              />
-              {t("footer.and")}
-              <img
-                alt="steaming-bowl"
-                src="/svgs/steaming-bowl.svg"
-                className="w-6 mx-1"
-                fetchPriority="low"
-                loading="lazy"
-                width={32}
-                height={32}
-              />
-              {t("footer.made")}
-            </span>
+          <div className="mt-1">
             {isCNRegion && (
               <span className="mt-2">
-                <a href="https://beian.miit.gov.cn/" target="_blank">
+                <a
+                  href="https://beian.miit.gov.cn/"
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   渝ICP备18016662号-2
                 </a>
               </span>
             )}
-            <span className="ml-2" suppressHydrationWarning>
-              build.{COMMITHASH} {dateString}
-            </span>
           </div>
         </div>
       </div>

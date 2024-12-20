@@ -39,19 +39,23 @@ export const FriendSiteLinks = [
 
 export const AboutUsLinks = [
   {
-    link: "https://github.com/FurryConsChina/website",
-    label: "GitHub",
+    link: "https://docs.furrycons.cn/blog/about",
+    label: "我们是谁",
   },
   {
-    link: "https://status.furryeventchina.com",
-    label: "Status 监控",
+    link: "https://docs.furrycons.cn/blog/contact-us",
+    label: "联系方式",
   },
   {
     link: "https://docs.furrycons.cn",
     label: "帮助文档",
   },
   {
-    link: "mailto:contact@furrycons.cn",
-    label: "邮件联系我们",
+    link: "https://github.com/FurryConsChina/website",
+    label: "GitHub",
+  },
+  {
+    link: "https://status.furryeventchina.com",
+    label: "状态监控",
   },
 ];
