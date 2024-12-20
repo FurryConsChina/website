@@ -59,13 +59,13 @@ export default function EventCard({
           })
         }
         className={clsx(
-          "bg-white rounded-xl h-48 md:h-[300px] relative group md:outline md:outline-[5px] outline-white transition-all duration-300 drop-shadow-sm hover:shadow-2xl hover:-translate-y-2",
+          "bg-white rounded-xl h-48 md:h-[300px] relative group md:outline md:outline-[5px] outline-white transition-all duration-300 drop-shadow-sm hover:shadow-2xl hover:-translate-y-2 overflow-hidden",
           "hover:outline-red-400"
         )}
       >
         <div
           className={clsx(
-            "flex md:flex-col justify-between md:justify-end h-full rounded-xl relative overflow-hidden"
+            "flex md:flex-col justify-between md:justify-end h-full rounded-xl relative"
           )}
         >
           <div
@@ -92,7 +92,7 @@ export default function EventCard({
             className={clsx(
               "w-1/2",
               "md:w-full md:h-2/5 group-hover:md:h-[90%]",
-              "p-2 md:p-4 transition-all duration-300 md:rounded-xl z-10 bg-white/90 group-hover:md:bg-white/60",
+              "p-2 md:p-4 transition-all duration-300 rounded-r-xl md:rounded-xl z-10 bg-white/90 group-hover:md:bg-white/60",
               styles.eventCardDescContainer
             )}
           >
