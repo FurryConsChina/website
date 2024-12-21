@@ -18,6 +18,7 @@ import { z } from "zod";
 import { format } from "date-fns";
 import { EventType } from "@/types/event";
 import { OrganizationType } from "@/types/organization";
+import { FeatureSchema } from "@/types/feature";
 // import {
 //   WebsiteButton,
 //   QQGroupButton,
@@ -312,6 +313,8 @@ export async function getStaticProps(context: GetStaticPropsContext) {
       startAt: z.string().datetime().nullable(),
       endAt: z.string().datetime().nullable(),
       slug: z.string(),
+      features: z.object({ self: z.array(z.string()).nullish() }).nullish(),
+      commonFeatures: z.array(FeatureSchema).nullish(),
     });
 
     const validResult = z

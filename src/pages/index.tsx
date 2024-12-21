@@ -17,6 +17,7 @@ import { sendTrack } from "@/utils/track";
 
 import { DurationType } from "@/types/list";
 import { EventScale, EventStatus, type EventType } from "@/types/event";
+import { FeatureSchema } from "@/types/feature";
 
 export default function Home(props: { events: EventType[] }) {
   const { t } = useTranslation();
@@ -215,6 +216,12 @@ export async function getStaticProps({ locale }: { locale: string }) {
         name: z.string(),
         logoUrl: z.string().nullable(),
       }),
+      commonFeatures: z.array(FeatureSchema).nullish(),
+      features: z
+        .object({
+          self: z.array(z.string()).nullish(),
+        })
+        .nullish(),
     })
   );
 

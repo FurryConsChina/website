@@ -1,3 +1,4 @@
+import { FeatureSchema } from "@/types/feature";
 import { z } from "zod";
 
 /** Sync with https://schema.org/EventStatusType */
@@ -63,7 +64,8 @@ export const EventSchema = z.object({
     })
     .nullable(),
   detail: z.string().nullable(),
-  features: z.object({}).nullable(),
+  features: z.object({ self: z.array(z.string()).nullish() }).nullish(),
+  commonFeatures: z.array(FeatureSchema).nullish(),
 
   organization: z.object({
     id: z.string().uuid(), // 假设 id 是一个 UUID
