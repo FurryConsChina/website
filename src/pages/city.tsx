@@ -62,7 +62,7 @@ export default function City(props: { events: EventType[] }) {
               >
                 <h2 className="text-lg font-bold text-gray-600 flex items-center group-hover:text-red-400 transition duration-300">
                   <FaLink className="inline-block h-3 w-3 mr-1" />
-                  {city}市
+                  {city}
                   <span className="text-sm font-normal ml-1">
                     {groupByCityEvents[city].length}个
                   </span>
@@ -76,15 +76,15 @@ export default function City(props: { events: EventType[] }) {
           我们共在 {cities.length} 个城市收录到 {events.length}{" "}
           个活动，其中，举办活动场数最多的城市是{" "}
           <span className="font-bold">
-            {groupByCityEventsSortByTotalCount[0]}市
+            {groupByCityEventsSortByTotalCount[0]}
           </span>
           ！紧随其后的是
           <span className="font-bold">
-            {groupByCityEventsSortByTotalCount[1]}市
+            {groupByCityEventsSortByTotalCount[1]}
           </span>
           ，而举办活动场数排名第三的城市是{" "}
           <span className="font-bold">
-            {groupByCityEventsSortByTotalCount[2]}市 🎉。
+            {groupByCityEventsSortByTotalCount[2]} 🎉。
           </span>
         </p>
       </div>
@@ -93,7 +93,7 @@ export default function City(props: { events: EventType[] }) {
         {groupByCityAndYearEvents.map((city) => (
           <div id={city.location} key={city.location}>
             <h2 className="text-2xl font-bold text-gray-600">
-              {city.location}市
+              {city.location}
             </h2>
             <div className="grid grid-cols-1 gap-4 mt-4">
               {city.eventsGroup.map((yearGroup) => (

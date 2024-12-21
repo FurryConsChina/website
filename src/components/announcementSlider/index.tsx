@@ -17,7 +17,7 @@ function AnnouncementSlider() {
   const defaultSliderClass =
     "px-4 py-4 bg-white border border-gray-200 rounded-xl text-red-400 text-sm md:text-base";
   return (
-    <div className="overflow-hidden mb-6 mx-1 lg:mx-0" ref={emblaRef}>
+    <div className="overflow-hidden mt-2 md:mt-0 mb-6 mx-1 lg:mx-0" ref={emblaRef}>
       <div className="embla__container flex">
         {!IS_CN_REGION && (
           <div className={clsx(SliderStyle.embla__slide, defaultSliderClass)}>
