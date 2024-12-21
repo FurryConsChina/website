@@ -133,7 +133,7 @@ export default function EventCard({
             </div>
 
             <div className="mt-4 md:hidden group-hover:block">
-              <Tags />
+              <Tags event={event} />
             </div>
           </div>
         </div>
@@ -316,8 +316,24 @@ function EventAddress({ event }: { event: EventType }) {
   );
 }
 
-function Tags() {
-  const tags: string[] = [];
+function Tags({ event }: { event: EventType }) {
+  const tags = useMemo(() => {
+    const result = new Set<string>();
+    if (!event) return [];
+    if (event.features?.self) {
+      event.features.self.forEach((f) => {
+        result.add(f);
+      });
+    }
+    if (event.commonFeatures) {
+      event.commonFeatures.forEach((f) => {
+        result.add(f.name);
+      });
+    }
+
+    return Array.from(result);
+  }, [event]);
+
   return (
     <div className="flex flex-wrap gap-1">
       {tags.map((t) => (
