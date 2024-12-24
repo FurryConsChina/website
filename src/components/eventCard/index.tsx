@@ -37,6 +37,23 @@ export default function EventCard({
     };
   }, []);
 
+  const tags = useMemo(() => {
+    const result = new Set<string>();
+    if (!event) return [];
+    if (event.features?.self) {
+      event.features.self.forEach((f) => {
+        result.add(f);
+      });
+    }
+    if (event.commonFeatures) {
+      event.commonFeatures.forEach((f) => {
+        result.add(f.name);
+      });
+    }
+
+    return Array.from(result);
+  }, [event]);
+
   return (
     <Link
       href={`/${event.organization?.slug}/${event.slug}`}
@@ -132,9 +149,11 @@ export default function EventCard({
               <EventAddress event={event} />
             </div>
 
-            <div className="mt-4 md:hidden group-hover:block">
-              <Tags event={event} />
-            </div>
+            {!!tags.length && (
+              <div className="mt-4">
+                <Tags tags={tags} />
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -316,24 +335,7 @@ function EventAddress({ event }: { event: EventType }) {
   );
 }
 
-function Tags({ event }: { event: EventType }) {
-  const tags = useMemo(() => {
-    const result = new Set<string>();
-    if (!event) return [];
-    if (event.features?.self) {
-      event.features.self.forEach((f) => {
-        result.add(f);
-      });
-    }
-    if (event.commonFeatures) {
-      event.commonFeatures.forEach((f) => {
-        result.add(f.name);
-      });
-    }
-
-    return Array.from(result);
-  }, [event]);
-
+function Tags({ tags }: { tags: string[] }) {
   return (
     <div className="flex flex-wrap gap-1">
       {tags.map((t) => (
