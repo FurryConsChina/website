@@ -76,8 +76,8 @@ export default function EventCard({
           })
         }
         className={clsx(
-          "bg-white rounded-xl h-48 md:h-[300px] relative group md:outline md:outline-[5px] outline-white transition-all duration-300 drop-shadow-sm hover:shadow-2xl hover:-translate-y-2 overflow-hidden",
-          "hover:outline-red-400"
+          "bg-white rounded-xl h-48 md:h-[384px] relative group md:outline md:outline-[5px] outline-white transition-all duration-300 drop-shadow-sm hover:shadow-2xl hover:-translate-y-2 overflow-hidden",
+          "hover:outline-red-400 hover:scale-105"
         )}
       >
         <div
@@ -85,17 +85,6 @@ export default function EventCard({
             "flex md:flex-col justify-between md:justify-end h-full rounded-xl relative"
           )}
         >
-          <div
-            className={clsx(
-              "hidden md:block md:absolute z-20 right-0 top-0 md:mt-2 md:mr-2"
-            )}
-          >
-            <OrganizationPill
-              logoUrl={event.organization.logoUrl}
-              organizationName={event.organization.name}
-            />
-          </div>
-
           <EventCover
             imageUrl={finalEventCoverImage}
             eventName={event.name}
@@ -108,8 +97,9 @@ export default function EventCard({
           <div
             className={clsx(
               "w-1/2",
-              "md:w-full md:h-2/5 group-hover:md:h-[90%]",
-              "p-2 md:p-4 transition-all duration-300 rounded-r-xl md:rounded-xl z-10 bg-white/90 group-hover:md:bg-white/60",
+              "md:w-full md:h-2/5",
+              tags.length && "group-hover:md:h-[50%]",
+              "p-2 md:p-4 transition-all duration-300 rounded-r-xl md:rounded-xl z-10 bg-white/90 group-hover:md:bg-white",
               styles.eventCardDescContainer
             )}
           >
@@ -120,7 +110,7 @@ export default function EventCard({
               {event.addressExtra?.city} {event.organization.name}
             </h5>
 
-            <h4 className="font-bold text-lg md:text-xl text-slate-800 group-hover:text-red-400 transition-colors duration-300 leading-5 truncate group-hover:text-clip group-hover:whitespace-normal">
+            <h4 className="font-bold text-lg md:text-xl text-slate-800 group-hover:text-red-400 transition-colors duration-75 leading-5 truncate group-hover:text-clip group-hover:whitespace-normal">
               {event.name}
             </h4>
 
@@ -150,7 +140,7 @@ export default function EventCard({
             </div>
 
             {!!tags.length && (
-              <div className="mt-4">
+              <div className="mt-4 hidden group-hover:block">
                 <Tags tags={tags} />
               </div>
             )}
@@ -172,7 +162,7 @@ function OrganizationPill({
   return (
     <div className="flex justify-between items-center rounded-full w-fit">
       {logoUrl && (
-        <div className="hidden md:block border-2 rounded-full border-white group-hover:animate-spin">
+        <div className="hidden md:block border-2 rounded-full border-white">
           <Image
             src={logoUrl}
             alt={`${organizationName}的展会标志`}
@@ -209,9 +199,9 @@ function EventCover({
   return (
     <div
       className={clsx(
-        "relative w-1/2 flex-grow-0 flex items-center justify-center",
+        "relative md:absolute top-0 left-0 w-1/2 flex-grow-0 flex items-center justify-center",
         "md:w-full md:h-3/5",
-        "group-hover:brightness-50 transition-all duration-300"
+        "group-hover:scale-150 transition-all duration-300"
       )}
     >
       <div className="relative flex items-center justify-center z-10 h-full md:w-full">
