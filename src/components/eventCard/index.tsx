@@ -76,7 +76,7 @@ export default function EventCard({
           })
         }
         className={clsx(
-          "bg-white rounded-xl h-48 md:h-[384px] relative group md:outline md:outline-[5px] outline-white transition-all duration-300 drop-shadow-sm hover:shadow-2xl hover:-translate-y-2 overflow-hidden",
+          "bg-white rounded-xl h-[150px] md:h-[384px] relative group md:outline md:outline-[5px] outline-white transition-all duration-300 drop-shadow-sm hover:shadow-2xl hover:-translate-y-2 overflow-hidden",
           "hover:outline-red-400 hover:scale-105"
         )}
       >
@@ -96,7 +96,7 @@ export default function EventCard({
 
           <div
             className={clsx(
-              "w-1/2",
+              "w-[60%]",
               "md:w-full md:h-2/5",
               tags.length && "group-hover:md:h-[50%]",
               "p-2 md:p-4 transition-all duration-300 rounded-r-xl md:rounded-xl z-10 bg-white/90 group-hover:md:bg-white",
@@ -110,7 +110,12 @@ export default function EventCard({
               {event.addressExtra?.city} {event.organization.name}
             </h5>
 
-            <h4 className="font-bold text-lg md:text-xl text-slate-800 group-hover:text-red-400 transition-colors duration-75 leading-5 truncate group-hover:text-clip group-hover:whitespace-normal">
+            <h4
+              className={clsx(
+                "font-bold text-lg md:text-xl text-slate-800 group-hover:text-red-400 transition-colors duration-75 leading-5",
+                "md:truncate md:group-hover:text-clip md:group-hover:whitespace-normal"
+              )}
+            >
               {event.name}
             </h4>
 
@@ -140,7 +145,7 @@ export default function EventCard({
             </div>
 
             {!!tags.length && (
-              <div className="mt-4 hidden group-hover:block">
+              <div className="mt-4 md:hidden md:group-hover:block">
                 <Tags tags={tags} />
               </div>
             )}
@@ -199,9 +204,9 @@ function EventCover({
   return (
     <div
       className={clsx(
-        "relative md:absolute top-0 left-0 w-1/2 flex-grow-0 flex items-center justify-center",
+        "relative md:absolute top-0 left-0 w-[40%] flex-grow-0 flex items-center justify-center",
         "md:w-full md:h-3/5",
-        "group-hover:scale-150 transition-all duration-300"
+        "md:group-hover:scale-150 transition-all duration-300"
       )}
     >
       <div className="relative flex items-center justify-center z-10 h-full md:w-full">
