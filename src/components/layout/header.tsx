@@ -66,6 +66,23 @@ const NavLinks = [
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const bodyRef = useRef<HTMLBodyElement | null>(null);
+
+  useEffect(() => {
+    bodyRef.current = document.querySelector("body");
+  }, []);
+
+  const handleMenuClick = (openStatus: boolean) => {
+    setIsMenuOpen(openStatus);
+    if (bodyRef.current) {
+      if (openStatus) {
+        bodyRef.current.classList.add("overflow-y-hidden");
+      } else {
+        bodyRef.current.classList.remove("overflow-y-hidden");
+      }
+    }
+  };
+
   return (
     <header className="sticky top-0 z-[9999] md:relative md:mt-8 md:mb-8">
       <div
@@ -75,10 +92,10 @@ export default function Header() {
         )}
       >
         <HeaderLeft />
-        <HeaderNav isMenuOpen={isMenuOpen} switchMenu={setIsMenuOpen} />
+        <HeaderNav isMenuOpen={isMenuOpen} switchMenu={handleMenuClick} />
         <HeaderRight />
       </div>
-      <MobileMenu isOpen={isMenuOpen} switchMenu={setIsMenuOpen} />
+      <MobileMenu isOpen={isMenuOpen} switchMenu={handleMenuClick} />
     </header>
   );
 }
@@ -148,30 +165,12 @@ function HeaderNav({
   const { t } = useTranslation();
   const { isCurrentPath } = useCurrentPath();
 
-  const bodyRef = useRef<HTMLBodyElement | null>(null);
-
-  useEffect(() => {
-    bodyRef.current = document.querySelector("body");
-  }, []);
-
-  const handleMenuClick = (openStatus: boolean) => {
-    switchMenu(openStatus);
-
-    if (bodyRef.current) {
-      if (openStatus) {
-        bodyRef.current.classList.add("overflow-y-hidden");
-      } else {
-        bodyRef.current.classList.remove("overflow-y-hidden");
-      }
-    }
-  };
-
   return (
     <>
       <div
         className="block md:hidden text-2xl text-gray-600"
-        onClick={() => handleMenuClick(!isMenuOpen)}
-        onKeyDown={() => handleMenuClick(!isMenuOpen)}
+        onClick={() => switchMenu(!isMenuOpen)}
+        onKeyDown={() => switchMenu(!isMenuOpen)}
       >
         <TbMenuDeep />
       </div>
@@ -196,7 +195,7 @@ function HeaderNav({
                 className="flex justify-center py-2 h-full w-full flex-col text-center"
                 href={nav.link}
                 onClick={() => {
-                  handleMenuClick(false);
+                  switchMenu(false);
                   sendTrack({
                     eventName: "click-nav-link",
                     eventValue: {
