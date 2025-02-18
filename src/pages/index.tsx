@@ -18,6 +18,7 @@ import { sendTrack } from "@/utils/track";
 import { DurationType } from "@/types/list";
 import { EventScale, EventStatus, type EventType } from "@/types/event";
 import { FeatureSchema } from "@/types/feature";
+import { monthNumberFormatter } from "@/utils/locale";
 
 export default function Home(props: { events: EventType[] }) {
   const { t } = useTranslation();
@@ -74,7 +75,7 @@ function DurationSection({
   durationType: string;
   events: EventType[];
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const groupByDateEvent = useMemo(() => {
     return groupBy(events, (event) =>
       // Some event open in the last day of start month, but it should be count in next month.
@@ -94,8 +95,12 @@ function DurationSection({
           <h3 className="text-lg md:text-xl text-red-400 font-bold mb-2 md:mb-6">
             {month !== "unknown"
               ? durationType === DurationType.NextYear
-                ? t("homepage.nextYearMonth", { month })
-                : t("homepage.month", { month })
+                ? t("homepage.nextYearMonth", {
+                    month: monthNumberFormatter(month, i18n.language),
+                  })
+                : t("homepage.month", {
+                    month: monthNumberFormatter(month, i18n.language),
+                  })
               : null}
             <span className="text-sm text-gray-500 font-bold ml-1">
               {t("homepage.total", { total: groupByDateEvent[month].length })}

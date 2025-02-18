@@ -1,4 +1,3 @@
-import groupBy from "lodash-es/groupBy";
 import { eventGroupByMonth, eventGroupByYear } from "@/utils/event";
 import SimpleEventCard from "@/components/SimpleEventCard";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -6,11 +5,12 @@ import { useTranslation } from "next-i18next";
 import wfetch from "@/api";
 import { z } from "zod";
 import { EventType } from "@/types/event";
+import { monthNumberFormatter } from "@/utils/locale";
 
 export default function Years({ events }: { events: EventType[] }) {
   const groupByYearEvents = eventGroupByYear(events, "asc");
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const years = groupByYearEvents.map((group) => group.year);
 
@@ -24,15 +24,21 @@ export default function Years({ events }: { events: EventType[] }) {
             totalAmount: events.length,
           })}
           <br />
-          {groupByYearEvents.map((group, groupIndex) => (
-            <span key={group.year}>
-              {t("years.eachYear", {
-                year: group.year,
-                amount: group.events.length,
-              })}
-              {groupIndex === groupByYearEvents.length - 1 ? "。" : "，"}
-            </span>
-          ))}
+          <div className="flex flex-wrap gap-x-4 gap-y-4 mt-2">
+            {groupByYearEvents.map((group) => (
+              <div
+                key={group.year}
+                className="text-center border rounded-full flex justify-between1 items-center cursor-pointer group overflow-hidden hover:shadow-md"
+              >
+                <span className="font-bold text-red-400 bg-slate-100 px-2 py-1 group-hover:bg-red-400 group-hover:text-white rounded-l transition-all duration-300">
+                  {t("years.known", { year: group.year })}
+                </span>
+                <span className=" text-slate-500 font-medium px-4 py-1">
+                  {group.events.length}
+                </span>
+              </div>
+            ))}
+          </div>
         </p>
       </div>
 
@@ -47,7 +53,6 @@ export default function Years({ events }: { events: EventType[] }) {
               : t("years.known", { year: yearGroup.year })}
           </h2>
           <p className="text-gray-600 mb-4">
-            {yearGroup.year === "no-date" ? "" : t("years.thisYear")}
             {t("years.total", { total: yearGroup.events.length })}：
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
@@ -57,7 +62,12 @@ export default function Years({ events }: { events: EventType[] }) {
                 className="border rounded-xl bg-gray-100 p-2"
               >
                 <h3 className="text-red-400 text-xl font-bold mb-2">
-                  {t("years.month", { month: monthGroup.month })}
+                  {t("years.month", {
+                    month: monthNumberFormatter(
+                      monthGroup.month,
+                      i18n.language
+                    ),
+                  })}
                 </h3>
                 <div className="grid grid-cols-1 gap-2">
                   {monthGroup.events.map((event) => (
