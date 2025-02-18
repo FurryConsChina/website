@@ -1,38 +1,38 @@
 {
   "header": {
     "title": "FurConsCalender",
-    "slogan": "vacation is coming 🤤",
+    "slogan": "No! My sweet vacations!",
     "nav": {
       "homepage": "Home",
-      "city": "City",
-      "organization": "Organizer",
-      "years": "Year Overview"
+      "city": "Cities",
+      "organization": "Organizers",
+      "years": "Timeline"
     }
   },
   "footer": {
     "friendsLink": "Friend Links",
     "aboutUs": "About Us",
-    "disclaimer": "The information shown on this page is for reference only. Please refer to the official event website for accurate information.",
-    "use": "Made by",
+    "disclaimer": "Information provided is for reference only. Please check official event websites for accurate details.",
+    "use": "Created by",
     "and": "and",
-    "made": "produced"
+    "made": "developed"
   },
   "homepage": {
-    "total": "A total of {{total}} conventions",
-    "month": "{{month}} Month",
-    "nextYearMonth": "Next year {{month}} Month",
+    "total": "{{total}} conventions in total",
+    "month": "{{month}} ",
+    "nextYearMonth": "{{month}} next year",
     "group": {
       "status": {
-        "passed": "Already ended",
-        "now": "Right now",
+        "passed": "Past events",
+        "now": "Happening now",
         "soon": "Coming soon",
-        "next": "There are still",
-        "nextYear": "Look at next year"
+        "next": "Upcoming",
+        "nextYear": "Next year"
       }
     },
     "noResult": "It seems there are no conventions that meet the query requirements...",
     "noResultTip": "Try different search criteria, or... wait a bit longer?",
-    "noResultContact": "You can also report a convention that has been officially announced! Our contact information is in the footer!"
+    "noResultContact": "Know of an upcoming convention? Let us know! Contact info is in the footer."
   },
   "event": {
     "filter": {
@@ -45,11 +45,11 @@
       "mega": "Can't breathe (expo)"
     },
     "status": {
-      "cancel": "The event has been canceled by the organizer and cannot be held."
+      "cancel": "The event has been canceled by the organizer"
     },
-    "hostBy": "Hosted by {{hostName}}",
-    "unknown": "Not yet announced",
-    "scaleDes": "This is a {{scale}} furry convention",
+    "hostBy": "Organized by {{hostName}}",
+    "unknown": "To be announced",
+    "scaleDes": "A {{scale}} furry convention",
     "scale": {
       "cosy": "Small scale",
       "small": "Medium scale",
@@ -62,7 +62,7 @@
     "mapLoading": "Loading map",
     "gotoGaoDe": "View on Gaode Map",
     "gotoOrganization": "View Organizer details",
-    "dateFormat": "yyyy年MM月dd日"
+    "dateFormat": "MMMM dd, yyyy"
   },
   "organization": {
     "active": "Active Organizers",
@@ -87,13 +87,12 @@
     "passedEvent": "Past conventions"
   },
   "years": {
-    "title": "Summary",
-    "des": "The FEC·Furry Convention Calendar has recorded {{totalAmount}} furry conventions/gatherings over {{totalYear}} years. Among them:",
-    "eachYear": "{{year}} had a total of {{amount}} furry conventions/gatherings",
+    "title": "Overview",
+    "des": "FCC has documented {{totalAmount}} furry cons across {{totalYear}} years:",
     "unknown": "Not yet scheduled",
     "known": "{{year}}",
-    "thisYear": "This year",
-    "total": "A total of {{total}} furry conventions/gatherings",
-    "month": "{{month}} Month"
+    "thisYear": "Current year",
+    "total": "Wrapping up {{total}} amazing furry conventions this year",
+    "month": "{{month}} "
   }
 }
