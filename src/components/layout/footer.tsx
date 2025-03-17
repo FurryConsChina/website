@@ -76,10 +76,11 @@ export default function Footer({ isCNRegion }: { isCNRegion: boolean }) {
             ©️ {isCNRegion ? "FURRYCONS.CN" : "FURRYEVENTCHINA.COM"} {2023}-
             {new Date().getFullYear()}
           </span>
-          {/* <span className="ml-2" suppressHydrationWarning>
-            build.{COMMITHASH} {dateString}
-          </span> */}
+
           <span className="block">{t("footer.disclaimer")}</span>
+          <span className="md:ml-2" suppressHydrationWarning>
+            build.{COMMITHASH}
+          </span>
           <div className="mt-1">
             {isCNRegion && (
               <span className="mt-2">
