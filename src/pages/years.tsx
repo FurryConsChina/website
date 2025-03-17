@@ -111,7 +111,7 @@ export async function getStaticProps({ locale }: { locale: string }) {
       events: validEvents,
       headMetas: {
         title: "年度时间轴",
-        des: `欢迎来到FEC·兽展日历！FEC·兽展日历在过去的 7年里共计收录了 ${validEvents?.length} 场 Furry 相关的展会活动，你去过多少场呢？愿你能在这里找到最美好的回忆！`,
+        des: `欢迎来到FEC·兽展日历！FEC·兽展日历共计收录了 ${validEvents?.length} 场 Furry 相关的展会活动，你去过多少场呢？愿你能在这里找到最美好的回忆！`,
         link: "https://www.furryeventchina.com/years",
       },
       structuredData: {
