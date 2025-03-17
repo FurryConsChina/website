@@ -13,7 +13,6 @@ jobs:
     environment: Prod
     env:
       XATA_API_KEY: ${{ secrets.XATA_API_KEY }}
-      XATA_FALLBACK_BRANCH: ${{ vars.XATA_FALLBACK_BRANCH }}
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
       ENABLE_TRACK: ${{ vars.ENABLE_TRACK }}
       NEXT_PUBLIC_REGION: ${{ vars.NEXT_PUBLIC_REGION }}
@@ -28,7 +27,6 @@ jobs:
           touch .env
           echo NEXT_PUBLIC_REGION="GLOBAL" >>.env
           echo XATA_API_KEY="$XATA_API_KEY" >> .env
-          echo XATA_FALLBACK_BRANCH="$XATA_FALLBACK_BRANCH" >> .env
           echo SENTRY_AUTH_TOKEN="$SENTRY_AUTH_TOKEN" >> .env
           echo NEXT_PUBLIC_ENABLE_TRACK="$ENABLE_TRACK" >> .env
           echo NEXT_PUBLIC_STATIC_CDN_URL="$NEXT_PUBLIC_STATIC_CDN_URL" >>.env
@@ -55,7 +53,6 @@ jobs:
     environment: Prod-CN
     env:
       XATA_API_KEY: ${{ secrets.XATA_API_KEY }}
-      XATA_FALLBACK_BRANCH: ${{ vars.XATA_FALLBACK_BRANCH }}
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
       ENABLE_TRACK: ${{ vars.ENABLE_TRACK }}
       NEXT_PUBLIC_REGION: ${{ vars.NEXT_PUBLIC_REGION }}
@@ -69,7 +66,6 @@ jobs:
         run: |
           touch .env
           echo XATA_API_KEY="$XATA_API_KEY" >> .env
-          echo XATA_FALLBACK_BRANCH="$XATA_FALLBACK_BRANCH" >> .env
           echo SENTRY_AUTH_TOKEN="$SENTRY_AUTH_TOKEN" >> .env
           echo NEXT_PUBLIC_ENABLE_TRACK="$ENABLE_TRACK" >> .env
           echo NEXT_PUBLIC_REGION="$NEXT_PUBLIC_REGION" >>.env
