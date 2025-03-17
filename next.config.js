@@ -9,9 +9,7 @@ const { withSentryConfig } = require("@sentry/nextjs");
 const { GitRevisionPlugin } = require("git-revision-webpack-plugin");
 
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
-  enabled:
-    process.env.NODE_ENV === "production" &&
-    process.env.NEXT_PUBLIC_ENABLE_TRACK === "true",
+  enabled: process.env.NEXT_PUBLIC_ENABLE_ANALYZE === "true",
 });
 
 const { i18n } = require("./next-i18next.config");
@@ -33,6 +31,20 @@ const nextConfig = {
     loaderFile: "./src/utils/imageLoader.ts",
   },
   assetPrefix: isProd && STATIC_CDN_URL ? STATIC_CDN_URL : undefined,
+  redirects: async () => {
+    return [
+      {
+        source: "/%E5%BE%BD%E5%85%BD%E6%B1%87",
+        destination: "/huishouhui",
+        permanent: true,
+      },
+      {
+        source: "/%E5%BE%BD%E5%85%BD%E6%B1%87/july-fur-con-2023",
+        destination: "/huishouhui/july-fur-con-2023", // Complete the GitHub redirect destination
+        permanent: true,
+      },
+    ];
+  },
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
     config.plugins.push(
       new webpack.DefinePlugin({
