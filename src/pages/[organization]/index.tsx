@@ -3,7 +3,7 @@ import OrganizationStatus from "@/components/organizationStatus";
 import styles from "@/styles/Organization.module.css";
 import clsx from "clsx";
 import Image from "@/components/image";
-import { GetStaticPropsContext } from "next/types";
+import { GetServerSidePropsContext } from "next/types";
 import { useMemo } from "react";
 import toast from "react-hot-toast";
 import { FaPaw, FaQq, FaTwitter, FaWeibo } from "react-icons/fa";
@@ -255,29 +255,21 @@ export default function OrganizationDetail(props: {
   );
 }
 
-export async function getStaticPaths() {
-  const organizations = await wfetch.get("/organization/all").json();
-
-  const organizationSchema = z.array(
-    z.object({
-      slug: z.string().min(1),
-    })
-  );
-
-  const validOrganizations = organizationSchema.safeParse(organizations);
-
-  return {
-    paths: validOrganizations?.data?.map((organization) => ({
-      params: { organization: organization.slug },
-    })),
-    fallback: "blocking",
-  };
-}
-
-export async function getStaticProps(context: GetStaticPropsContext) {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
   try {
+    const orgParamsSchema = z.object({
+      organization: z
+        .string()
+        .min(1)
+        .regex(/^[a-zA-Z0-9-]+$/),
+    });
+
+    const reqParamsParseResult = orgParamsSchema.parse({
+      organization: context.params?.organization,
+    });
+
     const response = await wfetch
-      .query({ slug: context.params?.organization })
+      .query({ slug: reqParamsParseResult.organization })
       .get("/organization/detail")
       .json();
 
@@ -399,12 +391,10 @@ export async function getStaticProps(context: GetStaticPropsContext) {
           ? await serverSideTranslations(context.locale, ["common"])
           : {}),
       },
-      revalidate: 86400,
     };
   } catch (error) {
     return {
       notFound: true,
-      revalidate: 60,
     };
   }
 }
