@@ -2,7 +2,7 @@ import OrganizationStatus from "@/components/organizationStatus";
 
 import clsx from "clsx";
 import { format } from "date-fns";
-import { GetStaticPropsContext } from "next";
+import { GetServerSidePropsContext } from "next";
 import NextImage from "@/components/image";
 import { useState } from "react";
 import { BsCalendar2DateFill } from "react-icons/bs";
@@ -414,34 +414,28 @@ export default function EventDetail({ event }: { event: EventType }) {
   );
 }
 
-export async function getStaticPaths() {
-  const events = await wfetch.get("/event/all").json();
-
-  const eventSchema = z.array(
-    z.object({
-      slug: z.string().min(1),
-      organization: z.object({
-        slug: z.string(),
-      }),
-    })
-  );
-
-  const validResult = eventSchema.safeParse(events);
-
-  return {
-    paths: validResult.data?.map((event) => ({
-      params: { organization: event.organization?.slug, slug: event.slug },
-    })),
-    fallback: "blocking", // can also be true or 'blocking'
-  };
-}
-
-export async function getStaticProps(context: GetStaticPropsContext) {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
   try {
+    const eventParamsSchema = z.object({
+      slug: z
+        .string()
+        .min(1)
+        .regex(/^[a-zA-Z0-9-]+$/),
+      organization: z
+        .string()
+        .min(1)
+        .regex(/^[a-zA-Z0-9-]+$/),
+    });
+
+    const reqParamsParseResult = eventParamsSchema.parse({
+      slug: context.params?.slug,
+      organization: context.params?.organization,
+    });
+
     const response = await wfetch
       .query({
-        slug: context.params?.slug,
-        organization: context.params?.organization,
+        slug: reqParamsParseResult.slug,
+        organization: reqParamsParseResult.organization,
       })
       .get("/event/detail")
       .json()
@@ -578,12 +572,11 @@ export async function getStaticProps(context: GetStaticPropsContext) {
           ? await serverSideTranslations(context.locale, ["common"])
           : {}),
       },
-      revalidate: 86400,
     };
   } catch (error) {
+    console.error(error);
     return {
       notFound: true,
-      revalidate: 60,
     };
   }
 }
