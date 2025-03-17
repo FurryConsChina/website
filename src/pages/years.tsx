@@ -18,7 +18,7 @@ export default function Years({ events }: { events: EventType[] }) {
     <div>
       <div className="mb-4 border rounded-xl p-6 bg-white">
         <h2 className="font-bold text-red-400 text-2xl mb-4">总结</h2>
-        <p className="text-gray-600">
+        <div className="text-gray-600">
           {t("years.des", {
             totalYear: years.filter((year) => year !== "no-date").length,
             totalAmount: events.length,
@@ -26,9 +26,10 @@ export default function Years({ events }: { events: EventType[] }) {
           <br />
           <div className="flex flex-wrap gap-x-4 gap-y-4 mt-2">
             {groupByYearEvents.map((group) => (
-              <div
+              <a
                 key={group.year}
-                className="text-center border rounded-full flex justify-between1 items-center cursor-pointer group overflow-hidden hover:shadow-md"
+                href={`#${group.year}`}
+                className="text-center border rounded-full flex items-center cursor-pointer group overflow-hidden"
               >
                 <span className="font-bold text-red-400 bg-slate-100 px-2 py-1 group-hover:bg-red-400 group-hover:text-white rounded-l transition-all duration-300">
                   {t("years.known", { year: group.year })}
@@ -36,16 +37,17 @@ export default function Years({ events }: { events: EventType[] }) {
                 <span className=" text-slate-500 font-medium px-4 py-1">
                   {group.events.length}
                 </span>
-              </div>
+              </a>
             ))}
           </div>
-        </p>
+        </div>
       </div>
 
       {groupByYearEvents.map((yearGroup) => (
         <section
           key={yearGroup.year}
           className="mb-4 border rounded-xl p-6 bg-white"
+          id={yearGroup.year}
         >
           <h2 className="font-bold text-red-400 text-2xl mb-4">
             {yearGroup.year === "no-date"
