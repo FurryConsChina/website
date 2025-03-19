@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && next-sitemap",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "clean": "rm -rf .next && rm -rf out"
@@ -26,7 +26,6 @@
     "lodash-es": "^4.17.21",
     "next": "15.2.2",
     "next-i18next": "^15.4.2",
-    "next-sitemap": "^4.2.3",
     "postcss": "^8.5.3",
     "postcss-flexbugs-fixes": "^5.0.2",
     "postcss-nested": "^7.0.2",
