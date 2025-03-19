@@ -40,7 +40,7 @@ const nextConfig = {
       },
       {
         source: "/%E5%BE%BD%E5%85%BD%E6%B1%87/july-fur-con-2023",
-        destination: "/huishouhui/july-fur-con-2023", // Complete the GitHub redirect destination
+        destination: "/huishouhui/july-fur-con-2023",
         permanent: true,
       },
     ];
@@ -72,13 +72,16 @@ const sentryWebpackPluginOptions = {
   //   release, url, authToken, configFile, stripPrefix,
   //   urlPrefix, include, ignore
 
-  org: IS_CN_REGION ? "kemono-games" : "jipai",
-  project: IS_CN_REGION ? "fec-web" : "furryeventchina",
+  org: true ? "kemono-games" : "jipai",
+  project: true ? "fec-web" : "furryeventchina",
 
+  widenClientFileUpload: true,
   silent: true, // Suppresses all logs
   disableLogger: true,
-  hideSourceMaps: true,
   deleteSourceMapsAfterUpload: true,
+  reactComponentAnnotation: {
+    enabled: true,
+  },
 
   errorHandler: (err, invokeErr, compilation) => {
     compilation.warnings.push("Sentry CLI Plugin: " + err.message);
