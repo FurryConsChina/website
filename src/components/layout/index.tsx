@@ -98,27 +98,21 @@ export default function Layout({
           rel="canonical"
           href={`https://www.furryeventchina.com${asPath}`}
         /> */}
-        {/* disabled due to en translate not finish. */}
-        {/* <link
+        <link
           rel="alternate"
-          hrefLang="zh-Hans-CN"
+          hrefLang="zh-Hans-cn"
           href={`https://www.furrycons.cn${asPath}`}
-        />
-        <link
-          rel="alternate"
-          hrefLang="zh-Hans"
-          href={`https://www.furryeventchina.com${asPath}`}
-        />
-        <link
-          rel="alternate"
-          hrefLang="en-CN"
-          href={`https://www.furrycons.cn/en${asPath}`}
         />
         <link
           rel="alternate"
           hrefLang="en"
           href={`https://www.furryeventchina.com/en${asPath}`}
-        /> */}
+        />
+        <link
+          rel="alternate"
+          hrefLang="x-default"
+          href={`https://www.furryeventchina.com/${asPath}`}
+        />
 
         {structuredData?.event && (
           <script
