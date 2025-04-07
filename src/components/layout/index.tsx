@@ -111,7 +111,7 @@ export default function Layout({
         <link
           rel="alternate"
           hrefLang="x-default"
-          href={`https://www.furryeventchina.com/${asPath}`}
+          href={`https://www.furryeventchina.com${asPath}`}
         />
 
         {structuredData?.event && (
