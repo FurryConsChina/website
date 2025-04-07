@@ -157,13 +157,15 @@ export function groupByCustomDurationEvent(events: EventType[]) {
     //Soon events
     if (
       (startMonth === currentMonth ||
-        (currentMonth + 1 === startMonth && startMonth <= 12)) &&
+        (currentMonth + 1 === startMonth &&
+          currentMonth + 1 === endMonth &&
+          startMonth <= 12)) &&
       isBefore(now, startTime)
     ) {
       return durationObject.soon.push(event);
     }
 
-    //Next events
+    //next year events
     if (startMonth > currentMonth) {
       if (startMonth > 12) {
         return durationObject.nextYear.push(event);
