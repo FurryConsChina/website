@@ -5,7 +5,7 @@ export const isEnableTrack = process.env.NEXT_PUBLIC_ENABLE_TRACK === "true";
 
 export default function Document() {
   return (
-    <Html lang="zh-Hans">
+    <Html>
       <Head></Head>
 
       <body>
