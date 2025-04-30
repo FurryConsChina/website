@@ -37,12 +37,13 @@
   "event": {
     "filter": {
       "onlyAvailable": "Only view upcoming conventions",
-      "all": "I want them all (all)",
-      "cosy": "A small gathering (small convention)",
-      "small": "A bit impressive (medium convention)",
-      "medium": "So many people (large convention)",
-      "large": "Starting to get lost (giant convention)",
-      "mega": "Can't breathe (expo)"
+      "cosy": "Mini (0-100 attendees)",
+      "small": "Small (100-500 attendees)",
+      "medium": "Medium (500-1,000 attendees)",
+      "large": "Large (1,000-3,000 attendees)",
+      "xlarge": "X-Large (3,000-5,000 attendees)",
+      "xxlarge": "XX-Large (5,000+ attendees)",
+      "mega": "Mega (10,000+ attendees)"
     },
     "status": {
       "cancel": "The event has been canceled by the organizer"
@@ -51,11 +52,13 @@
     "unknown": "To be announced",
     "scaleDes": "A {{scale}} furry convention",
     "scale": {
-      "cosy": "Small scale",
-      "small": "Medium scale",
-      "medium": "Large scale",
-      "large": "Extra large scale",
-      "mega": "Giant scale"
+      "cosy": "Mini (0-100 attendees)",
+      "small": "Small (100-500 attendees)",
+      "medium": "Medium (500-1,000 attendees)",
+      "large": "Large (1,000-3,000 attendees)",
+      "xlarge": "X-Large (3,000-5,000 attendees)",
+      "xxlarge": "XX-Large (5,000+ attendees)",
+      "mega": "Mega (10,000+ attendees)"
     },
     "goToSource": "Go to source",
     "map": "Convention map",
