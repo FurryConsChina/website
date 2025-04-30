@@ -11,6 +11,7 @@ import { TbMenuDeep } from "react-icons/tb";
 import { useCurrentPath } from "@/utils/path";
 import { FaLanguage } from "react-icons/fa6";
 import LocaleMenu from "@/components/layout/localeMenu";
+import imageLoader from "@/utils/imageLoader";
 
 // const AnimeEmojis = [
 //   "tiger-face",
@@ -122,7 +123,7 @@ function HeaderLeft() {
             <span className="flex items-center">
               <img
                 alt="title-emoji"
-                src="/svgs/tiger-face.svg"
+                src={imageLoader({ src: "assets/svgs/tiger-face.svg" })}
                 width={32}
                 height={32}
                 fetchPriority="low"
@@ -130,7 +131,7 @@ function HeaderLeft() {
               />
               <img
                 alt="title-emoji"
-                src="/svgs/wolf.svg"
+                src={imageLoader({ src: "assets/svgs/wolf.svg" })}
                 width={32}
                 height={32}
                 fetchPriority="low"
@@ -138,7 +139,7 @@ function HeaderLeft() {
               />
               <img
                 alt="title-emoji"
-                src="/svgs/lion.svg"
+                src={imageLoader({ src: "assets/svgs/lion.svg" })}
                 width={32}
                 height={32}
                 fetchPriority="low"
