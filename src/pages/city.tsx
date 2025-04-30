@@ -174,6 +174,7 @@ const CityResponseSchema = EventSchema.pick({
 }).merge(PartialOrganizationSchema);
 
 export async function getStaticProps({ locale }: { locale: string }) {
+  const PUBLIC_URL = process.env.NEXT_PUBLIC_URL;
   const response = await wfetch.get("/event/all").json();
   const events = z.array(CityResponseSchema).safeParse(response).data;
 
@@ -193,7 +194,7 @@ export async function getStaticProps({ locale }: { locale: string }) {
       headMetas: {
         title: "兽展城市列表",
         des: `欢迎来到FEC·兽展日历！FEC·兽展日历共收录来自中国大陆共 ${cities} 个城市举办过的 ${events.length} 场 兽展(兽聚)活动信息！快来看看这些城市有没有你所在的地方吧！`,
-        link: "https://www.furryeventchina.com/city",
+        link: "/city",
       },
       structuredData: {
         breadcrumb: {
@@ -204,7 +205,7 @@ export async function getStaticProps({ locale }: { locale: string }) {
               "@type": "ListItem",
               position: 1,
               name: "城市",
-              item: "https://www.furryeventchina.com/city",
+              item: `https://${PUBLIC_URL}/city`,
             },
           ],
         },

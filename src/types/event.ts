@@ -28,20 +28,16 @@ export const EventScale = {
   Cosy: "cosy",
   /** 二三线城市的展会一般用这个。 */
   Small: "small",
-  /** 一线城市的展会一般用这个，比如：极兽聚 */
+  /** 一线城市的展会但是不是很有名一般用这个，比如：上海兽界 */
   Medium: "medium",
-  /** 没有这种规模 */
+  /** 以极兽聚为代表的超过1000人以上的展会 */
   Large: "large",
-  /** 没有这种规模 */
+  /** 特大型展会 */
+  XLarge: "xlarge",
+  /**超特大型展会 */
+  XXLarge: "xxlarge",
+  /** 巨型展会，没有这种规模 */
   Mega: "mega",
-};
-
-export const EventScaleLabel = {
-  [EventScale.Cosy]: "小型规模",
-  [EventScale.Small]: "中型规模",
-  [EventScale.Medium]: "大型规模",
-  [EventScale.Large]: "超大型规模",
-  [EventScale.Mega]: "巨型规模",
 };
 
 export const EventSchema = z.object({
