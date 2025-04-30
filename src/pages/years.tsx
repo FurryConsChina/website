@@ -86,6 +86,7 @@ export default function Years({ events }: { events: EventType[] }) {
 }
 
 export async function getStaticProps({ locale }: { locale: string }) {
+  const PUBLIC_URL = process.env.NEXT_PUBLIC_URL;
   const events = await wfetch.get("/event/all").json();
 
   const parseEventResult = z
@@ -112,7 +113,7 @@ export async function getStaticProps({ locale }: { locale: string }) {
       headMetas: {
         title: "年度时间轴",
         des: `欢迎来到FEC·兽展日历！FEC·兽展日历共计收录了 ${validEvents?.length} 场 Furry 相关的展会活动，你去过多少场呢？愿你能在这里找到最美好的回忆！`,
-        link: "https://www.furryeventchina.com/years",
+        link: "/years",
       },
       structuredData: {
         breadcrumb: {
@@ -123,7 +124,7 @@ export async function getStaticProps({ locale }: { locale: string }) {
               "@type": "ListItem",
               position: 1,
               name: "年度时间轴",
-              item: "https://www.furryeventchina.com/years",
+              item: `https://${PUBLIC_URL}/years`,
             },
           ],
         },

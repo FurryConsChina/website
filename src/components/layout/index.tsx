@@ -9,6 +9,7 @@ import { Toaster } from "react-hot-toast";
 import Sidebar from "@/components/Sidebar";
 
 const IS_CN_REGION = process.env.NEXT_PUBLIC_REGION === "CN";
+const PUBLIC_URL = process.env.NEXT_PUBLIC_URL;
 
 export default function Layout({
   children,
@@ -63,7 +64,9 @@ export default function Layout({
         />
         <meta
           property="og:url"
-          content={headMetas?.url || "https://www.furryeventchina.com"}
+          content={
+            `https://${PUBLIC_URL}${headMetas?.url}` || `https://${PUBLIC_URL}`
+          }
           key="url"
         />
         <meta
@@ -72,10 +75,12 @@ export default function Layout({
           key="image"
         />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta property="twitter:domain" content="furryeventchina.com" />
+        <meta property="twitter:domain" content={`${PUBLIC_URL}`} />
         <meta
           property="twitter:url"
-          content={headMetas?.url || "https://www.furryeventchina.com"}
+          content={
+            `https://${PUBLIC_URL}${headMetas?.url}` || `https://${PUBLIC_URL}`
+          }
         />
         <meta name="twitter:title" content={titleGenerator(headMetas?.title)} />
         <meta
@@ -94,10 +99,7 @@ export default function Layout({
           content={IS_CN_REGION ? "codeva-GHH5uUsoan" : "codeva-UlpDYpags1"}
         />
         <link rel="icon" href="/favicon.ico" />
-        <link
-          rel="canonical"
-          href={`https://www.furrycons.cn${asPath}`}
-        />
+        <link rel="canonical" href={`https://www.furrycons.cn${asPath}`} />
         <link
           rel="alternate"
           hrefLang="zh-Hans-cn"

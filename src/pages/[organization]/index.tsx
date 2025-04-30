@@ -256,6 +256,7 @@ export default function OrganizationDetail(props: {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const PUBLIC_URL = process.env.NEXT_PUBLIC_URL;
   try {
     const orgParamsSchema = z.object({
       organization: z
@@ -365,7 +366,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
               : "不过他们没怎么介绍自己。"
           }`,
           keywords: `${validOrganization?.name}, ${validOrganization?.name} 兽展, ${validOrganization?.name} 兽聚`,
-          url: `https://www.furryeventchina.com/${validOrganization?.slug}`,
+          url: `/${validOrganization?.slug}`,
           cover: validOrganization?.logoUrl,
         },
         structuredData: {
@@ -377,7 +378,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
                 "@type": "ListItem",
                 position: 1,
                 name: "展商",
-                item: "https://www.furryeventchina.com/organization",
+                item: `https://${PUBLIC_URL}/organization`,
               },
               {
                 "@type": "ListItem",

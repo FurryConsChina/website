@@ -12,7 +12,6 @@ import { RiErrorWarningLine } from "react-icons/ri";
 import { TbArrowsRightLeft } from "react-icons/tb";
 import Link from "next/link";
 import {
-  EventScaleLabel,
   EventSchema,
   EventStatus,
   EventStatusSchema,
@@ -415,6 +414,7 @@ export default function EventDetail({ event }: { event: EventType }) {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const PUBLIC_URL = process.env.NEXT_PUBLIC_URL;
   try {
     const eventParamsSchema = z.object({
       slug: z
@@ -482,7 +482,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
             },
           }),
           des: metaDes,
-          url: `https://www.furryeventchina.com/${context.params?.organization}/${event?.slug}`,
+          url: `/${context.params?.organization}/${event?.slug}`,
           cover: imageUrl(getEventCoverImgPath(event)),
         },
         structuredData: {
@@ -494,13 +494,13 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
                 "@type": "ListItem",
                 position: 1,
                 name: "展商",
-                item: "https://www.furryeventchina.com/organization",
+                item: `https://${PUBLIC_URL}/organization`,
               },
               {
                 "@type": "ListItem",
                 position: 2,
                 name: event?.organization?.name,
-                item: `https://www.furryeventchina.com/${context.params?.organization}`,
+                item: `https://${PUBLIC_URL}/${context.params?.organization}`,
               },
               {
                 "@type": "ListItem",
@@ -548,7 +548,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
             organizer: {
               "@type": "Organization",
               name: event?.organization?.name,
-              url: `https://www.furryeventchina.com/${context.params?.organization}`,
+              url: `https://${PUBLIC_URL}/${context.params?.organization}`,
             },
           },
           imageObject: [
@@ -565,7 +565,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
             },
             copyrightNotice: event?.organization?.name,
             license: "https://creativecommons.org/licenses/by-nc/4.0/",
-            acquireLicensePage: "https://docs.furryeventchina.com/blog/about",
+            acquireLicensePage: "https://docs.furrycons.cn/blog/about",
           })),
         },
         ...(context.locale

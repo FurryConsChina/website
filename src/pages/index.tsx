@@ -123,10 +123,12 @@ function DurationSection({
 }
 
 const EventScaleScaleOptions = [
-  { key: "all", name: "我全都要（全部）" },
-  { key: EventScale.Cosy, name: "三两小聚（小型展）" },
-  { key: EventScale.Small, name: "有点厉害（中型展）" },
-  { key: EventScale.Medium, name: "好多人啊（大型展）" },
+  { key: "all" },
+  { key: EventScale.Cosy },
+  { key: EventScale.Small },
+  { key: EventScale.Medium },
+  { key: EventScale.Large },
+  { key: EventScale.XLarge },
 ];
 function Filter({
   onChange,
@@ -156,7 +158,7 @@ function Filter({
     });
   };
 
-  const selctedScaleValue = EventScaleScaleOptions.filter((e) =>
+  const selectedScaleValue = EventScaleScaleOptions.filter((e) =>
     selectedFilter.eventScale.includes(e.key)
   );
   return (
@@ -186,7 +188,7 @@ function Filter({
       <div className="bg-gray-100 w-[2px] h-4 mx-4 hidden sm:block" />
 
       <select
-        value={selctedScaleValue[0].key}
+        value={selectedScaleValue[0].key}
         id="scale"
         onChange={(e) => handleFilter("eventScale", [e.target.value])}
         className="bg-white p-2 border rounded-xl text-gray-600"
