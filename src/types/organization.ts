@@ -21,6 +21,21 @@ export const OrganizationSchema = z.object({
   qqGroup: z.string().nullable(),
   bilibili: z.string().url().nullable(),
   wikifur: z.string().url().nullable(),
+  facebook: z.string().url().nullable(),
+  plurk: z.string().url().nullable(),
+  rednote: z.string().url().nullable(),
+  extraMedia: z
+    .object({
+      qqGroups: z
+        .array(
+          z.object({
+            label: z.string(),
+            value: z.string(),
+          })
+        )
+        .nullable(),
+    })
+    .nullable(),
   creationTime: z
     .string()
     .refine((date) => !isNaN(Date.parse(date)), {

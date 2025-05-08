@@ -23,13 +23,16 @@ import Script from "next/script";
 import OrganizationLinkButton, {
   BiliButton,
   EmailButton,
+  FacebookButton,
+  PlurkButton,
   QQGroupButton,
+  RednoteButton,
   TwitterButton,
   WebsiteButton,
   WeiboButton,
   WikifurButton,
 } from "@/components/OrganizationLinkButton";
-import { FaPeoplePulling } from "react-icons/fa6";
+import { FaHotel, FaPeoplePulling } from "react-icons/fa6";
 import EventStatusBar from "@/components/EventStatusBar";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
@@ -40,6 +43,7 @@ import {
   eventDescriptionGenerator,
   keywordGenerator,
 } from "@/utils/meta";
+import { EventDate } from "@/components/eventCard";
 
 const MapLoadingStatus = {
   Idle: "idle",
@@ -49,7 +53,7 @@ const MapLoadingStatus = {
 };
 
 export default function EventDetail({ event }: { event: EventType }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [mapLoadingStatus, setMapLoadingStatus] = useState(() => {
     if (event.addressLat && event.addressLon) {
       return MapLoadingStatus.Loading;
@@ -194,23 +198,34 @@ export default function EventDetail({ event }: { event: EventType }) {
                 event.address ? event.address : t("event.unknown")
               }`}
             </p>
+
             <p
               aria-label="活动时间"
               className="flex items-center text-gray-500"
             >
               <BsCalendar2DateFill className="text-gray-500 inline-block mr-2" />
-              <time aria-label="活动开始时间" suppressHydrationWarning>
-                {event.startAt
-                  ? format(event.startAt, t("event.dateFormat"))
-                  : t("event.unknown")}
-              </time>
-              <TbArrowsRightLeft className="mx-2  text-sm" />
-              <time aria-label="活动结束时间" suppressHydrationWarning>
-                {event.endAt
-                  ? format(event.endAt, t("event.dateFormat"))
-                  : t("event.unknown")}
-              </time>
+              <EventDate
+                event={event}
+                locale={i18n.language as currentSupportLocale}
+              />
             </p>
+
+            {!!event.type && !!event.locationType && (
+              <p
+                aria-label="活动场地类型"
+                className="flex items-center text-gray-500"
+              >
+                <FaHotel className="text-gray-500 inline-block mr-2" />
+
+                {[
+                  event.locationType &&
+                    t(`event.locationType.${event.locationType}`),
+                  event.type && t(`event.type.${event.type}`),
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+              </p>
+            )}
 
             <p
               aria-label="活动规模"
@@ -219,14 +234,6 @@ export default function EventDetail({ event }: { event: EventType }) {
               <FaPeoplePulling className="text-gray-500 inline-block mr-2" />
               {t("event.scaleDes", { scale: t(`event.scale.${event.scale}`) })}
             </p>
-
-            {/* <p
-              aria-label="活动规模"
-              className="flex items-center text-gray-500"
-            >
-              <FaPeoplePulling className="text-gray-500 inline-block mr-2" />
-              页面更新次数：{event.xata.version}
-            </p> */}
           </div>
 
           {event.source && (
@@ -243,7 +250,7 @@ export default function EventDetail({ event }: { event: EventType }) {
                   },
                 })
               }
-              className="block mt-8 px-16 py-4 bg-red-400 text-white font-bold rounded-md text-center transition duration-300 border border-2 border-red-100 hover:border-red-400 shadow-lg"
+              className="block mt-8 px-16 py-4 bg-red-400 text-white font-bold rounded-md text-center transition duration-300 border-2 border-red-100 hover:border-red-400 shadow-lg"
             >
               {t("event.goToSource")}
             </a>
@@ -380,7 +387,7 @@ export default function EventDetail({ event }: { event: EventType }) {
 
             <div
               className={clsx(
-                "flex items-center text-gray-500 grid gap-4 mt-4",
+                "items-center text-gray-500 grid gap-4 mt-4",
                 !showDescriptionContainer && "lg:grid-cols-2"
               )}
             >
@@ -406,8 +413,16 @@ export default function EventDetail({ event }: { event: EventType }) {
                 <EmailButton t={t} mail={event.organization.contactMail} />
               )}
 
-              {event.organization?.wikifur && (
-                <WikifurButton t={t} href={event.organization.wikifur} />
+              {event.organization?.plurk && (
+                <PlurkButton t={t} href={event.organization.plurk} />
+              )}
+
+              {event.organization?.facebook && (
+                <FacebookButton t={t} href={event.organization.facebook} />
+              )}
+
+              {event.organization?.rednote && (
+                <RednoteButton t={t} href={event.organization.rednote} />
               )}
             </div>
           </div>
@@ -442,14 +457,16 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         organization: reqParamsParseResult.organization,
       })
       .get("/open/v1/event/detail")
-      .json()
-      .catch((e) => console.log(e));
+      .json();
 
     const validResult = EventSchema.safeParse(response);
     const event = validResult.data;
 
     if (validResult.error) {
-      console.log(`Error in render ${context?.params?.slug}`);
+      console.log(
+        `Error in render ${context?.params?.slug}`,
+        validResult.error
+      );
     }
 
     if (!event) {

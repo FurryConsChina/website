@@ -40,6 +40,28 @@ export const EventScale = {
   Mega: "mega",
 };
 
+export const EventLocationType = {
+  /** 在酒店举办的展会 */
+  Hotel: "hotel",
+  /** 在专用活动场地举办的展会 */
+  Venue: "venue",
+  /** 线上活动，叮咚鸡！ */
+  Online: "online",
+};
+
+export const EventTypeMap = {
+  /** 有毛又有销售摊位，比如极兽聚夏聚 */
+  AllInCon: "all-in-con",
+  /** 贩售会，主要在台湾和日本，以卖本子为主 */
+  ComicMarket: "comic-market",
+  /** 纯吸毛展，比如极兽聚冬聚 */
+  SuitOnlyCon: "suit-only-con",
+  /** 主打旅游的展子，行程里包含旅游等安排。 */
+  TravelCon: "travel-con",
+  /** 类似粉丝见面会和同城交友的类型，比如岚兽聚，这种展会的显著特点是：展会主动选择（筛选）访客。 */
+  FandomMeetup: "fandom-meetup",
+};
+
 export const EventSchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -48,6 +70,22 @@ export const EventSchema = z.object({
   endAt: z.string().datetime().nullable(),
   status: z.string(),
   scale: z.string(),
+  type: z
+    .enum([
+      EventTypeMap.AllInCon,
+      EventTypeMap.ComicMarket,
+      EventTypeMap.SuitOnlyCon,
+      EventTypeMap.TravelCon,
+      EventTypeMap.FandomMeetup,
+    ])
+    .nullable(),
+  locationType: z
+    .enum([
+      EventLocationType.Hotel,
+      EventLocationType.Venue,
+      EventLocationType.Online,
+    ])
+    .nullable(),
   source: z.string().nullable(),
   address: z.string().nullable(),
   addressLat: z.string().nullable(),
@@ -64,21 +102,37 @@ export const EventSchema = z.object({
   commonFeatures: z.array(FeatureSchema).nullish(),
 
   organization: z.object({
-    id: z.string().uuid(), // 假设 id 是一个 UUID
-    slug: z.string().min(1), // slug 至少有一个字符
-    name: z.string().min(1), // name 至少有一个字符
-    description: z.string().nullable(), // description 至少有一个字符
-    status: z.enum(["active", "inactive"]), // 假设 status 只能是 'active' 或 'inactive'
-    type: z.string().nullable(), // type 可以是字符串或 null
-    logoUrl: z.string().nullable(), // logoUrl 应该是一个有效的 URL
-    richMediaConfig: z.any().nullable(), // richMediaConfig 可以是任意类型或 null
-    contactMail: z.string().email().nullable(), // contactMail 应该是一个有效的邮箱地址
-    website: z.string().url().nullable(), // website 应该是一个有效的 URL
-    twitter: z.string().url().nullable(), // twitter 可以是有效的 URL 或 null
-    weibo: z.string().url().nullable(), // weibo 可以是有效的 URL 或 null
-    qqGroup: z.string().nullable(), // qqGroup 可以是字符串或 null
-    bilibili: z.string().url().nullable(), // bilibili 可以是有效的 URL 或 null
-    wikifur: z.string().url().nullable(), // wikifur 可以是有效的 URL 或 null
+    id: z.string().uuid(),
+    slug: z.string().min(1),
+    name: z.string().min(1),
+    description: z.string().nullable(),
+    status: z.enum(["active", "inactive"]),
+    type: z.string().nullable(),
+
+    logoUrl: z.string().nullable(),
+    richMediaConfig: z.any().nullable(),
+    contactMail: z.string().email().nullable(),
+    website: z.string().url().nullable(),
+    twitter: z.string().url().nullable(),
+    weibo: z.string().url().nullable(),
+    qqGroup: z.string().nullable(),
+    bilibili: z.string().url().nullable(),
+    wikifur: z.string().url().nullable(),
+    facebook: z.string().url().nullable(),
+    plurk: z.string().url().nullable(),
+    rednote: z.string().url().nullable(),
+    extraMedia: z
+      .object({
+        qqGroups: z
+          .array(
+            z.object({
+              label: z.string(),
+              value: z.string(),
+            })
+          )
+          .nullable(),
+      })
+      .nullable(),
     creationTime: z
       .string()
       .refine((date) => !isNaN(Date.parse(date)), {

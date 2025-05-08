@@ -1,8 +1,17 @@
 import Link from "next/link";
 import React, { useEffect, useMemo } from "react";
 import clsx from "clsx";
-import { format, differenceInDays, isSameDay } from "date-fns";
-import { zhCN } from "date-fns/locale";
+import {
+  format,
+  differenceInDays,
+  isSameDay,
+  differenceInHours,
+  getOverlappingDaysInIntervals,
+  startOfDay,
+  endOfDay,
+  differenceInCalendarDays,
+} from "date-fns";
+import { zhCN, enUS } from "date-fns/locale";
 
 import Image from "@/components/image";
 import { sendTrack } from "@/utils/track";
@@ -11,6 +20,8 @@ import { getEventCoverImgPath } from "@/utils/imageLoader";
 import type { EventType } from "@/types/event";
 
 import styles from "@/components/eventCard/index.module.css";
+import { useTranslation } from "next-i18next";
+import { currentSupportLocale } from "@/utils/meta";
 
 let instancesCount = 0;
 
@@ -25,6 +36,7 @@ export default function EventCard({
   fallbackWidth?: number;
   fallbackHeight?: number;
 }) {
+  const { t, i18n } = useTranslation();
   const finalEventCoverImage = getEventCoverImgPath(event);
   const isDefaultCover = finalEventCoverImage.includes(
     "fec-event-default-cover"
@@ -103,12 +115,20 @@ export default function EventCard({
               styles.eventCardDescContainer
             )}
           >
-            <h5
-              aria-label="The name of the cons organizer"
-              className={clsx("text-xs md:text-sm text-slate-500")}
-            >
-              {event.addressExtra?.city} {event.organization.name}
-            </h5>
+            <div className="flex items-center justify-between1">
+              <h5
+                aria-label="The name of the cons organizer"
+                className={clsx("text-xs md:text-sm text-slate-500")}
+              >
+                {[
+                  event.locationType &&
+                    t(`event.locationType.${event.locationType}`),
+                  event.type && t(`event.type.${event.type}`),
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+              </h5>
+            </div>
 
             <h4
               className={clsx(
@@ -116,8 +136,17 @@ export default function EventCard({
                 "md:truncate md:group-hover:text-clip md:group-hover:whitespace-normal"
               )}
             >
-              {event.name}
+              {[event.addressExtra?.city, event.organization.name]
+                .filter(Boolean)
+                .join(" ")}
             </h4>
+
+            <h5
+              aria-label="The name of the cons"
+              className={clsx("text-xs md:text-sm text-slate-500")}
+            >
+              {event.name}
+            </h5>
 
             <div
               className="mt-2 flex items-start text-xs md:text-sm text-slate-600 "
@@ -130,7 +159,10 @@ export default function EventCard({
                   "hidden md:block mr-1 flex-shrink-0 text-xs h-5"
                 )}
               />
-              <EventDate event={event} />
+              <EventDate
+                event={event}
+                locale={i18n.language as currentSupportLocale}
+              />
             </div>
 
             <div className="mt-1 flex items-start text-xs md:text-sm text-slate-600 truncate group-hover:text-clip group-hover:whitespace-normal">
@@ -269,47 +301,81 @@ function EventBackgroundBlur({
   );
 }
 
-function EventDate({ event }: { event: EventType }) {
+export function EventDate({
+  event,
+  locale = "zh-Hans",
+}: {
+  event: EventType;
+  locale?: currentSupportLocale;
+}) {
+  const { t } = useTranslation();
   const distanceInTwoDate = useMemo(() => {
     if (!event.startAt || !event.endAt) return;
-    const result = differenceInDays(
-      new Date(event.endAt),
-      new Date(event.startAt)
-    );
 
-    if (result) {
-      return `${result}天`;
-    }
+    const startDate = new Date(event.startAt);
+    const endDate = new Date(event.endAt);
+
+    const result = differenceInCalendarDays(endDate, startDate) + 1;
 
     if (isSameDay(event.startAt, event.endAt)) {
-      return "1天";
+      switch (locale) {
+        case "en":
+          return "1 day";
+        case "zh-Hans":
+        default:
+          return "1天";
+      }
+    }
+
+    if (result) {
+      switch (locale) {
+        case "en":
+          return `${result}days`;
+        case "zh-Hans":
+        default:
+          return `${result}天`;
+      }
     }
 
     return null;
-  }, [event.startAt, event.endAt]);
+  }, [event.startAt, event.endAt, locale]);
+
+  const startDateMonth = useMemo(() => {
+    if (event.startAt) {
+      return `${format(event.startAt, "yyyy/MM", {
+        locale: locale === "zh-Hans" ? zhCN : enUS,
+      })}`;
+    }
+
+    return null;
+  }, [event.startAt, locale]);
 
   const startDateLabel = useMemo(() => {
     if (event.startAt) {
       return `${format(event.startAt, "yyyy/MM/dd", {
-        locale: zhCN,
-      })}(${format(event.startAt, "E", { locale: zhCN })})`;
+        locale: locale === "zh-Hans" ? zhCN : enUS,
+      })}(${format(event.startAt, "E", {
+        locale: locale === "zh-Hans" ? zhCN : enUS,
+      })})`;
     }
 
     return null;
-  }, [event.startAt]);
+  }, [event.startAt, locale]);
 
   const endDateLabel = useMemo(() => {
     if (event.endAt) {
       return `${format(event.endAt, "MM/dd", {
-        locale: zhCN,
-      })}(${format(event.endAt, "E", { locale: zhCN })})`;
+        locale: locale === "zh-Hans" ? zhCN : enUS,
+      })}(${format(event.endAt, "E", {
+        locale: locale === "zh-Hans" ? zhCN : enUS,
+      })})`;
     }
 
     return null;
-  }, [event.endAt]);
+  }, [event.endAt, locale]);
 
   if (!startDateLabel || !endDateLabel) {
-    return "大概是这个月";
+    return startDateMonth || t("event.unknown");
   }
 
   if (distanceInTwoDate) {

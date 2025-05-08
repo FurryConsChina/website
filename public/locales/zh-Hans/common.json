@@ -49,6 +49,18 @@
     "status": {
       "cancel": "活动已被主办方取消，无法举行。"
     },
+    "type": {
+      "all-in-con": "综合性展会",
+      "comic-market": "贩售展会",
+      "suit-only-con": "毛毛聚会",
+      "travel-con": "旅游聚会",
+      "fandom-meetup": "专项聚会"
+    },
+    "locationType": {
+      "hotel": "酒店",
+      "venue": "场馆",
+      "online": "线上"
+    },
     "hostBy": "由 {{hostName}} 主办",
     "unknown": "暂未公布",
     "scaleDes": "预估这是一个 {{scale}} 的兽展",
@@ -75,11 +87,14 @@
     "firstTimeEvent": "首次举办于 {{year}}年{{month}}月{{day}}日",
     "firstTimeShow": "首次出现于 {{year}}年{{month}}月{{day}}日",
     "totalEvent": "已累计收录{{amount}}场兽展/兽聚",
-    "website": "去官网",
-    "bilibili": "去Bilibili",
-    "twitter": "去Twitter",
-    "weibo": "去微博",
+    "website": "官网",
+    "bilibili": "Bilibili",
+    "twitter": "Twitter",
+    "weibo": "微博",
     "wikifur": "去 Wikifur 了解更多",
+    "facebook": "Facebook",
+    "plurk": "Plurk",
+    "rednote": "小红书",
     "qq": "复制QQ群号: {{qq}}",
     "copyQq": "复制QQ群号",
     "qqCopySuccess": "🥳 复制成功，快去QQ加群吧",
