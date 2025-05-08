@@ -6,6 +6,7 @@ import { HiOutlineHome, HiOutlineMail } from "react-icons/hi";
 import { FaQq, FaTwitter, FaWeibo } from "react-icons/fa";
 import { SiBilibili } from "react-icons/si";
 import { TFunction } from "next-i18next";
+import { FaFacebook } from "react-icons/fa6";
 
 function OrganizationLinkButton({
   icon,
@@ -147,6 +148,36 @@ export const WikifurButton = ({ href, t }: { href: string; t: TFunction }) => (
     icon={<FaPaw />}
   >
     {t("organization.wikifur")}
+  </OrganizationLinkButton>
+);
+
+export const FacebookButton = ({ href, t }: { href: string; t: TFunction }) => (
+  <OrganizationLinkButton
+    bgColorClass="bg-[#1877f2]"
+    href={href}
+    icon={<FaFacebook />}
+  >
+    {t("organization.facebook")}
+  </OrganizationLinkButton>
+);
+
+export const PlurkButton = ({ href, t }: { href: string; t: TFunction }) => (
+  <OrganizationLinkButton
+    bgColorClass="bg-[#FF574D]"
+    href={href}
+    icon={<FaPaw />}
+  >
+    {t("organization.plurk")}
+  </OrganizationLinkButton>
+);
+
+export const RednoteButton = ({ href, t }: { href: string; t: TFunction }) => (
+  <OrganizationLinkButton
+    bgColorClass="bg-[#ff2442]"
+    href={href}
+    icon={<FaPaw />}
+  >
+    {t("organization.rednote")}
   </OrganizationLinkButton>
 );
 

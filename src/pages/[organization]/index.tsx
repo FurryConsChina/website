@@ -13,17 +13,18 @@ import { formatDistanceToNowStrict, isBefore } from "date-fns";
 import { zhCN } from "date-fns/locale";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
-import wfetch from "@/api";
+import { API } from "@/api";
 import { z } from "zod";
 import { format } from "date-fns";
 import { EventType } from "@/types/event";
-import { OrganizationType } from "@/types/organization";
+import { OrganizationSchema, OrganizationType } from "@/types/organization";
 import { FeatureSchema } from "@/types/feature";
 import {
   currentSupportLocale,
   keywordGenerator,
   organizationDetailDescriptionGenerator,
 } from "@/utils/meta";
+import { HTTPError } from "ky";
 // import {
 //   WebsiteButton,
 //   QQGroupButton,
@@ -228,6 +229,42 @@ export default function OrganizationDetail(props: {
                   </div>
                 </div>
               )}
+
+              {organization?.plurk && (
+                <a
+                  href={organization?.plurk}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-center bg-red-500 hover:bg-red-600 transition rounded-xl px-4 py-1 text-white text-center"
+                >
+                  <FaPaw className="mr-2" />
+                  {t("organization.plurk")}
+                </a>
+              )}
+
+              {organization?.facebook && (
+                <a
+                  href={organization?.facebook}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-center bg-blue-800 hover:bg-blue-900 transition rounded-xl px-4 py-1 text-white text-center"
+                >
+                  <FaPaw className="mr-2" />
+                  {t("organization.facebook")}
+                </a>
+              )}
+
+              {organization?.rednote && (
+                <a
+                  href={organization?.rednote}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center justify-center bg-red-600 hover:bg-red-700 transition rounded-xl px-4 py-1 text-white text-center"
+                >
+                  <FaPaw className="mr-2" />
+                  {t("organization.rednote")}
+                </a>
+              )}
             </div>
           </div>
         </div>
@@ -274,36 +311,14 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       organization: context.params?.organization,
     });
 
-    const response = await wfetch
-      .query({ slug: reqParamsParseResult.organization })
-      .get("/open/v1/organization/detail")
-      .json();
-
-    const organizationSchema = z.object({
-      id: z.string().uuid(), // 假设 id 是一个 UUID
-      slug: z.string().min(1), // slug 至少有一个字符
-      name: z.string().min(1), // name 至少有一个字符
-      description: z.string().nullable(), // description 至少有一个字符
-      status: z.enum(["active", "inactive"]), // 假设 status 只能是 'active' 或 'inactive'
-      type: z.string().nullable(), // type 可以是字符串或 null
-      logoUrl: z.string().nullable(), // logoUrl 应该是一个有效的 URL
-      richMediaConfig: z.any().nullable(), // richMediaConfig 可以是任意类型或 null
-      contactMail: z.string().email().nullable(), // contactMail 应该是一个有效的邮箱地址
-      website: z.string().url().nullable(), // website 应该是一个有效的 URL
-      twitter: z.string().url().nullable(), // twitter 可以是有效的 URL 或 null
-      weibo: z.string().url().nullable(), // weibo 可以是有效的 URL 或 null
-      qqGroup: z.string().nullable(), // qqGroup 可以是字符串或 null
-      bilibili: z.string().url().nullable(), // bilibili 可以是有效的 URL 或 null
-      wikifur: z.string().url().nullable(), // wikifur 可以是有效的 URL 或 null
-      creationTime: z
-        .string()
-        .refine((date) => !isNaN(Date.parse(date)), {
-          message: "Invalid date format",
-        })
-        .nullable(), // creationTime 应该是一个有效的日期字符串
+    const response = await API.get("open/v1/organization/detail", {
+      searchParams: { slug: reqParamsParseResult.organization },
     });
 
+    const data = await response.json();
+
     const eventSchema = z.object({
+      id: z.string().uuid(),
       name: z.string(),
       address: z.string().nullable(),
       addressExtra: z.object({ city: z.string().nullable() }).nullable(),
@@ -317,10 +332,10 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
     const validResult = z
       .object({
-        organization: organizationSchema,
+        organization: OrganizationSchema,
         events: z.array(eventSchema),
       })
-      .safeParse(response);
+      .safeParse(data);
 
     const validOrganization = validResult.data?.organization;
     const validEvents =
@@ -342,9 +357,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     const slug = context?.params?.organization;
 
     if (validResult.error) {
-      console.log(
-        `Error in render ${slug},reason:${JSON.stringify(validResult.error)}`
-      );
+      throw new Error(`Error in render ${slug},reason:${validResult.error}`);
     }
 
     if (!response) {
@@ -363,7 +376,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
             (context.locale as currentSupportLocale) || "zh-Hans",
             validOrganization!,
             validEvents?.length,
-            validEvents[0].startAt
+            validEvents[0]?.startAt
           ),
           keywords: keywordGenerator({
             page: "organization",
@@ -398,8 +411,11 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       },
     };
   } catch (error) {
-    return {
-      notFound: true,
-    };
+    if (error instanceof HTTPError && error.response.status === 404) {
+      return {
+        notFound: true,
+      };
+    }
+    throw new Error(`Organization render error: ${error}`);
   }
 }
