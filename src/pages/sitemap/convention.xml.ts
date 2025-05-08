@@ -36,7 +36,7 @@ function SiteMap() {
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { res } = context;
 
-  const events = await wfetch.get("/event/all").json();
+  const events = await wfetch.get("/internal/cms/event/all").json();
 
   const parseEventResult = z
     .array(

@@ -2,11 +2,17 @@ import Head from "next/head";
 import React from "react";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
-import { titleGenerator, universalKeywords } from "@/utils/meta";
+import {
+  currentSupportLocale,
+  descriptionGenerator,
+  titleGenerator,
+  universalKeywords,
+} from "@/utils/meta";
 import AnnouncementSlider from "@/components/announcementSlider";
 import { useRouter } from "next/router";
 import { Toaster } from "react-hot-toast";
 import Sidebar from "@/components/Sidebar";
+import { useTranslation } from "next-i18next";
 
 const IS_CN_REGION = process.env.NEXT_PUBLIC_REGION === "CN";
 const PUBLIC_URL = process.env.NEXT_PUBLIC_URL;
@@ -28,16 +34,22 @@ export default function Layout({
 }) {
   const router = useRouter();
   const asPath = router.asPath;
+  const { i18n } = useTranslation();
 
   return (
     <div className="sm:max-w-screen-xl mx-auto flex flex-col min-h-screen relative">
       <Head>
-        <title>{titleGenerator(headMetas?.title)}</title>
+        <title>
+          {titleGenerator(
+            i18n.language as currentSupportLocale,
+            headMetas?.title
+          )}
+        </title>
         <meta
           name="description"
           content={
             headMetas?.des ||
-            "欢迎来到FEC·兽展日历！FEC·兽展日历致力于为您提供最新最全的位于中国大陆境内的兽展、兽聚等相关资讯整合，来这里寻找感兴趣的展会，叫上朋友一起来玩吧！"
+            descriptionGenerator(i18n.language as currentSupportLocale)
           }
           key="description"
         />
@@ -46,20 +58,24 @@ export default function Layout({
           content={
             headMetas?.keywords
               ? headMetas.keywords
-                  .concat(",")
-                  .concat(universalKeywords.join(","))
-              : universalKeywords.join(",")
+              : universalKeywords(i18n.language as "zh-Hans" | "en").join(",")
           }
           key="keywords"
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta property="og:title" content={titleGenerator(headMetas?.title)} />
+        <meta
+          property="og:title"
+          content={titleGenerator(
+            i18n.language as currentSupportLocale,
+            headMetas?.title
+          )}
+        />
         <meta property="og:type" content="website" />
         <meta
           property="og:description"
           content={
             headMetas?.des ||
-            "欢迎来到FEC·兽展日历！FEC·兽展日历致力于为您提供最新最全的位于中国大陆境内的兽展、兽聚相关资讯整合，来这里寻找感兴趣的展会，叫上朋友一起来玩吧！"
+            descriptionGenerator(i18n.language as currentSupportLocale)
           }
         />
         <meta
@@ -82,12 +98,18 @@ export default function Layout({
             `https://${PUBLIC_URL}${headMetas?.url}` || `https://${PUBLIC_URL}`
           }
         />
-        <meta name="twitter:title" content={titleGenerator(headMetas?.title)} />
+        <meta
+          name="twitter:title"
+          content={titleGenerator(
+            i18n.language as currentSupportLocale,
+            headMetas?.title
+          )}
+        />
         <meta
           name="twitter:description"
           content={
             headMetas?.des ||
-            "欢迎来到FEC·兽展日历！FEC·兽展日历致力于为您提供最新最全的位于中国大陆境内的兽展相关资讯整合，来这里寻找感兴趣的展会，叫上朋友一起来玩吧！"
+            descriptionGenerator(i18n.language as currentSupportLocale)
           }
         />
         <meta

@@ -19,6 +19,11 @@ import { format } from "date-fns";
 import { EventType } from "@/types/event";
 import { OrganizationType } from "@/types/organization";
 import { FeatureSchema } from "@/types/feature";
+import {
+  currentSupportLocale,
+  keywordGenerator,
+  organizationDetailDescriptionGenerator,
+} from "@/utils/meta";
 // import {
 //   WebsiteButton,
 //   QQGroupButton,
@@ -271,7 +276,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
     const response = await wfetch
       .query({ slug: reqParamsParseResult.organization })
-      .get("/organization/detail")
+      .get("/open/v1/organization/detail")
       .json();
 
     const organizationSchema = z.object({
@@ -318,31 +323,29 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       .safeParse(response);
 
     const validOrganization = validResult.data?.organization;
-    const validEvents = validResult.data?.events
-      ?.map((e) => ({
-        ...e,
-        organization: {
-          name: validOrganization?.name,
-          slug: validOrganization?.slug,
-          logoUrl: validOrganization?.logoUrl,
-        },
-      }))
-      .sort((a, b) => {
-        if (a.startAt && b.startAt) {
-          return isBefore(a.startAt, b.startAt) ? 1 : -1;
-        }
-        return 0;
-      });
+    const validEvents =
+      validResult.data?.events
+        ?.map((e) => ({
+          ...e,
+          organization: {
+            name: validOrganization?.name,
+            slug: validOrganization?.slug,
+            logoUrl: validOrganization?.logoUrl,
+          },
+        }))
+        .sort((a, b) => {
+          if (a.startAt && b.startAt) {
+            return isBefore(a.startAt, b.startAt) ? 1 : -1;
+          }
+          return 0;
+        }) || [];
     const slug = context?.params?.organization;
+
     if (validResult.error) {
       console.log(
         `Error in render ${slug},reason:${JSON.stringify(validResult.error)}`
       );
     }
-
-    const dateString = validEvents?.[0]?.startAt
-      ? format(validEvents?.[0].startAt, "yyyy年MM月dd日")
-      : "未知时间线";
 
     if (!response) {
       return {
@@ -356,16 +359,17 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         events: validEvents,
         headMetas: {
           title: `${validOrganization?.name}`,
-          des: `欢迎来到FEC·兽展日历！FEC·兽展日历提供关于 ${
-            validOrganization?.name
-          } 的有关信息，这家展商已累计举办 ${
-            validEvents?.length
-          } 场兽展，最近的一场在${dateString}，${
-            validOrganization?.description
-              ? `他们是这样介绍自己的：“${validOrganization?.description}”。`
-              : "不过他们没怎么介绍自己。"
-          }`,
-          keywords: `${validOrganization?.name}, ${validOrganization?.name} 兽展, ${validOrganization?.name} 兽聚`,
+          des: organizationDetailDescriptionGenerator(
+            (context.locale as currentSupportLocale) || "zh-Hans",
+            validOrganization!,
+            validEvents?.length,
+            validEvents[0].startAt
+          ),
+          keywords: keywordGenerator({
+            page: "organization",
+            locale: context.locale as "zh-Hans" | "en",
+            organization: validOrganization,
+          }),
           url: `/${validOrganization?.slug}`,
           cover: validOrganization?.logoUrl,
         },

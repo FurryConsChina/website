@@ -29,13 +29,17 @@ import OrganizationLinkButton, {
   WeiboButton,
   WikifurButton,
 } from "@/components/OrganizationLinkButton";
-import { keywordgenerator } from "@/utils/meta";
 import { FaPeoplePulling } from "react-icons/fa6";
 import EventStatusBar from "@/components/EventStatusBar";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import wfetch from "@/api";
 import { z } from "zod";
+import {
+  currentSupportLocale,
+  eventDescriptionGenerator,
+  keywordGenerator,
+} from "@/utils/meta";
 
 const MapLoadingStatus = {
   Idle: "idle",
@@ -437,7 +441,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         slug: reqParamsParseResult.slug,
         organization: reqParamsParseResult.organization,
       })
-      .get("/event/detail")
+      .get("/open/v1/event/detail")
       .json()
       .catch((e) => console.log(e));
 
@@ -454,34 +458,24 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       };
     }
 
-    const metaDes =
-      event.startAt && event.endAt
-        ? `欢迎来到FEC·兽展日历！FEC·兽展日历提供关于“${
-            event?.name
-          }”的详细信息：这是由“${
-            event?.organization?.name
-          }”举办的兽展，将于${format(
-            event?.startAt!,
-            "yyyy年MM月dd日"
-          )}至${format(event?.endAt!, "yyyy年MM月dd日")}在“${
-            event?.addressExtra?.city
-          }${event?.address}”举办，喜欢的朋友记得关注开始售票时间～`
-        : `欢迎来到FEC·兽展日历！FEC·兽展日历提供关于“${event?.name}”的详细信息：这是由“${event?.organization?.name}”举办的兽展，将在“${event?.addressExtra?.city}${event?.address}”举办，喜欢的朋友记得关注开始售票时间～`;
-
     return {
       props: {
         event: validResult.data,
         headMetas: {
           title: `${event?.name}-${event?.organization?.name}`,
-          keywords: keywordgenerator({
+          keywords: keywordGenerator({
             page: "event",
+            locale: context.locale as "zh-Hans" | "en",
             event: {
               name: event?.name,
               startDate: event?.startAt,
               city: event?.addressExtra?.city || undefined,
             },
           }),
-          des: metaDes,
+          des: eventDescriptionGenerator(
+            context.locale as currentSupportLocale,
+            event
+          ),
           url: `/${context.params?.organization}/${event?.slug}`,
           cover: imageUrl(getEventCoverImgPath(event)),
         },

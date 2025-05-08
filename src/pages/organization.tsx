@@ -8,6 +8,7 @@ import { useTranslation } from "next-i18next";
 import wfetch from "@/api";
 import { z } from "zod";
 import { OrganizationType } from "@/types/organization";
+import { currentSupportLocale, OrganizationPageMeta } from "@/utils/meta";
 
 export default function OrganizationPage({
   organizations,
@@ -90,7 +91,9 @@ function OrganizationItem({
 
 export async function getStaticProps({ locale }: { locale: string }) {
   const PUBLIC_URL = process.env.NEXT_PUBLIC_URL;
-  const organizations = await wfetch.get("/organization/all").json();
+  const organizations = await wfetch
+    .get("/internal/cms/organization/all")
+    .json();
   const parseResult = z
     .array(
       z.object({
@@ -109,12 +112,20 @@ export async function getStaticProps({ locale }: { locale: string }) {
       notFound: true,
     };
   }
+
+  const title = OrganizationPageMeta[locale as currentSupportLocale].title;
+  const des = OrganizationPageMeta[locale as currentSupportLocale].description(
+    validOrganizations.length
+  );
+
   return {
     props: {
       organizations: validOrganizations,
       headMetas: {
-        title: "展商列表",
-        des: `欢迎来到FEC·兽展日历！FEC·兽展日历共收录来自中国大陆的 ${validOrganizations.length} 个和“furry”，“兽展”，“兽人控”等主题相关的展商，我们真挚感谢这些为兽人文化发展做出贡献的团体，今天的繁荣离不开你们的支持！`,
+        title: OrganizationPageMeta[locale as currentSupportLocale].title,
+        des: OrganizationPageMeta[locale as currentSupportLocale].description(
+          validOrganizations.length
+        ),
         link: "/organization",
       },
       structuredData: {
