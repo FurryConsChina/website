@@ -6,6 +6,7 @@ import wfetch from "@/api";
 import { z } from "zod";
 import { EventType } from "@/types/event";
 import { monthNumberFormatter } from "@/utils/locale";
+import { currentSupportLocale, YearPageMeta } from "@/utils/meta";
 
 export default function Years({ events }: { events: EventType[] }) {
   const groupByYearEvents = eventGroupByYear(events, "asc");
@@ -87,7 +88,7 @@ export default function Years({ events }: { events: EventType[] }) {
 
 export async function getStaticProps({ locale }: { locale: string }) {
   const PUBLIC_URL = process.env.NEXT_PUBLIC_URL;
-  const events = await wfetch.get("/event/all").json();
+  const events = await wfetch.get("/internal/cms/event/all").json();
 
   const parseEventResult = z
     .array(
@@ -111,8 +112,11 @@ export async function getStaticProps({ locale }: { locale: string }) {
     props: {
       events: validEvents,
       headMetas: {
-        title: "年度时间轴",
-        des: `欢迎来到FEC·兽展日历！FEC·兽展日历共计收录了 ${validEvents?.length} 场 Furry 相关的展会活动，你去过多少场呢？愿你能在这里找到最美好的回忆！`,
+        title: YearPageMeta[locale as currentSupportLocale].title,
+        des: YearPageMeta[locale as currentSupportLocale].description(
+          12,
+          validEvents?.length || 0
+        ),
         link: "/years",
       },
       structuredData: {

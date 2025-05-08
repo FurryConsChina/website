@@ -19,6 +19,7 @@ import { DurationType } from "@/types/list";
 import { EventScale, EventStatus, type EventType } from "@/types/event";
 import { FeatureSchema } from "@/types/feature";
 import { monthNumberFormatter } from "@/utils/locale";
+import { keywordGenerator } from "@/utils/meta";
 
 export default function Home(props: { events: EventType[] }) {
   const { t } = useTranslation();
@@ -204,7 +205,7 @@ function Filter({
 }
 
 export async function getStaticProps({ locale }: { locale: string }) {
-  const events = await wfetch.get("/event/home").json();
+  const events = await wfetch.get("/internal/cms/event/home").json();
 
   const homeSchema = z.array(
     z.object({
@@ -238,6 +239,12 @@ export async function getStaticProps({ locale }: { locale: string }) {
   return {
     props: {
       events: finalEvents,
+      headMetas: {
+        keywords: keywordGenerator({
+          page: "home",
+          locale: locale as "zh-Hans" | "en",
+        }),
+      },
       ...(await serverSideTranslations(locale, ["common"])),
     },
     revalidate: 500,

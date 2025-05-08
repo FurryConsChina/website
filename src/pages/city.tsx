@@ -6,12 +6,12 @@ import { useMemo } from "react";
 import { getEventCoverImgPath } from "@/utils/imageLoader";
 import { format } from "date-fns";
 import Image from "@/components/image";
-import { titleGenerator } from "@/utils/meta";
 import { FaLink } from "react-icons/fa6";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { EventSchema, EventType } from "@/types/event";
 import wfetch from "@/api";
 import { z } from "zod";
+import { CityPageMeta, currentSupportLocale } from "@/utils/meta";
 
 export default function City(props: { events: EventType[] }) {
   const { events } = props;
@@ -175,7 +175,7 @@ const CityResponseSchema = EventSchema.pick({
 
 export async function getStaticProps({ locale }: { locale: string }) {
   const PUBLIC_URL = process.env.NEXT_PUBLIC_URL;
-  const response = await wfetch.get("/event/all").json();
+  const response = await wfetch.get("/internal/cms/event/all").json();
   const events = z.array(CityResponseSchema).safeParse(response).data;
 
   if (!events) {
@@ -192,8 +192,11 @@ export async function getStaticProps({ locale }: { locale: string }) {
     props: {
       events: events,
       headMetas: {
-        title: "兽展城市列表",
-        des: `欢迎来到FEC·兽展日历！FEC·兽展日历共收录来自中国大陆共 ${cities} 个城市举办过的 ${events.length} 场 兽展(兽聚)活动信息！快来看看这些城市有没有你所在的地方吧！`,
+        title: CityPageMeta[locale as currentSupportLocale].title,
+        des: CityPageMeta[locale as currentSupportLocale].description(
+          cities.length,
+          events.length
+        ),
         link: "/city",
       },
       structuredData: {
