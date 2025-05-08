@@ -217,6 +217,8 @@ export async function getStaticProps({ locale }: { locale: string }) {
       startAt: z.string().datetime().nullable(),
       endAt: z.string().datetime().nullable(),
       slug: z.string(),
+      type: z.string().nullable(),
+      locationType: z.string().nullable(),
       // status: z.string(),
       scale: z.string(),
       organization: z.object({
