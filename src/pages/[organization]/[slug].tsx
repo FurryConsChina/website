@@ -457,8 +457,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         organization: reqParamsParseResult.organization,
       })
       .get("/open/v1/event/detail")
-      .json()
-      .catch((e) => console.log(e));
+      .json();
 
     const validResult = EventSchema.safeParse(response);
     const event = validResult.data;

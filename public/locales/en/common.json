@@ -48,6 +48,18 @@
     "status": {
       "cancel": "The event has been canceled by the organizer"
     },
+    "type": {
+      "all-in-con": "General Con",
+      "comic-market": "Marketplace",
+      "suit-only-con": "Fursuit Meet",
+      "travel-con": "Travel Meet",
+      "fandom-meetup": "Community Meetup"
+    },
+    "locationType": {
+      "hotel": "Hotel",
+      "venue": "Venue",
+      "online": "Online"
+    },
     "hostBy": "Organized by {{hostName}}",
     "unknown": "To be announced",
     "scaleDes": "A {{scale}} furry convention",
@@ -74,11 +86,14 @@
     "firstTimeEvent": "First held on {{year}}/{{month}}/{{day}}",
     "firstTimeShow": "First appeared on {{year}}/{{month}}/{{day}}",
     "totalEvent": "A total of {{amount}} furry conventions/gatherings recorded",
-    "website": "Visit official website",
-    "bilibili": "Visit Bilibili",
-    "twitter": "Visit Twitter",
-    "weibo": "Visit Weibo",
-    "wikifur": "Visit Wikifur for more information",
+    "website": "Official website",
+    "bilibili": "Bilibili",
+    "twitter": "Twitter",
+    "weibo": "Weibo",
+    "wikifur": "Wikifur",
+    "facebook": "Facebook",
+    "plurk": "Plurk",
+    "rednote": "RedNote",
     "qq": "Copy QQ group number: {{qq}}",
     "copyQq": "Copy QQ group number",
     "qqCopySuccess": "🥳 Copied successfully, go join the QQ group now",

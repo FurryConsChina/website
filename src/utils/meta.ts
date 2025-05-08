@@ -155,7 +155,6 @@ function keywordGenerator({
     name: string;
   };
 }) {
-  console.log(locale);
   const nowYear = new Date().getFullYear();
 
   switch (page) {
