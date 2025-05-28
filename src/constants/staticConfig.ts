@@ -30,7 +30,7 @@ export const FriendSiteLinks = [
       "让社群交流更亲密友善，还能精彩重温兽圈中每一个温馨与欢乐的瞬间，让这段旅程充满毛绒绒的爱与共鸣。",
   },
   {
-    link: "https://m.nyanket.com/?utm_source=fec",
+    link: "https://app.nyanket.cn/?utm_source=fec",
     label: "Nyanket 喵通贩",
     description:
       "Nyanket 喵通贩 是最早立足于提供 票务一体化解决方案 的服务商，我们与兽展的故事起源于兽夏祭。",
