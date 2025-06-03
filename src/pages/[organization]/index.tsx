@@ -8,7 +8,7 @@ import { useMemo } from "react";
 import toast from "react-hot-toast";
 import { FaPaw, FaQq, FaTwitter, FaWeibo } from "react-icons/fa";
 import { MdOutlineContentCopy } from "react-icons/md";
-import { SiBilibili } from "react-icons/si";
+import { SiBilibili, SiXiaohongshu } from "react-icons/si";
 import { formatDistanceToNowStrict, isBefore } from "date-fns";
 import { zhCN } from "date-fns/locale";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -261,7 +261,7 @@ export default function OrganizationDetail(props: {
                   rel="noreferrer"
                   className="flex items-center justify-center bg-red-600 hover:bg-red-700 transition rounded-xl px-4 py-1 text-white text-center"
                 >
-                  <FaPaw className="mr-2" />
+                  <SiXiaohongshu className="mr-2" />
                   {t("organization.rednote")}
                 </a>
               )}
