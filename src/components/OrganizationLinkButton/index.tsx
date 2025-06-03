@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { FaPaw } from "react-icons/fa";
 import { HiOutlineHome, HiOutlineMail } from "react-icons/hi";
 import { FaQq, FaTwitter, FaWeibo } from "react-icons/fa";
-import { SiBilibili } from "react-icons/si";
+import { SiBilibili, SiXiaohongshu } from "react-icons/si";
 import { TFunction } from "next-i18next";
 import { FaFacebook } from "react-icons/fa6";
 
@@ -175,7 +175,7 @@ export const RednoteButton = ({ href, t }: { href: string; t: TFunction }) => (
   <OrganizationLinkButton
     bgColorClass="bg-[#ff2442]"
     href={href}
-    icon={<FaPaw />}
+    icon={<SiXiaohongshu />}
   >
     {t("organization.rednote")}
   </OrganizationLinkButton>
