@@ -4,7 +4,7 @@ import QueryStringAddon from "wretch/addons/queryString";
 
 wretch.options({ mode: "cors" });
 
-const HOST = "https://api.furryeventchina.com";
+const HOST = "https://api.furrycons.cn";
 
 const wfetch = wretch(HOST, { cache: "default" })
   .auth(`${process.env.FEC_API_TOKEN}`)
