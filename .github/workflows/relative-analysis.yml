@@ -6,6 +6,9 @@ on:
       - main
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -25,7 +28,7 @@ jobs:
       - run: yarn install
 
       # Build and output bundle stats
-      - run: yarn build -- --json webpack-stats.json
+      - run: yarn build
 
       - name: Send bundle stats to RelativeCI
         uses: relative-ci/agent-action@v3
