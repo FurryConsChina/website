@@ -149,6 +149,7 @@ export default function EventDetail({ event }: { event: EventType }) {
               alt={`${event.name}的活动海报`}
               className="mx-auto h-full object-contain z-20 relative"
               autoFormat
+              quality={100}
             />
 
             <NextImage
@@ -159,6 +160,7 @@ export default function EventDetail({ event }: { event: EventType }) {
               alt={`${event.name}的活动海报`}
               className="mx-auto h-full w-full object-cover"
               autoFormat
+              quality={100}
             />
           </div>
         </div>
@@ -314,11 +316,11 @@ export default function EventDetail({ event }: { event: EventType }) {
                     <NextImage
                       alt={`${event.name}的详情图片-${index + 1}`}
                       src={cover}
-                      width={600}
+                      // width={600}
                       className="w-full"
                       priority
                       autoFormat
-                      quality={90}
+                      quality={100}
                     />
                   </div>
                 ))}
