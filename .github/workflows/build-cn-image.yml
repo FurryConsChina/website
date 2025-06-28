@@ -10,11 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: Prod-CN
     env:
-      XATA_API_KEY: ${{ secrets.XATA_API_KEY }}
+      REVALIDATE_TOKEN: ${{ secrets.XATA_API_KEY }}
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
       ENABLE_TRACK: ${{ vars.ENABLE_TRACK }}
       NEXT_PUBLIC_REGION: ${{ vars.NEXT_PUBLIC_REGION }}
-      NEXT_PUBLIC_SENTRY_DSN: ${{vars.NEXT_PUBLIC_SENTRY_DSN}}
       NEXT_PUBLIC_WEBSITE_URL: ${{vars.NEXT_PUBLIC_WEBSITE_URL}}
       FEC_API_TOKEN: ${{vars.FEC_API_TOKEN}}
     steps:
@@ -34,11 +33,10 @@ jobs:
       - name: Create Env
         run: |
           touch .env
-          echo XATA_API_KEY="$XATA_API_KEY" >> .env
+          echo REVALIDATE_TOKEN="$REVALIDATE_TOKEN" >> .env
           echo SENTRY_AUTH_TOKEN="$SENTRY_AUTH_TOKEN" >> .env
           echo NEXT_PUBLIC_ENABLE_TRACK="$ENABLE_TRACK" >> .env
           echo NEXT_PUBLIC_REGION="$NEXT_PUBLIC_REGION" >>.env
-          echo NEXT_PUBLIC_SENTRY_DSN="$NEXT_PUBLIC_SENTRY_DSN" >>.env
           echo NEXT_PUBLIC_WEBSITE_URL="$NEXT_PUBLIC_WEBSITE_URL" >>.env
           echo FEC_API_TOKEN="$FEC_API_TOKEN" >>.env
 
@@ -51,3 +49,8 @@ jobs:
           tags: |
             hkccr.ccs.tencentyun.com/furrycons/frontend:latest
             hkccr.ccs.tencentyun.com/furrycons/frontend:${{ github.sha }}
+
+      - name: Call Webhook
+        run: |
+          curl -X POST ${{ vars.WEBHOOK_URL }} \
+            -H "Content-Type: application/json"

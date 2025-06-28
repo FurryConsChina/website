@@ -3,7 +3,6 @@ import { ImageLoaderProps } from "next/image";
 
 const GLOBAL_AUTO_CDN_IMAGE_URL = "images.furrycons.cn";
 const GLOBAL_MANUAL_CDN_IMAGE_URL = "images.furryeventchina.com";
-const NO_CDN_IMAGE_URL = "cos-proxy.furrycons.cn";
 
 export const getEventCoverImgPath = (event: Partial<EventType>) => {
   return (

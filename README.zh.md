@@ -1,17 +1,28 @@
-# FurryEventChina.com
+# <div align="center">FurryCons.cn</div>
 
-![](https://img.shields.io/badge/Next.js-black.svg?style=flat-square&logo=next.js)
-![](https://img.shields.io/badge/React-blue.svg?style=flat-square&logo=react)
-![](https://img.shields.io/badge/Sentry-purple.svg?style=flat-square&logo=sentry)
-![](https://img.shields.io/badge/Umami-orange.svg?style=flat-square&logo=umami)
-![](https://img.shields.io/badge/Google%20Analytics%205-blue.svg?style=flat-square&logo=google-analytics)
-![](https://img.shields.io/badge/Cloudflare%20R2-blue.svg?style=flat-square&logo=cloudflare)
-![](https://img.shields.io/badge/Cloudflare%20Worker-blue.svg?style=flat-square&logo=cloudflare)
-![](https://img.shields.io/badge/CloudFront-orange.svg?style=flat-square&logo=amazon-aws)
+<div align="center">
+
+[![Better Stack Badge](https://uptime.betterstack.com/status-badges/v1/monitor/vz4h.svg)](https://uptime.betterstack.com/?utm_source=status_badge)
+[![Build CN Image](https://github.com/FurryConsChina/website/actions/workflows/build-cn-image.yml/badge.svg)](https://github.com/FurryConsChina/website/actions/workflows/build-cn-image.yml)
+
+</div>
+
+<div align="center">
+
+![](https://img.shields.io/badge/Next.js-black.svg?logo=next.js)
+![](https://img.shields.io/badge/React-blue.svg?logo=react)
+![](https://img.shields.io/badge/Sentry-purple.svg?logo=sentry)
+![](https://img.shields.io/badge/Umami-orange.svg?logo=umami)
+![](https://img.shields.io/badge/Google%20Analytics%205-blue.svg?logo=google-analytics)
+![](https://img.shields.io/badge/Cloudflare%20R2-blue.svg?logo=cloudflare)
+![](https://img.shields.io/badge/Cloudflare%20Worker-blue.svg?logo=cloudflare)
+![](https://img.shields.io/badge/CloudFront-orange.svg?logo=amazon-aws)
+
+</div>
 
 [English](./README.md)
 
-[兽展日历](https://www.furryeventchina.com) 是一个收集并展示中国大陆与兽迷相关的展览活动的网站。这是它的源代码仓库。
+[兽展日历](https://www.furrycons.cn) 是一个收集并展示中国大陆与兽迷相关的展览活动的网站。这是它的源代码仓库。
 
 ## 开始开发
 
