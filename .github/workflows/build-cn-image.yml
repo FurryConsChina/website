@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: Prod-CN
     env:
-      XATA_API_KEY: ${{ secrets.XATA_API_KEY }}
+      REVALIDATE_TOKEN: ${{ secrets.XATA_API_KEY }}
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
       ENABLE_TRACK: ${{ vars.ENABLE_TRACK }}
       NEXT_PUBLIC_REGION: ${{ vars.NEXT_PUBLIC_REGION }}
@@ -33,7 +33,7 @@ jobs:
       - name: Create Env
         run: |
           touch .env
-          echo XATA_API_KEY="$XATA_API_KEY" >> .env
+          echo REVALIDATE_TOKEN="$REVALIDATE_TOKEN" >> .env
           echo SENTRY_AUTH_TOKEN="$SENTRY_AUTH_TOKEN" >> .env
           echo NEXT_PUBLIC_ENABLE_TRACK="$ENABLE_TRACK" >> .env
           echo NEXT_PUBLIC_REGION="$NEXT_PUBLIC_REGION" >>.env

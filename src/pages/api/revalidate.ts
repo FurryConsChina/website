@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
-const simpleToken = process.env.XATA_API_KEY?.slice(0, 6);
+const revalidateToken = process.env.REVALIDATE_TOKEN;
 
 export default async function handler(
   req: NextApiRequest,
@@ -8,7 +8,7 @@ export default async function handler(
 ) {
   const auth = req.headers.authorization;
 
-  if (auth !== simpleToken) {
+  if (auth !== revalidateToken) {
     return res.status(401).json({ message: "Invalid token." });
   }
   const payload = req.body;
