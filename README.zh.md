@@ -22,7 +22,7 @@
 
 [English](./README.md)
 
-[兽展日历](https://www.furryeventchina.com) 是一个收集并展示中国大陆与兽迷相关的展览活动的网站。这是它的源代码仓库。
+[兽展日历](https://www.furrycons.cn) 是一个收集并展示中国大陆与兽迷相关的展览活动的网站。这是它的源代码仓库。
 
 ## 开始开发
 

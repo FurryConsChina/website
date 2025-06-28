@@ -116,10 +116,7 @@ export default function Layout({
           name="twitter:image"
           content={headMetas?.cover || "https://images.furrycons.cn/banner.png"}
         />
-        <meta
-          name="baidu-site-verification"
-          content={IS_CN_REGION ? "codeva-GHH5uUsoan" : "codeva-UlpDYpags1"}
-        />
+        <meta name="baidu-site-verification" content={"codeva-GHH5uUsoan"} />
         <link rel="icon" href="/favicon.ico" />
         <link rel="canonical" href={`https://www.furrycons.cn${asPath}`} />
         <link
@@ -130,12 +127,12 @@ export default function Layout({
         <link
           rel="alternate"
           hrefLang="en"
-          href={`https://www.furryeventchina.com/en${asPath}`}
+          href={`https://www.furrycons.cn/en${asPath}`}
         />
         <link
           rel="alternate"
           hrefLang="x-default"
-          href={`https://www.furryeventchina.com${asPath}`}
+          href={`https://www.furrycons.cn${asPath}`}
         />
 
         {structuredData?.event && (
