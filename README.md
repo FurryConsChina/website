@@ -1,13 +1,24 @@
-# FurryEventChina.com
+# <div align="center">FurryCons.cn</div>
 
-![](https://img.shields.io/badge/Next.js-black.svg?style=flat-square&logo=next.js)
-![](https://img.shields.io/badge/React-blue.svg?style=flat-square&logo=react)
-![](https://img.shields.io/badge/Sentry-purple.svg?style=flat-square&logo=sentry)
-![](https://img.shields.io/badge/Umami-orange.svg?style=flat-square&logo=umami)
-![](https://img.shields.io/badge/Google%20Analytics%205-blue.svg?style=flat-square&logo=google-analytics)
-![](https://img.shields.io/badge/Cloudflare%20R2-blue.svg?style=flat-square&logo=cloudflare)
-![](https://img.shields.io/badge/Cloudflare%20Worker-blue.svg?style=flat-square&logo=cloudflare)
-![](https://img.shields.io/badge/CloudFront-orange.svg?style=flat-square&logo=amazon-aws)
+<div align="center">
+
+[![Better Stack Badge](https://uptime.betterstack.com/status-badges/v1/monitor/vz4h.svg)](https://uptime.betterstack.com/?utm_source=status_badge)
+[![Build CN Image](https://github.com/FurryConsChina/website/actions/workflows/build-cn-image.yml/badge.svg)](https://github.com/FurryConsChina/website/actions/workflows/build-cn-image.yml)
+
+</div>
+
+<div align="center">
+
+![](https://img.shields.io/badge/Next.js-black.svg?logo=next.js)
+![](https://img.shields.io/badge/React-blue.svg?logo=react)
+![](https://img.shields.io/badge/Sentry-purple.svg?logo=sentry)
+![](https://img.shields.io/badge/Umami-orange.svg?logo=umami)
+![](https://img.shields.io/badge/Google%20Analytics%205-blue.svg?logo=google-analytics)
+![](https://img.shields.io/badge/Cloudflare%20R2-blue.svg?logo=cloudflare)
+![](https://img.shields.io/badge/Cloudflare%20Worker-blue.svg?logo=cloudflare)
+![](https://img.shields.io/badge/CloudFront-orange.svg?logo=amazon-aws)
+
+</div>
 
 [中文版本](./README.zh.md)
 
@@ -55,6 +66,6 @@ This project is licensed under the GPL-3.0 License - see the [LICENSE](LICENSE) 
 
 If you have any questions or suggestions, please directly open a issue.
 
-
 ## Analytics
+
 ![Alt](https://repobeats.axiom.co/api/embed/74dada94f2baca768cdc3fac988db14a5c941997.svg "Repobeats analytics image")
