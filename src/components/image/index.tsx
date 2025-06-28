@@ -43,14 +43,14 @@ function Image({
     <picture className={containerClassName}>
       {autoFormat && (
         <ImgSources
-          avifsrcSet={getSrcset({
-            src,
-            quality,
-            sizes,
-            avif: true,
-            width,
-            height,
-          })}
+          // avifsrcSet={getSrcset({
+          //   src,
+          //   quality,
+          //   sizes,
+          //   avif: true,
+          //   width,
+          //   height,
+          // })}
           webpsrcSet={getSrcset({
             src,
             quality,
