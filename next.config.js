@@ -7,6 +7,7 @@ const { zhCN } = require("date-fns/locale");
 
 const { withSentryConfig } = require("@sentry/nextjs");
 const { GitRevisionPlugin } = require("git-revision-webpack-plugin");
+const { StatsWriterPlugin } = require("webpack-stats-plugin");
 
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.NEXT_PUBLIC_ENABLE_ANALYZE === "true",
@@ -60,6 +61,20 @@ const nextConfig = {
         __SENTRY_DEBUG__: false,
       })
     );
+
+    if (!dev && !isServer) {
+      config.plugins.push(
+        new StatsWriterPlugin({
+          filename: "../webpack-stats.json",
+          stats: {
+            assets: true,
+            chunks: true,
+            modules: true,
+          },
+        })
+      );
+    }
+
     return config;
   },
   i18n,

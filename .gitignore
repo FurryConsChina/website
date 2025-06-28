@@ -50,3 +50,4 @@ next.config.original.js
 
 #nextjs
 /analyze
+webpack-stats.json
