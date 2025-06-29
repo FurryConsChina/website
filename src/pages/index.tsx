@@ -20,6 +20,7 @@ import { EventScale, EventStatus, type EventType } from "@/types/event";
 import { FeatureSchema } from "@/types/feature";
 import { monthNumberFormatter } from "@/utils/locale";
 import { keywordGenerator } from "@/utils/meta";
+import SponsorBanner from "@/components/SponsorBanner";
 
 export default function Home(props: { events: EventType[] }) {
   const { t } = useTranslation();
@@ -35,6 +36,8 @@ export default function Home(props: { events: EventType[] }) {
   return (
     <>
       <div>
+        <SponsorBanner />
+
         <Filter
           selectedFilter={selectedFilter}
           onChange={(filter) => setFilter(filter)}
