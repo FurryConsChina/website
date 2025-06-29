@@ -9,8 +9,7 @@ import Image from "@/components/image";
 import { FaLink } from "react-icons/fa6";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { EventSchema, EventType } from "@/types/event";
-import wfetch from "@/api";
-import { z } from "zod";
+import { eventsAPI } from "@/api/events";
 import { CityPageMeta, currentSupportLocale } from "@/utils/meta";
 
 export default function City(props: { events: EventType[] }) {
@@ -156,27 +155,9 @@ function CityYearSelection({ events }: { events: EventType[] }) {
   );
 }
 
-const PartialOrganizationSchema = z.object({
-  organization: EventSchema.shape.organization.pick({
-    name: true,
-    slug: true,
-  }),
-});
-
-const CityResponseSchema = EventSchema.pick({
-  name: true,
-  slug: true,
-  thumbnail: true,
-  poster: true,
-  startAt: true,
-  endAt: true,
-  addressExtra: true,
-}).merge(PartialOrganizationSchema);
-
 export async function getStaticProps({ locale }: { locale: string }) {
   const PUBLIC_URL = process.env.NEXT_PUBLIC_URL;
-  const response = await wfetch.get("/internal/cms/event/all").json();
-  const events = z.array(CityResponseSchema).safeParse(response).data;
+  const events = await eventsAPI.getCityEvents();
 
   if (!events) {
     return {

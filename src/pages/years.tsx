@@ -2,8 +2,7 @@ import { eventGroupByMonth, eventGroupByYear } from "@/utils/event";
 import SimpleEventCard from "@/components/SimpleEventCard";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
-import wfetch from "@/api";
-import { z } from "zod";
+import { eventsAPI } from "@/api/events";
 import { EventType } from "@/types/event";
 import { monthNumberFormatter } from "@/utils/locale";
 import { currentSupportLocale, YearPageMeta } from "@/utils/meta";
@@ -88,34 +87,16 @@ export default function Years({ events }: { events: EventType[] }) {
 
 export async function getStaticProps({ locale }: { locale: string }) {
   const PUBLIC_URL = process.env.NEXT_PUBLIC_URL;
-  const events = await wfetch.get("/internal/cms/event/all").json();
+  const events = await eventsAPI.getYearEvents();
 
-  const parseEventResult = z
-    .array(
-      z.object({
-        id: z.string(),
-        name: z.string(),
-        slug: z.string(),
-        addressExtra: z.object({ city: z.string().nullable() }).nullable(),
-        startAt: z.string().datetime().nullable(),
-        endAt: z.string().datetime().nullable(),
-        organization: z.object({
-          name: z.string(),
-          slug: z.string(),
-        }),
-      })
-    )
-    .safeParse(events);
-
-  const validEvents = parseEventResult.data;
   return {
     props: {
-      events: validEvents,
+      events: events,
       headMetas: {
         title: YearPageMeta[locale as currentSupportLocale].title,
         des: YearPageMeta[locale as currentSupportLocale].description(
           12,
-          validEvents?.length || 0
+          events?.length || 0
         ),
         link: "/years",
       },

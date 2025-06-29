@@ -1,11 +1,9 @@
 import { useMemo, useState } from "react";
 import { Field, Label, Switch } from "@headlessui/react";
-import groupBy from "lodash-es/groupBy";
+import { groupBy } from "lodash-es";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { z } from "zod";
-
-import wfetch from "@/api";
+import { eventsAPI } from "@/api/events";
 import EventCard from "@/components/eventCard";
 import { FriendSiteBlock } from "@/components/layout/footer";
 import {
@@ -208,42 +206,11 @@ function Filter({
 }
 
 export async function getStaticProps({ locale }: { locale: string }) {
-  const events = await wfetch.get("/internal/cms/event/home").json();
-
-  const homeSchema = z.array(
-    z.object({
-      name: z.string(),
-      address: z.string().nullable(),
-      addressExtra: z.object({ city: z.string().nullable() }).nullable(),
-      thumbnail: z.string().nullable(),
-      poster: z.object({}).nullable(),
-      startAt: z.string().datetime().nullable(),
-      endAt: z.string().datetime().nullable(),
-      slug: z.string(),
-      type: z.string().nullable(),
-      locationType: z.string().nullable(),
-      // status: z.string(),
-      scale: z.string(),
-      organization: z.object({
-        slug: z.string(),
-        name: z.string(),
-        logoUrl: z.string().nullable(),
-      }),
-      commonFeatures: z.array(FeatureSchema).nullish(),
-      features: z
-        .object({
-          self: z.array(z.string()).nullish(),
-        })
-        .nullish(),
-    })
-  );
-
-  const validEvents = homeSchema.safeParse(events);
-  const finalEvents = validEvents.data;
+  const events = await eventsAPI.getHomeEvents();
 
   return {
     props: {
-      events: finalEvents,
+      events: events,
       headMetas: {
         keywords: keywordGenerator({
           page: "home",
