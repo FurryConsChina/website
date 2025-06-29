@@ -5,7 +5,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import { FaLink } from "react-icons/fa6";
 import clsx from "clsx";
 
-function Slider() {
+export default function Slider() {
   const [expand, setExpand] = useState(false);
 
   return (
