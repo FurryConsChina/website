@@ -5,8 +5,7 @@ import Link from "next/link";
 import { sendTrack } from "@/utils/track";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
-import wfetch from "@/api";
-import { z } from "zod";
+import { organizationsAPI } from "@/api/organizations";
 import { OrganizationType } from "@/types/organization";
 import { currentSupportLocale, OrganizationPageMeta } from "@/utils/meta";
 
@@ -91,23 +90,9 @@ function OrganizationItem({
 
 export async function getStaticProps({ locale }: { locale: string }) {
   const PUBLIC_URL = process.env.NEXT_PUBLIC_URL;
-  const organizations = await wfetch
-    .get("/internal/cms/organization/all")
-    .json();
-  const parseResult = z
-    .array(
-      z.object({
-        name: z.string(),
-        logoUrl: z.string().nullable(),
-        slug: z.string(),
-        status: z.string(),
-        id: z.string(),
-      })
-    )
-    .safeParse(organizations);
-  const validOrganizations = parseResult.data;
+  const organizations = await organizationsAPI.getAllOrganizations();
 
-  if (!validOrganizations) {
+  if (!organizations) {
     return {
       notFound: true,
     };
@@ -115,16 +100,16 @@ export async function getStaticProps({ locale }: { locale: string }) {
 
   const title = OrganizationPageMeta[locale as currentSupportLocale].title;
   const des = OrganizationPageMeta[locale as currentSupportLocale].description(
-    validOrganizations.length
+    organizations.length
   );
 
   return {
     props: {
-      organizations: validOrganizations,
+      organizations: organizations,
       headMetas: {
         title: OrganizationPageMeta[locale as currentSupportLocale].title,
         des: OrganizationPageMeta[locale as currentSupportLocale].description(
-          validOrganizations.length
+          organizations.length
         ),
         link: "/organization",
       },

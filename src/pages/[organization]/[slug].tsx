@@ -36,7 +36,7 @@ import { FaHotel, FaPeoplePulling } from "react-icons/fa6";
 import EventStatusBar from "@/components/EventStatusBar";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
-import wfetch from "@/api";
+import { eventsAPI } from "@/api/events";
 import { z } from "zod";
 import {
   currentSupportLocale,
@@ -453,23 +453,10 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       organization: context.params?.organization,
     });
 
-    const response = await wfetch
-      .query({
-        slug: reqParamsParseResult.slug,
-        organization: reqParamsParseResult.organization,
-      })
-      .get("/open/v1/event/detail")
-      .json();
-
-    const validResult = EventSchema.safeParse(response);
-    const event = validResult.data;
-
-    if (validResult.error) {
-      console.log(
-        `Error in render ${context?.params?.slug}`,
-        validResult.error
-      );
-    }
+    const event = await eventsAPI.getEventDetail(
+      reqParamsParseResult.slug,
+      reqParamsParseResult.organization
+    );
 
     if (!event) {
       return {
@@ -479,7 +466,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
     return {
       props: {
-        event: validResult.data,
+        event: event,
         headMetas: {
           title: `${event?.name}-${event?.organization?.name}`,
           keywords: keywordGenerator({

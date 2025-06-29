@@ -13,7 +13,7 @@ import { formatDistanceToNowStrict, isBefore } from "date-fns";
 import { zhCN } from "date-fns/locale";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
-import { API } from "@/api";
+import { organizationsAPI } from "@/api/organizations";
 import { z } from "zod";
 import { format } from "date-fns";
 import { EventType } from "@/types/event";
@@ -311,35 +311,11 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       organization: context.params?.organization,
     });
 
-    const response = await API.get("open/v1/organization/detail", {
-      searchParams: { slug: reqParamsParseResult.organization },
-    });
+    const data = await organizationsAPI.getOrganizationDetail(reqParamsParseResult.organization);
 
-    const data = await response.json();
-
-    const eventSchema = z.object({
-      id: z.string().uuid(),
-      name: z.string(),
-      address: z.string().nullable(),
-      addressExtra: z.object({ city: z.string().nullable() }).nullable(),
-      thumbnail: z.string().nullable(),
-      startAt: z.string().datetime().nullable(),
-      endAt: z.string().datetime().nullable(),
-      slug: z.string(),
-      features: z.object({ self: z.array(z.string()).nullish() }).nullish(),
-      commonFeatures: z.array(FeatureSchema).nullish(),
-    });
-
-    const validResult = z
-      .object({
-        organization: OrganizationSchema,
-        events: z.array(eventSchema),
-      })
-      .safeParse(data);
-
-    const validOrganization = validResult.data?.organization;
+    const validOrganization = data.organization;
     const validEvents =
-      validResult.data?.events
+      data.events
         ?.map((e) => ({
           ...e,
           organization: {
@@ -356,11 +332,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         }) || [];
     const slug = context?.params?.organization;
 
-    if (validResult.error) {
-      throw new Error(`Error in render ${slug},reason:${validResult.error}`);
-    }
-
-    if (!response) {
+    if (!data) {
       return {
         notFound: true,
       };

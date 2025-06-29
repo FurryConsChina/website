@@ -1,6 +1,5 @@
-import wfetch from "@/api";
+import { organizationsAPI } from "@/api/organizations";
 import { GetServerSidePropsContext } from "next";
-import { z } from "zod";
 
 const URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
 
@@ -36,21 +35,8 @@ function SiteMap() {
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { res } = context;
 
-  const organizations = await wfetch.get("/internal/cms/organization/all").json();
-
-  const parseResult = z
-    .array(
-      z.object({
-        name: z.string(),
-        logoUrl: z.string().nullable(),
-        slug: z.string(),
-        status: z.string(),
-        id: z.string(),
-      })
-    )
-    .safeParse(organizations);
-  const validOrganizations = parseResult.data;
-  const sitemap = generateSiteMap(validOrganizations);
+  const organizations = await organizationsAPI.getAllOrganizations();
+  const sitemap = generateSiteMap(organizations);
 
   res.setHeader("Content-Type", "text/xml");
 

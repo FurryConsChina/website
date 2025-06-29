@@ -1,6 +1,5 @@
-import wfetch from "@/api";
+import { eventsAPI } from "@/api/events";
 import { GetServerSidePropsContext } from "next";
-import { z } from "zod";
 
 const URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
 
@@ -36,27 +35,9 @@ function SiteMap() {
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { res } = context;
 
-  const events = await wfetch.get("/internal/cms/event/all").json();
+  const events = await eventsAPI.getSitemapEvents();
 
-  const parseEventResult = z
-    .array(
-      z.object({
-        id: z.string(),
-        name: z.string(),
-        slug: z.string(),
-        addressExtra: z.object({ city: z.string().nullable() }).nullable(),
-        startAt: z.string().datetime().nullable(),
-        endAt: z.string().datetime().nullable(),
-        organization: z.object({
-          name: z.string(),
-          slug: z.string(),
-        }),
-      })
-    )
-    .safeParse(events);
-
-  const validEvents = parseEventResult.data;
-  const sitemap = generateSiteMap(validEvents);
+  const sitemap = generateSiteMap(events);
 
   res.setHeader("Content-Type", "text/xml");
 
