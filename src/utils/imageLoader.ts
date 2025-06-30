@@ -39,10 +39,12 @@ const imageLoader = ({
 
   width !== undefined && imageURL.searchParams.set("w", width.toString());
   height !== undefined && imageURL.searchParams.set("h", height.toString());
-  imageURL.searchParams.set(
-    "q",
-    quality === undefined ? "75" : quality.toString()
-  );
+
+  // 暂时关闭质量压缩
+  // imageURL.searchParams.set(
+  //   "q",
+  //   quality === undefined ? "75" : quality.toString()
+  // );
   avif && imageURL.searchParams.set("f", "avif");
   webp && imageURL.searchParams.set("f", "webp");
 
