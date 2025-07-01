@@ -17,6 +17,17 @@ import { useTranslation } from "next-i18next";
 const IS_CN_REGION = process.env.NEXT_PUBLIC_REGION === "CN";
 const PUBLIC_URL = process.env.NEXT_PUBLIC_URL;
 
+const getCanonicalUrl = (locale: string | undefined, path: string) => {
+  switch (locale) {
+    case "en":
+      return `https://www.furrycons.cn/en${path}`;
+    case "zh-Hans":
+      return `https://www.furrycons.cn${path}`;
+    default:
+      return `https://www.furrycons.cn${path}`;
+  }
+};
+
 export default function Layout({
   children,
   headMetas,
@@ -34,6 +45,10 @@ export default function Layout({
 }) {
   const router = useRouter();
   const asPath = router.asPath;
+  const locale = router.locale;
+
+  const Path = asPath === "/" ? "" : asPath;
+
   const { i18n } = useTranslation();
 
   return (
@@ -135,21 +150,36 @@ export default function Layout({
           sizes="16x16"
           href="/favicon-16x16.png"
         />
-        <link rel="canonical" href={`https://www.furrycons.cn${asPath}`} />
+        <link rel="canonical" href={getCanonicalUrl(locale, Path)} />
+
         <link
           rel="alternate"
-          hrefLang="zh-Hans-cn"
-          href={`https://www.furrycons.cn${asPath}`}
+          hrefLang="zh-Hans"
+          href={`https://www.furrycons.cn${Path}`}
         />
+
+        <link
+          rel="alternate"
+          hrefLang="zh-HK"
+          href={`https://www.furrycons.cn${Path}`}
+        />
+
+        <link
+          rel="alternate"
+          hrefLang="zh-TW"
+          href={`https://www.furrycons.cn${Path}`}
+        />
+
         <link
           rel="alternate"
           hrefLang="en"
-          href={`https://www.furrycons.cn/en${asPath}`}
+          href={`https://www.furrycons.cn/en${Path}`}
         />
+
         <link
           rel="alternate"
           hrefLang="x-default"
-          href={`https://www.furrycons.cn${asPath}`}
+          href={`https://www.furrycons.cn/en${Path}`}
         />
 
         {structuredData?.event && (
