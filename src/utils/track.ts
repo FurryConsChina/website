@@ -10,6 +10,7 @@ export function sendTrack({
   }
   window.gtag && window.gtag("event", eventName, eventValue);
   window.mixpanel?.track(eventName, eventValue);
+  window.umami?.track(eventName, eventValue);
 }
 
 declare global {
@@ -17,5 +18,6 @@ declare global {
     gtag: Function | undefined;
     mixpanel: { track: Function } | undefined;
     TMap: any | undefined;
+    umami: { track: Function } | undefined;
   }
 }
