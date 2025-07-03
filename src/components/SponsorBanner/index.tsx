@@ -2,6 +2,7 @@ import Image from "@/components/image";
 import clsx from "clsx";
 
 import styles from "./index.module.css";
+import { sendTrack } from "@/utils/track";
 
 export default function SponsorBanner() {
   return (
@@ -9,7 +10,14 @@ export default function SponsorBanner() {
       <a
         href="https://www.furrychina.com/?utm_source=fcc"
         target="_blank"
-        className=""
+        onClick={() => {
+          sendTrack({
+            eventName: "sponsor_banner_click",
+            eventValue: {
+              sponsor_name: "furrychina",
+            },
+          });
+        }}
       >
         <Image
           autoFormat
