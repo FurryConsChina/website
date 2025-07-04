@@ -44,10 +44,12 @@ export default function Layout({
   structuredData?: { [key: string]: { [key: string]: string } };
 }) {
   const router = useRouter();
-  const asPath = router.pathname;
+  const asPath = router.asPath;
   const locale = router.locale;
 
-  const Path = asPath === "/" ? "" : asPath;
+  // Remove search parameters from asPath
+  const cleanPath = asPath.split('?')[0];
+  const Path = cleanPath === "/" ? "" : cleanPath;
 
   const { i18n } = useTranslation();
 
