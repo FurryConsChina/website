@@ -427,7 +427,7 @@ export default function EventDetail({ event }: { event: EventType }) {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const PUBLIC_URL = process.env.NEXT_PUBLIC_URL;
+  const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
   try {
     const eventParamsSchema = z.object({
       slug: z

@@ -86,7 +86,7 @@ export default function Years({ events }: { events: EventType[] }) {
 }
 
 export async function getStaticProps({ locale }: { locale: string }) {
-  const PUBLIC_URL = process.env.NEXT_PUBLIC_URL;
+  const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
   const events = await eventsAPI.getYearEvents();
 
   return {
