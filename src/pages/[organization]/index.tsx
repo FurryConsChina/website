@@ -298,7 +298,7 @@ export default function OrganizationDetail(props: {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const PUBLIC_URL = process.env.NEXT_PUBLIC_URL;
+  const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
   try {
     const orgParamsSchema = z.object({
       organization: z

@@ -15,7 +15,7 @@ import Sidebar from "@/components/Sidebar";
 import { useTranslation } from "next-i18next";
 
 const IS_CN_REGION = process.env.NEXT_PUBLIC_REGION === "CN";
-const PUBLIC_URL = process.env.NEXT_PUBLIC_URL;
+const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
 
 const getCanonicalUrl = (locale: string | undefined, path: string) => {
   switch (locale) {
@@ -44,7 +44,7 @@ export default function Layout({
   structuredData?: { [key: string]: { [key: string]: string } };
 }) {
   const router = useRouter();
-  const asPath = router.asPath;
+  const asPath = router.pathname;
   const locale = router.locale;
 
   const Path = asPath === "/" ? "" : asPath;

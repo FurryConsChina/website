@@ -89,7 +89,7 @@ function OrganizationItem({
 }
 
 export async function getStaticProps({ locale }: { locale: string }) {
-  const PUBLIC_URL = process.env.NEXT_PUBLIC_URL;
+  const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
   const organizations = await organizationsAPI.getAllOrganizations();
 
   if (!organizations) {
