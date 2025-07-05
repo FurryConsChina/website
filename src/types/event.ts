@@ -121,18 +121,19 @@ export const EventSchema = z.object({
     facebook: z.string().url().nullable(),
     plurk: z.string().url().nullable(),
     rednote: z.string().url().nullable(),
-    extraMedia: z
-      .object({
-        qqGroups: z
-          .array(
-            z.object({
-              label: z.string(),
-              value: z.string(),
-            })
-          )
-          .nullable(),
-      })
-      .nullable(),
+    // extra: z
+    //   .object({
+    //     contact: z
+    //       .object({
+    //         qqGroups: z
+    //           .array(z.object({ label: z.string(), value: z.string() }))
+    //           .nullable(),
+    //         wxMiniProgram: z.string().nullable(),
+    //         wxChannel: z.string().nullable(),
+    //       })
+    //       .nullable(),
+    //   })
+    //   .nullable(),
     creationTime: z
       .string()
       .refine((date) => !isNaN(Date.parse(date)), {
