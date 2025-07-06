@@ -190,7 +190,7 @@ export default function EventDetail({ event }: { event: EventType }) {
               className="flex items-center text-gray-500 mt-4"
             >
               <IoLocation className="text-gray-500 inline-block mr-2" />
-              {`${event.addressExtra?.city} · ${
+              {`${event.region?.localName || t("event.unknown")} · ${
                 event.address ? event.address : t("event.unknown")
               }`}
             </p>
@@ -450,6 +450,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       reqParamsParseResult.organization
     );
 
+    console.log(event);
+
     if (!event) {
       return {
         notFound: true,
@@ -467,7 +469,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
             event: {
               name: event?.name,
               startDate: event?.startAt,
-              city: event?.addressExtra?.city || undefined,
+              city: event.region?.localName || undefined,
             },
           }),
           des: eventDescriptionGenerator(
@@ -517,7 +519,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
               address: {
                 "@type": "PostalAddress",
                 streetAddress: event?.address,
-                addressLocality: event?.addressExtra?.city,
+                addressLocality: event.region?.localName,
                 // postalCode: "19019",
                 // addressRegion: event?.city,
                 addressCountry: "CN",

@@ -16,7 +16,7 @@ export default function City(props: { events: EventType[] }) {
   const { events } = props;
 
   const groupByCityEvents = useMemo(() => {
-    return groupBy(events, (event) => event.addressExtra?.city);
+    return groupBy(events, (event) => event.region?.localName);
   }, [events]);
 
   const cities = useMemo(() => {
@@ -158,6 +158,7 @@ function CityYearSelection({ events }: { events: EventType[] }) {
 export async function getStaticProps({ locale }: { locale: string }) {
   const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
   const events = await eventsAPI.getCityEvents();
+  console.log(events);
 
   if (!events) {
     return {
@@ -166,7 +167,7 @@ export async function getStaticProps({ locale }: { locale: string }) {
   }
 
   const cities = Object.keys(
-    groupBy(events, (item) => item.addressExtra?.city)
+    groupBy(events, (item) => item.region?.localName)
   );
 
   return {

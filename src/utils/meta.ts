@@ -208,7 +208,7 @@ function eventDescriptionGenerator(
     name?: string;
     organization?: { name: string };
     address?: string | null;
-    addressExtra?: { city: string | null } | null;
+    region?: { localName: string } | null;
     startAt?: string | null;
     endAt?: string | null;
   }
@@ -228,9 +228,9 @@ function eventDescriptionGenerator(
             event?.startAt!,
             "MMMM dd, yyyy"
           )} to ${format(event?.endAt!, "MMMM dd, yyyy")} at "${
-            event?.addressExtra?.city
+            event?.region?.localName
           }${event?.address}". Stay tuned for ticket sales!`
-        : `Welcome to FurConsCalendar! FCC provides detailed information about "${event?.name}": This furry convention is organized by "${event?.organization?.name}" and will be held at "${event?.addressExtra?.city}${event?.address}". Stay tuned for ticket sales!`;
+        : `Welcome to FurConsCalendar! FCC provides detailed information about "${event?.name}": This furry convention is organized by "${event?.organization?.name}" and will be held at "${event?.region?.localName}${event?.address}". Stay tuned for ticket sales!`;
     case "zh-Hans":
     default:
       return event.startAt && event.endAt
@@ -242,9 +242,9 @@ function eventDescriptionGenerator(
             event?.startAt!,
             "yyyy年MM月dd日"
           )}至${format(event?.endAt!, "yyyy年MM月dd日")}在“${
-            event?.addressExtra?.city
+            event?.region?.localName
           }${event?.address}”举办，喜欢的朋友记得关注开始售票时间～`
-        : `欢迎来到兽展日历！兽展日历提供关于“${event?.name}”的详细信息：这是由“${event?.organization?.name}”举办的兽展，将在“${event?.addressExtra?.city}${event?.address}”举办，喜欢的朋友记得关注开始售票时间～`;
+        : `欢迎来到兽展日历！兽展日历提供关于“${event?.name}”的详细信息：这是由“${event?.organization?.name}”举办的兽展，将在“${event?.region?.localName}${event?.address}”举办，喜欢的朋友记得关注开始售票时间～`;
   }
 }
 

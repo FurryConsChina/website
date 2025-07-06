@@ -20,7 +20,7 @@ function SimpleEventCard({ event }: { event: EventType }) {
       className="rounded-xl shadow relative flex justify-center items-center group bg-white"
     >
       <div className="z-10 relative pointer-events-none p-2">
-        <h4 className="tracking-wide text-slate-700 font-bold text-base text-center group-hover:text-red-400 transition">{`${event.addressExtra?.city} · ${event.name}`}</h4>
+        <h4 className="tracking-wide text-slate-700 font-bold text-base text-center group-hover:text-red-400 transition">{`${event.region?.localName} · ${event.name}`}</h4>
         <p className="text-center text-slate-600">{event.organization?.name}</p>
         {event.startAt && event.endAt && (
           <p className="text-center text-slate-600 text-sm">

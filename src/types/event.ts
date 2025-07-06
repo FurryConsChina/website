@@ -91,6 +91,16 @@ export const EventSchema = z.object({
   addressLat: z.string().nullable(),
   addressLon: z.string().nullable(),
   addressExtra: z.object({ city: z.string().nullable() }).nullable(),
+  region: z
+    .object({
+      name: z.string(),
+      code: z.string(),
+      type: z.string(),
+      level: z.number(),
+      localName: z.string(),
+      sortOrder: z.number(),
+    })
+    .nullable(),
   thumbnail: z.string().nullable(),
   poster: z
     .object({
@@ -121,19 +131,6 @@ export const EventSchema = z.object({
     facebook: z.string().url().nullable(),
     plurk: z.string().url().nullable(),
     rednote: z.string().url().nullable(),
-    // extra: z
-    //   .object({
-    //     contact: z
-    //       .object({
-    //         qqGroups: z
-    //           .array(z.object({ label: z.string(), value: z.string() }))
-    //           .nullable(),
-    //         wxMiniProgram: z.string().nullable(),
-    //         wxChannel: z.string().nullable(),
-    //       })
-    //       .nullable(),
-    //   })
-    //   .nullable(),
     creationTime: z
       .string()
       .refine((date) => !isNaN(Date.parse(date)), {
