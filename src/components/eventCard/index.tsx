@@ -136,7 +136,7 @@ export default function EventCard({
                 "md:truncate md:group-hover:text-clip md:group-hover:whitespace-normal"
               )}
             >
-              {[event.addressExtra?.city, event.organization.name]
+              {[event.region?.localName, event.organization.name]
                 .filter(Boolean)
                 .join(" ")}
             </h4>
@@ -391,7 +391,7 @@ function EventAddress({ event }: { event: EventType }) {
       aria-label="活动地址"
       className="truncate group-hover:text-clip group-hover:whitespace-normal"
     >
-      {event.addressExtra?.city} {event.address || "尚未公布"}
+      {event.region?.localName} {event.address || "尚未公布"}
     </span>
   );
 }

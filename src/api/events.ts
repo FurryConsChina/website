@@ -1,7 +1,6 @@
 import { API } from "./index";
 import { z } from "zod";
 import { EventType, EventSchema } from "@/types/event";
-import { FeatureSchema } from "@/types/feature";
 
 // 事件数据验证 schema - 使用现有的 EventSchema
 const HomeEventSchema = EventSchema;
@@ -13,7 +12,7 @@ const CityResponseSchema = EventSchema.pick({
   poster: true,
   startAt: true,
   endAt: true,
-  addressExtra: true,
+  region: true,
 }).merge(
   z.object({
     organization: EventSchema.shape.organization.pick({
@@ -27,20 +26,38 @@ const YearResponseSchema = z.object({
   id: z.string(),
   name: z.string(),
   slug: z.string(),
-  addressExtra: z.object({ city: z.string().nullable() }).nullable(),
   startAt: z.string().datetime().nullable(),
   endAt: z.string().datetime().nullable(),
   organization: z.object({
     name: z.string(),
     slug: z.string(),
   }),
+  region: z
+    .object({
+      name: z.string(),
+      code: z.string(),
+      type: z.string(),
+      level: z.number(),
+      localName: z.string(),
+      sortOrder: z.number(),
+    })
+    .nullable(),
 });
 
 const SitemapEventSchema = z.object({
   id: z.string(),
   name: z.string(),
   slug: z.string(),
-  addressExtra: z.object({ city: z.string().nullable() }).nullable(),
+  region: z
+    .object({
+      name: z.string(),
+      code: z.string(),
+      type: z.string(),
+      level: z.number(),
+      localName: z.string(),
+      sortOrder: z.number(),
+    })
+    .nullable(),
   startAt: z.string().datetime().nullable(),
   endAt: z.string().datetime().nullable(),
   organization: z.object({
@@ -97,13 +114,13 @@ export const eventsAPI = {
     const response = await API.get("open/v1/event/detail", {
       searchParams: { slug, organization },
     }).json();
-    
+
     const validEvent = EventSchema.safeParse(response);
-    
+
     if (!validEvent.success) {
       throw new Error(`Invalid event detail response: ${validEvent.error}`);
     }
-    
+
     return validEvent.data;
   },
-}; 
+};

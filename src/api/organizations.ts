@@ -1,6 +1,6 @@
 import { API } from "./index";
 import { z } from "zod";
-import { OrganizationType, OrganizationSchema } from "@/types/organization";
+import { OrganizationSchema } from "@/types/organization";
 
 // 组织详情响应 schema
 const OrganizationDetailResponseSchema = z.object({
@@ -10,7 +10,16 @@ const OrganizationDetailResponseSchema = z.object({
       id: z.string().uuid(),
       name: z.string(),
       address: z.string().nullable(),
-      addressExtra: z.object({ city: z.string().nullable() }).nullable(),
+      region: z
+        .object({
+          name: z.string(),
+          code: z.string(),
+          type: z.string(),
+          level: z.number(),
+          localName: z.string(),
+          sortOrder: z.number(),
+        })
+        .nullable(),
       thumbnail: z.string().nullable(),
       startAt: z.string().datetime().nullable(),
       endAt: z.string().datetime().nullable(),
@@ -41,20 +50,24 @@ export const organizationsAPI = {
     const response = await API.get("open/v1/organization/detail", {
       searchParams: { slug },
     }).json();
-    
+
     const validResult = OrganizationDetailResponseSchema.safeParse(response);
-    
+
     if (!validResult.success) {
-      throw new Error(`Invalid organization detail response: ${validResult.error}`);
+      throw new Error(
+        `Invalid organization detail response: ${validResult.error}`
+      );
     }
-    
+
     return validResult.data;
   },
 
   // 获取所有组织列表（用于站点地图）
   async getAllOrganizations(): Promise<SitemapOrganizationType[]> {
     const response = await API.get("internal/cms/organization/all").json();
-    const validOrganizations = z.array(SitemapOrganizationSchema).safeParse(response);
+    const validOrganizations = z
+      .array(SitemapOrganizationSchema)
+      .safeParse(response);
     return validOrganizations.data || [];
   },
-}; 
+};
