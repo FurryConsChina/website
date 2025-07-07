@@ -111,7 +111,7 @@ function DurationSection({
           <div className="grid gap-4 md:gap-8 grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {sortEvents(groupByDateEvent[month], "asc").map((event) => (
               <EventCard
-                key={event.name}
+                key={event.id}
                 event={event}
                 sizes="(max-width: 750px) 650px, (max-width: 1080px) 552px, 552px"
                 fallbackWidth={650}
