@@ -44,6 +44,9 @@ import {
   keywordGenerator,
 } from "@/utils/meta";
 import { EventDate } from "@/components/eventCard";
+import EventSourceButton from "@/components/event/EventSourceButton";
+import { generateEventDetailStructuredData } from "@/utils/structuredData";
+import { getEventDetailUrl } from "@/utils/url";
 
 const MapLoadingStatus = {
   Idle: "idle",
@@ -117,7 +120,7 @@ export default function EventDetail({ event }: { event: EventType }) {
   };
 
   const showDescriptionContainer = !!(
-    event.detail || event.poster?.all?.length
+    event.detail || event.media?.images?.length
   );
 
   return (
@@ -232,25 +235,10 @@ export default function EventDetail({ event }: { event: EventType }) {
             </p>
           </div>
 
-          {event.source && (
-            <a
-              href={event.source}
-              target="_blank"
-              rel="noreferrer"
-              onClick={() =>
-                sendTrack({
-                  eventName: "click-event-website",
-                  eventValue: {
-                    eventName: event.name,
-                    link: event.source,
-                  },
-                })
-              }
-              className="block mt-8 px-16 py-4 bg-red-400 text-white font-bold rounded-md text-center transition duration-300 border-2 border-red-100 hover:border-red-400 shadow-lg"
-            >
-              {t("event.goToSource")}
-            </a>
-          )}
+          <EventSourceButton
+            sources={event.sources || []}
+            eventName={event.name}
+          />
         </div>
       </div>
 
@@ -303,13 +291,13 @@ export default function EventDetail({ event }: { event: EventType }) {
               </div>
             )}
 
-            {!!event.poster?.all?.length && (
+            {!!event.media?.images?.length && (
               <div className="bg-white rounded-xl flex-grow p-6 md:mr-4">
-                {event.poster?.all?.map((cover, index) => (
-                  <div className="relative" key={cover}>
+                {event.media?.images?.map((cover, index) => (
+                  <div className="relative" key={cover.url}>
                     <NextImage
                       alt={`${event.name}的详情图片-${index + 1}`}
-                      src={cover}
+                      src={cover.url}
                       className="w-full"
                       priority
                       autoFormat
@@ -427,7 +415,6 @@ export default function EventDetail({ event }: { event: EventType }) {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
   try {
     const eventParamsSchema = z.object({
       slug: z
@@ -449,8 +436,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       reqParamsParseResult.slug,
       reqParamsParseResult.organization
     );
-
-    console.log(event);
 
     if (!event) {
       return {
@@ -476,92 +461,18 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
             context.locale as currentSupportLocale,
             event
           ),
-          url: `/${context.params?.organization}/${event?.slug}`,
+          url: getEventDetailUrl({
+            eventSlug: event.slug,
+            organizationSlug: event.organization.slug,
+            locale: context.locale as currentSupportLocale,
+            fullUrl: false,
+          }),
           cover: imageUrl(getEventCoverImgPath(event)),
         },
-        structuredData: {
-          breadcrumb: {
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            itemListElement: [
-              {
-                "@type": "ListItem",
-                position: 1,
-                name: "展商",
-                item: `https://${PUBLIC_URL}/organization`,
-              },
-              {
-                "@type": "ListItem",
-                position: 2,
-                name: event?.organization?.name,
-                item: `https://${PUBLIC_URL}/${context.params?.organization}`,
-              },
-              {
-                "@type": "ListItem",
-                position: 3,
-                name: event?.name,
-              },
-            ],
-          },
-          event: {
-            "@context": "https://schema.org",
-            "@type": "Event",
-            name: event?.name,
-            startDate: event?.startAt,
-            endDate: event?.endAt,
-            eventStatus:
-              EventStatusSchema[event?.status || EventStatus.EventScheduled],
-            eventAttendanceMode:
-              "https://schema.org/OfflineEventAttendanceMode",
-            location: {
-              "@type": "Place",
-              name: event?.address,
-              address: {
-                "@type": "PostalAddress",
-                streetAddress: event?.address,
-                addressLocality: event.region?.localName,
-                // postalCode: "19019",
-                // addressRegion: event?.city,
-                addressCountry: "CN",
-              },
-            },
-            image: [imageUrl(getEventCoverImgPath(event))],
-            description: event?.detail,
-            // offers: {
-            //   "@type": "Offer",
-            //   url: "https://www.example.com/event_offer/12345_201803180430",
-            //   price: "30",
-            //   priceCurrency: "USD",
-            //   availability: "https://schema.org/InStock",
-            //   validFrom: "2024-05-21T12:00",
-            // },
-            // performer: {
-            //   "@type": "PerformingGroup",
-            //   name: "Kira and Morrison",
-            // },
-            organizer: {
-              "@type": "Organization",
-              name: event?.organization?.name,
-              url: `https://${PUBLIC_URL}/${context.params?.organization}`,
-            },
-          },
-          imageObject: [
-            ...(event?.thumbnail ? [event.thumbnail] : []),
-            ...(event?.poster?.all || []),
-          ].map((image) => ({
-            "@context": "https://schema.org/",
-            "@type": "ImageObject",
-            contentUrl: imageUrl(image),
-            creditText: event?.organization?.name,
-            creator: {
-              "@type": "Organization",
-              name: event?.organization?.name,
-            },
-            copyrightNotice: event?.organization?.name,
-            license: "https://creativecommons.org/licenses/by-nc/4.0/",
-            acquireLicensePage: "https://docs.furrycons.cn/blog/about",
-          })),
-        },
+        structuredData: generateEventDetailStructuredData({
+          event,
+          locale: context.locale as currentSupportLocale,
+        }),
         ...(context.locale
           ? await serverSideTranslations(context.locale, ["common"])
           : {}),
