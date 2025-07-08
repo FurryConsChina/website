@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const HOST = "http://localhost:8787";
+const HOST = "https://api.furrycons.cn";
 
 const API = axios.create({
   baseURL: HOST,
