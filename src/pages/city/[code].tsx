@@ -1,5 +1,5 @@
 import { getEventList } from "@/api/events";
-import { getRegionList } from "@/api/region";
+import { getRegionDetail, getRegionList } from "@/api/region";
 import { EventType } from "@/types/event";
 import { Region } from "@/types/region";
 import { sendTrack } from "@/utils/track";
@@ -164,11 +164,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     .parse(params?.code);
 
   const [region, regionEvents] = await Promise.all([
-    getRegionList({
-      current: 1,
-      pageSize: 1,
-      code: regionCode,
-    }),
+    getRegionDetail(regionCode),
     getEventList({
       eventRegionCode: [regionCode],
       current: "1",
@@ -193,7 +189,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   return {
     props: {
-      region: region.records[0],
+      region: region,
       events: pickEventSchema.parse(regionEvents?.records),
       ...(await serverSideTranslations(locale, ["common"])),
     },
