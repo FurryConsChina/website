@@ -1,14 +1,12 @@
-import ky from "ky";
+import axios from "axios";
 
-const HOST = "https://api.furrycons.cn";
+const HOST = "http://localhost:8787";
 
-export const API = ky.create({
+const API = axios.create({
+  baseURL: HOST,
   headers: {
     Authorization: process.env.FEC_API_TOKEN,
   },
-  prefixUrl: HOST,
-  mode: "cors",
-  cache: "default",
 });
 
 export default API;
