@@ -19,13 +19,13 @@ export const OrganizationPageMeta = {
 export const CityPageMeta = {
   en: {
     title: "Cities",
-    description: (organizationCount: number) =>
-      `Welcome to the FurConsCalendar! The calendar has recorded a total of ${organizationCount} organizers related to furry conventions and gatherings. Whether they are still active today or not, we sincerely thank these groups for their contributions to the development of furry culture.`,
+    description: (cities: number) =>
+      `Welcome to the FurConsCalendar! The calendar has recorded a total of ${cities} cities related to furry conventions and gatherings. Whether they are still active today or not, we sincerely thank these groups for their contributions to the development of furry culture.`,
   },
   "zh-Hans": {
     title: "兽展城市列表",
-    description: (cities: number, eventCount: number) =>
-      `欢迎来到兽展日历！兽展日历共收录 ${cities} 个城市举办过的 ${eventCount} 场 兽展(兽聚)活动信息！快来看看这些城市有没有你所在的地方吧！`,
+    description: (cities: number) =>
+      `欢迎来到兽展日历！兽展日历共收录 ${cities} 个城市举办过的兽展(兽聚)活动信息，快来看看这些城市有没有你所在的地方吧！`,
   },
 };
 

@@ -6,7 +6,9 @@ const GLOBAL_MANUAL_CDN_IMAGE_URL = "images.furryeventchina.com";
 
 export const getEventCoverImgPath = (event: Partial<EventType>) => {
   return (
-    event.thumbnail || event.poster?.all?.[0] || `fec-event-default-cover.png`
+    event.thumbnail ||
+    event.media?.images?.[0].url ||
+    `fec-event-default-cover.png`
   );
 };
 

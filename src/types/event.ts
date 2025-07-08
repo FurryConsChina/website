@@ -86,11 +86,28 @@ export const EventSchema = z.object({
       EventLocationType.Online,
     ])
     .nullable(),
-  source: z.string().nullable(),
+  sources: z
+    .array(
+      z.object({
+        url: z.string(),
+        name: z.string().nullable(),
+        description: z.string().nullable(),
+      })
+    )
+    .nullable(),
+  ticketChannels: z
+    .array(
+      z.object({
+        type: z.enum(["wxMiniProgram", "url", "qrcode", "app"]),
+        name: z.string(),
+        url: z.string().nullable(),
+        available: z.boolean().nullable(),
+      })
+    )
+    .nullable(),
   address: z.string().nullable(),
   addressLat: z.string().nullable(),
   addressLon: z.string().nullable(),
-  addressExtra: z.object({ city: z.string().nullable() }).nullable(),
   region: z
     .object({
       name: z.string(),
@@ -102,12 +119,38 @@ export const EventSchema = z.object({
     })
     .nullable(),
   thumbnail: z.string().nullable(),
-  poster: z
-    .object({
-      all: z.array(z.string()).nullable(),
-    })
-    .nullable(),
   detail: z.string().nullable(),
+  media: z
+    .object({
+      images: z
+        .array(
+          z.object({
+            url: z.string(),
+            title: z.string().nullable(),
+            description: z.string().nullable(),
+          })
+        )
+        .optional(),
+      videos: z
+        .array(
+          z.object({
+            url: z.string(),
+            title: z.string().nullable(),
+            description: z.string().nullable(),
+          })
+        )
+        .optional(),
+      lives: z
+        .array(
+          z.object({
+            url: z.string(),
+            title: z.string().nullable(),
+            description: z.string().nullable(),
+          })
+        )
+        .optional(),
+    })
+    .optional(),
   features: z.object({ self: z.array(z.string()).nullish() }).nullish(),
   commonFeatures: z.array(FeatureSchema).nullish(),
 
