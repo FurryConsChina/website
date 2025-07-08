@@ -32,8 +32,6 @@ export default function City(props: {
     return 0;
   });
 
-  console.log(groupKeys);
-
   return (
     <>
       <div className="bg-white border p-6 rounded-xl">
