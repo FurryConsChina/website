@@ -15,6 +15,7 @@ if (process.env.NODE_ENV === "production") {
     dsn: SENTRY_DSN,
     // Replay may only be enabled for the client-side
     integrations: [],
+    sendDefaultPii: true,
 
     // Set tracesSampleRate to 1.0 to capture 100%
     // of transactions for performance monitoring.
@@ -31,3 +32,5 @@ if (process.env.NODE_ENV === "production") {
     // that it will also get attached to your source maps
   });
 }
+
+export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;

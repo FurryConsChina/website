@@ -98,8 +98,8 @@ const sentryWebpackPluginOptions = {
     enabled: true,
   },
 
-  errorHandler: (err, invokeErr, compilation) => {
-    compilation.warnings.push("Sentry CLI Plugin: " + err.message);
+  errorHandler: (error) => {
+    console.warn("Sentry build error occurred:", error);
   },
 
   // For all available options, see:
