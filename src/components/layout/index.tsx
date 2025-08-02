@@ -19,6 +19,10 @@ const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
 
 const getCanonicalUrl = (locale: string | undefined, path: string) => {
   switch (locale) {
+    case "ru":
+      return `https://www.furrycons.cn/ru${path}`;
+    case "zh-tw":
+      return `https://www.furrycons.cn/tw${path}`;
     case "en":
       return `https://www.furrycons.cn/en${path}`;
     case "zh-Hans":
