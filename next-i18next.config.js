@@ -5,5 +5,5 @@ module.exports = {
     locales: ["zh-Hans", "zh-tw", "en", "ru"],
     localeDetection: false,
   },
-  reloadOnPrerender:     locales: ["zh-Hans", "zh-tw", "en", "ru"],.env.NODE_ENV === "development",
+  reloadOnPrerender: process.env.NODE_ENV === "development",
 };
