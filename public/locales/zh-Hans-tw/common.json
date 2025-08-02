@@ -1,12 +1,12 @@
 {
   "header": {
-    "title": "獸展行事曆",
+    "title": "獸展日曆",
     "slogan": "放假囉！",
     "nav": {
       "homepage": "首頁",
       "city": "城市",
       "organization": "主辦單位",
-      "years": "年度總覽"
+      "years": "年份表"
     }
   },
   "footer": {
@@ -15,7 +15,7 @@
     "disclaimer": "本頁資訊僅供參考，詳情請以活動官方公告為準",
     "use": "採用",
     "and": "與",
-    "made": "技術製作"
+    "made": "製作而成"
   },
   "homepage": {
     "total": "共收錄 {{total}} 場展會",
@@ -81,8 +81,8 @@
     "dateFormat": "yyyy年MM月dd日"
   },
   "organization": {
-    "active": "營運中主辦",
-    "inactive": "已停辦主辦",
+    "active": "營運中",
+    "inactive": "已停辦",
     "createdAt": "創立於 {{distance}}",
     "firstTimeEvent": "首場展會：{{year}}年{{month}}月{{day}}日",
     "firstTimeShow": "首次登場：{{year}}年{{month}}月{{day}}日",
@@ -107,7 +107,7 @@
   },
   "years": {
     "title": "年度統計",
-    "des": "獸展行事曆共收錄 {{totalYear}} 個年度的 {{totalAmount}} 場展會／獸聚。其中：",
+    "des": "獸展日曆共收錄 {{totalYear}} 個年度的 {{totalAmount}} 場展會／獸聚。其中：",
     "unknown": "日期未定",
     "known": "{{year}}年",
     "thisYear": "本年度",
