@@ -37,6 +37,7 @@
   "event": {
     "filter": {
       "onlyAvailable": "Only view upcoming conventions",
+      "all": "Overall scale",
       "cosy": "Mini (0-100 attendees)",
       "small": "Small (100-500 attendees)",
       "medium": "Medium (500-1,000 attendees)",
