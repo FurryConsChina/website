@@ -24,7 +24,6 @@ import {
   keywordGenerator,
   organizationDetailDescriptionGenerator,
 } from "@/utils/meta";
-import { HTTPError } from "ky";
 // import {
 //   WebsiteButton,
 //   QQGroupButton,
@@ -299,95 +298,89 @@ export default function OrganizationDetail(props: {
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
-  try {
-    const orgParamsSchema = z.object({
-      organization: z
-        .string()
-        .min(1)
-        .regex(/^[a-zA-Z0-9-]+$/),
-    });
 
-    const reqParamsParseResult = orgParamsSchema.parse({
-      organization: context.params?.organization,
-    });
+  const orgParamsSchema = z.object({
+    organization: z
+      .string()
+      .min(1)
+      .regex(/^[a-zA-Z0-9-]+$/),
+  });
 
-    const data = await organizationsAPI.getOrganizationDetail(reqParamsParseResult.organization);
+  const reqParamsParseResult = orgParamsSchema.parse({
+    organization: context.params?.organization,
+  });
 
-    const validOrganization = data.organization;
-    const validEvents =
-      data.events
-        ?.map((e) => ({
-          ...e,
-          organization: {
-            name: validOrganization?.name,
-            slug: validOrganization?.slug,
-            logoUrl: validOrganization?.logoUrl,
-          },
-        }))
-        .sort((a, b) => {
-          if (a.startAt && b.startAt) {
-            return isBefore(a.startAt, b.startAt) ? 1 : -1;
-          }
-          return 0;
-        }) || [];
-    const slug = context?.params?.organization;
+  const data = await organizationsAPI.getOrganizationDetail(
+    reqParamsParseResult.organization
+  );
 
-    if (!data) {
-      return {
-        notFound: true,
-      };
-    }
+  const validOrganization = data.organization;
+  const validEvents =
+    data.events
+      ?.map((e) => ({
+        ...e,
+        organization: {
+          name: validOrganization?.name,
+          slug: validOrganization?.slug,
+          logoUrl: validOrganization?.logoUrl,
+        },
+      }))
+      .sort((a, b) => {
+        if (a.startAt && b.startAt) {
+          return isBefore(a.startAt, b.startAt) ? 1 : -1;
+        }
+        return 0;
+      }) || [];
+  const slug = context?.params?.organization;
 
+  if (!data) {
     return {
-      props: {
-        organization: validOrganization,
-        events: validEvents,
-        headMetas: {
-          title: `${validOrganization?.name}`,
-          des: organizationDetailDescriptionGenerator(
-            (context.locale as currentSupportLocale) || "zh-Hans",
-            validOrganization!,
-            validEvents?.length,
-            validEvents[0]?.startAt
-          ),
-          keywords: keywordGenerator({
-            page: "organization",
-            locale: context.locale as "zh-Hans" | "en",
-            organization: validOrganization,
-          }),
-          url: `/${validOrganization?.slug}`,
-          cover: validOrganization?.logoUrl,
-        },
-        structuredData: {
-          breadcrumb: {
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            itemListElement: [
-              {
-                "@type": "ListItem",
-                position: 1,
-                name: "展商",
-                item: `https://${PUBLIC_URL}/organization`,
-              },
-              {
-                "@type": "ListItem",
-                position: 2,
-                name: validOrganization?.name,
-              },
-            ],
-          },
-        },
-        ...(context.locale
-          ? await serverSideTranslations(context.locale, ["common"])
-          : {}),
-      },
+      notFound: true,
     };
-  } catch (error) {
-    if (error instanceof HTTPError && error.response.status === 404) {
-      return {
-        notFound: true,
-      };
-    }
-    throw new Error(`Organization render error: ${error}`);
   }
+
+  return {
+    props: {
+      organization: validOrganization,
+      events: validEvents,
+      headMetas: {
+        title: `${validOrganization?.name}`,
+        des: organizationDetailDescriptionGenerator(
+          (context.locale as currentSupportLocale) || "zh-Hans",
+          validOrganization!,
+          validEvents?.length,
+          validEvents[0]?.startAt
+        ),
+        keywords: keywordGenerator({
+          page: "organization",
+          locale: context.locale as "zh-Hans" | "en",
+          organization: validOrganization,
+        }),
+        url: `/${validOrganization?.slug}`,
+        cover: validOrganization?.logoUrl,
+      },
+      structuredData: {
+        breadcrumb: {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            {
+              "@type": "ListItem",
+              position: 1,
+              name: "展商",
+              item: `https://${PUBLIC_URL}/organization`,
+            },
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: validOrganization?.name,
+            },
+          ],
+        },
+      },
+      ...(context.locale
+        ? await serverSideTranslations(context.locale, ["common"])
+        : {}),
+    },
+  };
 }

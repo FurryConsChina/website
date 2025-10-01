@@ -4937,7 +4937,6 @@ __metadata:
     eslint-config-next: "npm:15.5.4"
     git-revision-webpack-plugin: "npm:^5.0.0"
     i18next: "npm:^25.5.3"
-    ky: "npm:^1.11.0"
     lodash-es: "npm:^4.17.21"
     next: "npm:15.5.4"
     next-i18next: "npm:^15.4.2"
@@ -6029,13 +6028,6 @@ __metadata:
   dependencies:
     json-buffer: "npm:3.0.1"
   checksum: 10/167eb6ef64cc84b6fa0780ee50c9de456b422a1e18802209234f7c2cf7eae648c7741f32e50d7e24ccb22b24c13154070b01563d642755b156c357431a191e75
-  languageName: node
-  linkType: hard
-
-"ky@npm:^1.11.0":
-  version: 1.11.0
-  resolution: "ky@npm:1.11.0"
-  checksum: 10/df4315ffce22d6ffcd420fdefe5c9a3fd65d96b5e265af64bb5cbdecc77b3905ddae5b5b9bc667be7a485593388d0d65b7e06a92c2852e34f62c68a89293917e
   languageName: node
   linkType: hard
 

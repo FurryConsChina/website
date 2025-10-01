@@ -25,7 +25,6 @@
     "eslint-config-next": "15.5.4",
     "git-revision-webpack-plugin": "^5.0.0",
     "i18next": "^25.5.3",
-    "ky": "^1.11.0",
     "lodash-es": "^4.17.21",
     "next": "15.5.4",
     "next-i18next": "^15.4.2",
