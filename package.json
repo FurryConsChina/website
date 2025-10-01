@@ -1,5 +1,5 @@
 {
-  "name": "furry-event-china",
+  "name": "furrycons-site",
   "version": "2.0.0",
   "private": true,
   "scripts": {
@@ -21,7 +21,7 @@
     "embla-carousel-autoplay": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
     "es-toolkit": "^1.39.10",
-    "eslint": "8.57.1",
+    "eslint": "9.36.0",
     "eslint-config-next": "15.5.4",
     "git-revision-webpack-plugin": "^5.0.0",
     "i18next": "^24.2.3",
@@ -38,7 +38,7 @@
     "react-hot-toast": "^2.6.0",
     "react-i18next": "^15.7.4",
     "react-icons": "^5.5.0",
-    "tailwindcss": "^3.4.17",
+    "tailwindcss": "^3.4.18",
     "typescript": "5.9.3",
     "zod": "^3.25.76"
   },
