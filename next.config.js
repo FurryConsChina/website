@@ -74,6 +74,9 @@ const nextConfig = {
 
     return config;
   },
+  eslint: {
+    dirs: ["src"],
+  },
   i18n,
 };
 
@@ -110,7 +113,7 @@ const sentryWebpackPluginOptions = {
   // Note: Check that the configured route will not match with your Next.js middleware, otherwise reporting of client-
   // side errors will fail.
   // tunnelRoute: "/monitoring",
-  
+
   errorHandler: (error) => {
     console.warn("Sentry build error occurred:", error);
   },
