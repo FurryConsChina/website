@@ -30,7 +30,7 @@ const imageLoader = ({
   height?: number;
 }) => {
   const imageURLHost = `https://${GLOBAL_AUTO_CDN_IMAGE_URL}`;
-  const imageURL = new URL(`${imageURLHost}/${src}`);
+  const imageURL = src.startsWith("http") ? new URL(src) : new URL(`${imageURLHost}/${src}`);
 
   width !== undefined && imageURL.searchParams.set("w", width.toString());
   height !== undefined && imageURL.searchParams.set("h", height.toString());
