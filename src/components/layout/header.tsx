@@ -85,7 +85,7 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-[9999] md:relative md:mt-8 md:mb-8">
+    <header className="sticky top-0 z-30 md:relative md:mt-8 md:mb-8">
       <div
         className={clsx(
           "shadow bg-white flex justify-between items-center rounded-b-xl md:rounded-xl",
@@ -189,7 +189,7 @@ function HeaderNav({
                 "font-bold rounded-md w-full",
                 isCurrentPath(nav.link)
                   ? "text-geraldine bg-white"
-                  : "text-slate-700"
+                  : "text-slate-700 hover:text-geraldine hover:bg-white/70"
               )}
             >
               <Link

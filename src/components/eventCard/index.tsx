@@ -108,10 +108,11 @@ export default function EventCard({
 
           <div
             className={clsx(
-              "w-[60%]",
-              "md:w-full md:h-2/5",
-              tags.length && "group-hover:md:h-[50%]",
-              "p-2 md:p-4 transition-all duration-300 rounded-r-xl md:rounded-xl z-10 bg-white/90 group-hover:md:bg-white",
+              "w-[60%] md:w-full",
+              // "md:h-2/5",
+              "p-2 md:p-3",
+              // tags.length && "group-hover:md:h-[50%]",
+              "transition-all duration-300 rounded-r-xl md:rounded-xl z-10 bg-white/90 group-hover:md:bg-white",
               styles.eventCardDescContainer
             )}
           >
@@ -177,7 +178,7 @@ export default function EventCard({
             </div>
 
             {!!tags.length && (
-              <div className="mt-4 md:hidden md:group-hover:block">
+              <div className={clsx("mt-4", "")}>
                 <Tags tags={tags} />
               </div>
             )}
@@ -238,7 +239,7 @@ function EventCover({
       className={clsx(
         "relative md:absolute top-0 left-0 w-[40%] flex-grow-0 flex items-center justify-center",
         "md:w-full md:h-3/5",
-        "md:group-hover:scale-150 transition-all duration-300"
+        "md:group-hover:scale-125 transition-all duration-300"
       )}
     >
       <div className="relative flex items-center justify-center z-10 h-full md:w-full">
@@ -255,37 +256,6 @@ function EventCover({
         />
       </div>
 
-      <Image
-        src={imageUrl}
-        alt={`${eventName} mask filter`}
-        containerClassName="absolute top-0 left-0 h-full w-full"
-        className={clsx("object-cover h-full w-full blur-3xl")}
-        sizes={sizes}
-        autoFormat
-        priority={instancesCount <= 3}
-        fallbackHeight={fallbackHeight}
-        fallbackWidth={fallbackWidth}
-      />
-    </div>
-  );
-}
-
-function EventBackgroundBlur({
-  imageUrl,
-  eventName,
-  sizes,
-  fallbackHeight,
-  fallbackWidth,
-}: {
-  imageUrl: string;
-  eventName: string;
-  isDefault: boolean;
-  sizes?: string;
-  fallbackWidth?: number;
-  fallbackHeight?: number;
-}) {
-  return (
-    <div>
       <Image
         src={imageUrl}
         alt={`${eventName} mask filter`}
@@ -387,10 +357,7 @@ export function EventDate({
 
 function EventAddress({ event }: { event: EventType }) {
   return (
-    <span
-      aria-label="活动地址"
-      className="truncate group-hover:text-clip group-hover:whitespace-normal"
-    >
+    <span aria-label="活动地址" className="truncate">
       {event.region?.localName} {event.address || "尚未公布"}
     </span>
   );

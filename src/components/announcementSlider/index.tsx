@@ -19,19 +19,6 @@ function AnnouncementSlider() {
   return (
     <div className="overflow-hidden mt-2 md:mt-0 mb-6 mx-1 lg:mx-0" ref={emblaRef}>
       <div className="embla__container flex">
-        {!IS_CN_REGION && (
-          <div className={clsx(SliderStyle.embla__slide, defaultSliderClass)}>
-            如您感觉加载速度较慢，请访问我们的境内域名地址:{" "}
-            <a
-              href={`https://www.furrycons.cn${asPath}`}
-              className="underline cursor-pointer"
-            >
-              www.furrycons.cn
-            </a>
-            ，放心点击，您的路径将保持一致。
-          </div>
-        )}
-
         <div
           className={clsx(
             SliderStyle.embla__slide,

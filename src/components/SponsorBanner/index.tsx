@@ -14,7 +14,7 @@ export default function SponsorBanner() {
           sendTrack({
             eventName: "sponsor_banner_click",
             eventValue: {
-              sponsor_name: "furrychina",
+              sponsor_name: "furrychina_2025_dec_shanghai_con",
             },
           });
         }}
@@ -27,18 +27,18 @@ export default function SponsorBanner() {
             styles.sponsorBanner
           )}
           containerClassName="w-full"
-          src="organizations/furrychina/2025-aug-shanghai-con/cover-JzO5v0594YvPRe4xeHHuQ.png"
+          src="organizations/furrychina/2025-dec-shanghai-con/2f9827aeedcc8978b3f579bf642a27ae.jpg"
           alt="Sponsor Banner"
         />
-        <span className="absolute top-2 right-2 bg-[#17b2af] text-white text-xs md:text-sm px-1 rounded md:top-4 md:right-4">
+        <span className="absolute top-2 right-2 bg-[#76b578] text-white text-xs md:text-sm px-1 rounded md:top-4 md:right-4">
           推荐
         </span>
         <div className="absolute bottom-0 right-0 pr-2 pb-2 rounded-xl flex items-end flex-col md:pr-4 md:pb-4">
-          <h3 className="text-2xl font-bold md:text-3xl text-white drop-shadow-md bg-[#17b2af] mb-2 text-right px-1 rounded">
-            极兽聚
+          <h3 className="text-2xl font-bold md:text-3xl text-white drop-shadow-md bg-[#76b578] mb-2 text-right px-1 rounded">
+            冬兽聚2025
           </h3>
-          <p className="text-white text-base md:text-lg bg-[#17b2af] px-1 rounded">
-            2025年8月3日 上海世贸展馆
+          <p className="text-white text-base md:text-lg bg-[#76b578] px-1 rounded">
+            2025年12月19日 上海夏阳湖皇冠假日酒店
           </p>
         </div>
       </a>
