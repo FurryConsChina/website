@@ -365,10 +365,10 @@ function EventAddress({ event }: { event: EventType }) {
 
 function Tags({ tags }: { tags: string[] }) {
   return (
-    <div className="flex flex-wrap gap-1">
+    <div className="flex flex-nowrap gap-1 scrollbar-hide overflow-x-auto scrollbar-width-0">
       {tags.map((t) => (
         <span
-          className="text-xs bg-slate-100 px-1 rounded text-gray-700"
+          className="text-xs bg-slate-100 px-1 rounded text-gray-700 whitespace-nowrap"
           key={t}
         >
           {t}
