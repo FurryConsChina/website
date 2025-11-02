@@ -28,7 +28,7 @@ jobs:
       - run: yarn install
 
       # Build and output bundle stats
-      - run: yarn build
+      - run: TURBOPACK_STATS=1 yarn build
 
       - name: Send bundle stats to RelativeCI
         uses: relative-ci/agent-action@v3
