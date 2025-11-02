@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { EventType, EventSchema } from "@/types/event";
+import { EventItem, EventSchema } from "@/types/event";
 import { ListResponse } from "@/types/api";
 import API from "@/api";
 
@@ -50,7 +50,7 @@ const SitemapEventSchema = z.object({
 });
 
 // 定义返回类型
-type HomeEventType = EventType;
+type HomeEventType = EventItem;
 type YearEventType = z.infer<typeof YearResponseSchema>;
 type SitemapEventType = z.infer<typeof SitemapEventSchema>;
 
@@ -78,7 +78,7 @@ export const eventsAPI = {
   },
 
   // 获取事件详情
-  async getEventDetail(slug: string, organization: string): Promise<EventType> {
+  async getEventDetail(slug: string, organization: string): Promise<EventItem> {
     const response = await API.get("open/v1/event/detail", {
       params: { slug, organization },
     });
@@ -106,7 +106,7 @@ export async function getEventList({
   eventRegionCode?: string[];
   organizationSlug?: string[];
 }) {
-  const response = await API.post<ListResponse<EventType>>(
+  const response = await API.post<ListResponse<EventItem>>(
     "/internal/cms/event/list",
     {
       current,

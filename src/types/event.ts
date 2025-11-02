@@ -183,4 +183,4 @@ export const EventSchema = z.object({
   }),
 });
 
-export type EventType = z.infer<typeof EventSchema>;
+export type EventItem = z.infer<typeof EventSchema>;

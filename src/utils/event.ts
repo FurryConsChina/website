@@ -10,11 +10,11 @@ import {
   compareDesc,
 } from "date-fns";
 import { zhCN } from "date-fns/locale";
-import { EventType } from "@/types/event";
+import { EventItem } from "@/types/event";
 
 setDefaultOptions({ locale: zhCN });
 
-export function eventGroupByYear(data: EventType[], order: "asc" | "desc") {
+export function eventGroupByYear(data: EventItem[], order: "asc" | "desc") {
   const groupByStartDate = groupBy(data, (e) =>
     e.startAt ? new Date(e.startAt).getFullYear() : "no-date"
   );
@@ -39,7 +39,7 @@ export function eventGroupByYear(data: EventType[], order: "asc" | "desc") {
 }
 
 export function eventGroupByMonth(
-  data: EventType[],
+  data: EventItem[],
   monthOrder: "asc" | "desc"
 ) {
   const groupByStartDate = groupBy(data, (e) =>
@@ -71,7 +71,7 @@ export function eventGroupByMonth(
 }
 
 export function filteringEvents(
-  events: EventType[],
+  events: EventItem[],
   selectedFilter: SelectedFilterType
 ) {
   return events.filter((event) => {
@@ -109,11 +109,11 @@ function getDateMonth(testDate: string) {
   return isNextYear ? dateBelongMonth + 12 : dateBelongMonth;
 }
 
-export function groupByCustomDurationEvent(events: EventType[]) {
+export function groupByCustomDurationEvent(events: EventItem[]) {
   const currentMonth = getMonth(new Date()) + 1;
   const now = Date.now();
 
-  const durationObject: { [x in DurationType]: EventType[] } = {
+  const durationObject: { [x in DurationType]: EventItem[] } = {
     now: [],
     soon: [],
     next: [],
@@ -177,7 +177,7 @@ export function groupByCustomDurationEvent(events: EventType[]) {
   return durationObject;
 }
 
-export function sortEvents(events: EventType[], order: "asc" | "desc") {
+export function sortEvents(events: EventItem[], order: "asc" | "desc") {
   return events.sort((a, b) => {
     if (!a.endAt) {
       return 1;

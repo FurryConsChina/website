@@ -14,13 +14,13 @@ import {
 import { sendTrack } from "@/utils/track";
 
 import { DurationType } from "@/types/list";
-import { EventScale, EventStatus, type EventType } from "@/types/event";
+import { EventScale, EventStatus, type EventItem } from "@/types/event";
 import { FeatureSchema } from "@/types/feature";
 import { monthNumberFormatter } from "@/utils/locale";
 import { keywordGenerator } from "@/utils/meta";
 import SponsorBanner from "@/components/SponsorBanner";
 
-export default function Home(props: { events: EventType[] }) {
+export default function Home(props: { events: EventItem[] }) {
   const { t } = useTranslation();
   const [selectedFilter, setFilter] = useState({
     onlyAvailable: true,
@@ -30,6 +30,7 @@ export default function Home(props: { events: EventType[] }) {
   const filteredEvents = filteringEvents(props.events, selectedFilter);
   const groupByCustomDurationEvents =
     groupByCustomDurationEvent(filteredEvents);
+    console.log(groupByCustomDurationEvents);
 
   return (
     <>
@@ -74,7 +75,7 @@ function DurationSection({
   events,
 }: {
   durationType: string;
-  events: EventType[];
+  events: EventItem[];
 }) {
   const { t, i18n } = useTranslation();
   const groupByDateEvent = useMemo(() => {
