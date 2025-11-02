@@ -43,22 +43,21 @@ const nextConfig = {
       },
     ];
   },
+  compiler: {
+    define: {
+      VERSION: JSON.stringify(gitRevisionPlugin.version()),
+      COMMITHASH: JSON.stringify(gitRevisionPlugin.commithash().slice(0, 7)),
+      BRANCH: JSON.stringify(gitRevisionPlugin.branch()),
+      // LASTCOMMITDATETIME: JSON.stringify(
+      //   gitRevisionPlugin.lastcommitdatetime()
+      // ),
+      LASTCOMMITDATETIME: JSON.stringify(
+        format(Date.now(), "yyyy/MM/dd", { locale: zhCN })
+      ),
+      __SENTRY_DEBUG__: false,
+    },
+  },
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
-    config.plugins.push(
-      new webpack.DefinePlugin({
-        VERSION: JSON.stringify(gitRevisionPlugin.version()),
-        COMMITHASH: JSON.stringify(gitRevisionPlugin.commithash().slice(0, 7)),
-        BRANCH: JSON.stringify(gitRevisionPlugin.branch()),
-        // LASTCOMMITDATETIME: JSON.stringify(
-        //   gitRevisionPlugin.lastcommitdatetime()
-        // ),
-        LASTCOMMITDATETIME: JSON.stringify(
-          format(Date.now(), "yyyy/MM/dd", { locale: zhCN })
-        ),
-        __SENTRY_DEBUG__: false,
-      })
-    );
-
     if (!dev && !isServer) {
       config.plugins.push(
         new StatsWriterPlugin({
@@ -73,9 +72,6 @@ const nextConfig = {
     }
 
     return config;
-  },
-  eslint: {
-    dirs: ["src"],
   },
   i18n,
 };
