@@ -115,9 +115,7 @@ export function groupByCustomDurationEvent(events: EventItem[]) {
 
   const durationObject: { [x in DurationType]: EventItem[] } = {
     now: [],
-    soon: [],
     next: [],
-    nextYear: [],
     passed: [],
   };
 
@@ -154,24 +152,7 @@ export function groupByCustomDurationEvent(events: EventItem[]) {
       return durationObject.now.push(event);
     }
 
-    //Soon events
-    if (
-      (startMonth === currentMonth ||
-        (currentMonth + 1 === startMonth &&
-          currentMonth + 1 === endMonth &&
-          startMonth <= 12)) &&
-      isBefore(now, startTime)
-    ) {
-      return durationObject.soon.push(event);
-    }
-
-    //next year events
-    if (startMonth > currentMonth) {
-      if (startMonth > 12) {
-        return durationObject.nextYear.push(event);
-      }
-      return durationObject.next.push(event);
-    }
+    return durationObject.next.push(event);
   });
 
   return durationObject;
