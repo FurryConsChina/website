@@ -17,7 +17,7 @@ import Image from "@/components/image";
 import { sendTrack } from "@/utils/track";
 import { getEventCoverImgPath } from "@/utils/imageLoader";
 
-import type { EventType } from "@/types/event";
+import type { EventItem } from "@/types/event";
 
 import styles from "@/components/eventCard/index.module.css";
 import { useTranslation } from "next-i18next";
@@ -31,7 +31,7 @@ export default function EventCard({
   fallbackWidth,
   fallbackHeight,
 }: {
-  event: EventType;
+  event: EventItem;
   sizes?: string;
   fallbackWidth?: number;
   fallbackHeight?: number;
@@ -275,7 +275,7 @@ export function EventDate({
   event,
   locale = "zh-Hans",
 }: {
-  event: EventType;
+  event: EventItem;
   locale?: currentSupportLocale;
 }) {
   const { t } = useTranslation();
@@ -355,7 +355,7 @@ export function EventDate({
   return `${startDateLabel} - ${endDateLabel}`;
 }
 
-function EventAddress({ event }: { event: EventType }) {
+function EventAddress({ event }: { event: EventItem }) {
   return (
     <span aria-label="活动地址" className="truncate">
       {event.region?.localName} {event.address || "尚未公布"}

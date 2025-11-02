@@ -17,6 +17,7 @@
     "and": "和",
     "made": "制作而成"
   },
+  "homepage.monthWithYear":"{{year}}年{{month}}月",
   "homepage": {
     "total": "共有 {{total}} 个展会",
     "month": "{{month}}月",
@@ -24,7 +25,7 @@
     "group": {
       "status": {
         "passed": "已经结束",
-        "now": "就是现在",
+        "now": "进行中",
         "soon": "马上就来",
         "next": "今年还有",
         "nextYear": "看看来年"

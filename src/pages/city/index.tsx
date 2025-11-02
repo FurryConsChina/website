@@ -7,7 +7,7 @@ import { format } from "date-fns";
 import Image from "@/components/image";
 import { FaLink } from "react-icons/fa6";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { EventSchema, EventType } from "@/types/event";
+import { EventSchema, EventItem } from "@/types/event";
 import { eventsAPI, getEventList } from "@/api/events";
 import { CityPageMeta, currentSupportLocale } from "@/utils/meta";
 import { getRegionList } from "@/api/region";

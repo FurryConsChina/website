@@ -16,7 +16,7 @@ import { useTranslation } from "next-i18next";
 import { organizationsAPI } from "@/api/organizations";
 import { z } from "zod";
 import { format } from "date-fns";
-import { EventType } from "@/types/event";
+import { EventItem } from "@/types/event";
 import { OrganizationSchema, OrganizationType } from "@/types/organization";
 import { FeatureSchema } from "@/types/feature";
 import {
@@ -35,7 +35,7 @@ import {
 // } from "@/components/OrganizationLinkButton";
 
 export default function OrganizationDetail(props: {
-  events: EventType[];
+  events: EventItem[];
   organization: OrganizationType;
 }) {
   const { t } = useTranslation();

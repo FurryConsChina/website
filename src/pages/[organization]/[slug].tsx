@@ -15,7 +15,7 @@ import {
   EventSchema,
   EventStatus,
   EventStatusSchema,
-  EventType,
+  EventItem,
 } from "@/types/event";
 import { sendTrack } from "@/utils/track";
 import { getEventCoverImgPath, imageUrl } from "@/utils/imageLoader";
@@ -55,7 +55,7 @@ const MapLoadingStatus = {
   Error: "error",
 };
 
-export default function EventDetail({ event }: { event: EventType }) {
+export default function EventDetail({ event }: { event: EventItem }) {
   const { t, i18n } = useTranslation();
   const [mapLoadingStatus, setMapLoadingStatus] = useState(() => {
     if (event.addressLat && event.addressLon) {

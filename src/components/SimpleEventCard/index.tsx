@@ -1,9 +1,9 @@
 import { sendTrack } from "@/utils/track";
 import Link from "next/link";
 import { format } from "date-fns";
-import { EventType } from "@/types/event";
+import { EventItem } from "@/types/event";
 
-function SimpleEventCard({ event }: { event: EventType }) {
+function SimpleEventCard({ event }: { event: EventItem }) {
   return (
     <Link
       key={event.id}

@@ -1,6 +1,6 @@
 import { getEventList } from "@/api/events";
 import { getRegionDetail, getRegionList } from "@/api/region";
-import { EventType } from "@/types/event";
+import { EventItem } from "@/types/event";
 import { Region } from "@/types/region";
 import { sendTrack } from "@/utils/track";
 import { GetServerSidePropsContext } from "next";
@@ -19,7 +19,7 @@ export default function CityDetail({
   events,
 }: {
   region: Region;
-  events: EventType[];
+  events: EventItem[];
 }) {
   const { t, i18n } = useTranslation();
   // 按年份分组
@@ -55,7 +55,7 @@ export default function CityDetail({
       }
       return acc;
     },
-    {} as Record<string, Record<string, EventType[]>>
+    {} as Record<string, Record<string, EventItem[]>>
   );
 
   // 排序年份（最新的在前）
@@ -110,7 +110,7 @@ export default function CityDetail({
   );
 }
 
-function MonthSection({ events }: { events: EventType[] }) {
+function MonthSection({ events }: { events: EventItem[] }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
       {events.map((event) => (

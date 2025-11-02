@@ -17,6 +17,7 @@
     "and": "and",
     "made": "developed"
   },
+  "homepage.monthWithYear":"{{month}}, {{year}}",
   "homepage": {
     "total": "{{total}} conventions in total",
     "month": "{{month}} ",

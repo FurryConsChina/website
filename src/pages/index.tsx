@@ -14,13 +14,13 @@ import {
 import { sendTrack } from "@/utils/track";
 
 import { DurationType } from "@/types/list";
-import { EventScale, EventStatus, type EventType } from "@/types/event";
+import { EventScale, EventStatus, type EventItem } from "@/types/event";
 import { FeatureSchema } from "@/types/feature";
 import { monthNumberFormatter } from "@/utils/locale";
 import { keywordGenerator } from "@/utils/meta";
 import SponsorBanner from "@/components/SponsorBanner";
 
-export default function Home(props: { events: EventType[] }) {
+export default function Home(props: { events: EventItem[] }) {
   const { t } = useTranslation();
   const [selectedFilter, setFilter] = useState({
     onlyAvailable: true,
@@ -74,41 +74,87 @@ function DurationSection({
   events,
 }: {
   durationType: string;
-  events: EventType[];
+  events: EventItem[];
 }) {
   const { t, i18n } = useTranslation();
-  const groupByDateEvent = useMemo(() => {
+
+  const groupByMonthEvent = useMemo(() => {
     return groupBy(events, (event) =>
       // Some event open in the last day of start month, but it should be count in next month.
-      event.endAt ? new Date(event.endAt).getUTCMonth() + 1 : "unknown"
+      {
+        const endDate = event.endAt ? new Date(event.endAt) : null;
+        if (!endDate) {
+          return "unknown";
+        }
+        return `${endDate.getFullYear()}-${endDate.getMonth() + 1}`;
+      }
     );
   }, [events]);
 
-  const months =
-    durationType === DurationType.Passed
-      ? Object.keys(groupByDateEvent).reverse()
-      : Object.keys(groupByDateEvent);
+  const sortedMonths = useMemo(() => {
+    const sortedResult = Object.keys(groupByMonthEvent).sort((a, b) => {
+      const yearA = parseInt(a.split("-")[0]);
+      const yearB = parseInt(b.split("-")[0]);
+      if (yearA !== yearB) {
+        return yearA - yearB;
+      }
+      return parseInt(a.split("-")[1]) - parseInt(b.split("-")[1]);
+    });
+    return durationType === DurationType.Passed
+      ? sortedResult.reverse()
+      : sortedResult;
+  }, [groupByMonthEvent, durationType]);
+
+  if (durationType === DurationType.Now) {
+    return (
+      <div className="rounded-xl bg-gray-100/80 p-2 md:p-6 my-4">
+        <h3 className="text-lg md:text-xl text-red-400 font-bold mb-2 md:mb-6">
+          {t("homepage.group.status.now")}
+          <span className="text-sm text-gray-500 font-bold ml-1">
+            {t("homepage.total", { total: events.length })}
+          </span>
+        </h3>
+        <div className="grid gap-4 md:gap-8 grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {sortEvents(events, "asc").map((event) => (
+            <EventCard
+              key={event.id}
+              event={event}
+              sizes="(max-width: 750px) 650px, (max-width: 1080px) 552px, 552px"
+              fallbackWidth={650}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
-      {months.map((month) => (
+      {sortedMonths.map((month) => (
         <div key={month} className="rounded-xl bg-gray-100/80 p-2 md:p-6 my-4">
           <h3 className="text-lg md:text-xl text-red-400 font-bold mb-2 md:mb-6">
             {month !== "unknown"
-              ? durationType === DurationType.NextYear
-                ? t("homepage.nextYearMonth", {
-                    month: monthNumberFormatter(month, i18n.language),
+              ? parseInt(month.split("-")[0]) === new Date().getFullYear()
+                ? t("homepage.month", {
+                    month: monthNumberFormatter(
+                      month.split("-")[1],
+                      i18n.language
+                    ),
                   })
-                : t("homepage.month", {
-                    month: monthNumberFormatter(month, i18n.language),
+                : t("homepage.monthWithYear", {
+                    year: parseInt(month.split("-")[0]),
+                    month: monthNumberFormatter(
+                      month.split("-")[1],
+                      i18n.language
+                    ),
                   })
               : null}
             <span className="text-sm text-gray-500 font-bold ml-1">
-              {t("homepage.total", { total: groupByDateEvent[month].length })}
+              {t("homepage.total", { total: groupByMonthEvent[month].length })}
             </span>
           </h3>
           <div className="grid gap-4 md:gap-8 grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {sortEvents(groupByDateEvent[month], "asc").map((event) => (
+            {sortEvents(groupByMonthEvent[month], "asc").map((event) => (
               <EventCard
                 key={event.id}
                 event={event}

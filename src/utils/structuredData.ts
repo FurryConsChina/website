@@ -1,4 +1,4 @@
-import { EventStatus, EventStatusSchema, EventType } from "@/types/event";
+import { EventStatus, EventStatusSchema, EventItem } from "@/types/event";
 import { getEventCoverImgPath, imageUrl } from "@/utils/imageLoader";
 import { currentSupportLocale } from "@/utils/meta";
 import { getOrganizationDetailUrl } from "@/utils/url";
@@ -8,7 +8,7 @@ generateEventDetailStructuredData({
   event,
   locale,
 }: {
-  event: EventType;
+  event: EventItem;
   locale: currentSupportLocale;
 }) {
   return {
