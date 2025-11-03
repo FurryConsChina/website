@@ -58,28 +58,28 @@ type SitemapEventType = z.infer<typeof SitemapEventSchema>;
 export const eventsAPI = {
   // 获取首页事件列表
   async getHomeEvents(): Promise<HomeEventType[]> {
-    const response = await API.get("internal/cms/event/home");
+    const response = await API.get("internal/website/home");
     const validEvents = z.array(HomeEventSchema).parse(response.data);
     return validEvents;
   },
 
   // 获取年度页面事件列表
   async getYearEvents(): Promise<YearEventType[]> {
-    const response = await API.get("internal/cms/event/all");
+    const response = await API.get("internal/website/event/all");
     const validEvents = z.array(YearResponseSchema).parse(response.data);
     return validEvents;
   },
 
   // 获取站点地图事件列表
   async getSitemapEvents(): Promise<SitemapEventType[]> {
-    const response = await API.get("internal/cms/event/all");
+    const response = await API.get("internal/website/event/all");
     const validEvents = z.array(SitemapEventSchema).parse(response.data);
     return validEvents;
   },
 
   // 获取事件详情
   async getEventDetail(slug: string, organization: string): Promise<EventItem> {
-    const response = await API.get("open/v1/event/detail", {
+    const response = await API.get("internal/website/event/detail", {
       params: { slug, organization },
     });
 

@@ -47,9 +47,11 @@ type SitemapOrganizationType = z.infer<typeof SitemapOrganizationSchema>;
 export const organizationsAPI = {
   // 获取组织详情
   async getOrganizationDetail(slug: string): Promise<OrganizationDetailType> {
-    const response = await API.get("open/v1/organization/detail", {
+    const response = await API.get("internal/website/organization/detail", {
       params: { slug },
     });
+
+    console.log(response.data);
 
     const validResult = OrganizationDetailResponseSchema.parse(response.data);
 
@@ -58,7 +60,7 @@ export const organizationsAPI = {
 
   // 获取所有组织列表（用于站点地图）
   async getAllOrganizations(): Promise<SitemapOrganizationType[]> {
-    const response = await API.get("internal/cms/organization/all");
+    const response = await API.get("internal/website/organization/all");
     const validOrganizations = z
       .array(SitemapOrganizationSchema)
       .parse(response.data);

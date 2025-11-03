@@ -45,16 +45,14 @@ const nextConfig = {
   },
   compiler: {
     define: {
-      VERSION: JSON.stringify(gitRevisionPlugin.version()),
-      COMMITHASH: JSON.stringify(gitRevisionPlugin.commithash().slice(0, 7)),
-      BRANCH: JSON.stringify(gitRevisionPlugin.branch()),
+      VERSION: gitRevisionPlugin.version(),
+      COMMITHASH: gitRevisionPlugin.commithash().slice(0, 7),
+      BRANCH: gitRevisionPlugin.branch(),
       // LASTCOMMITDATETIME: JSON.stringify(
       //   gitRevisionPlugin.lastcommitdatetime()
       // ),
-      LASTCOMMITDATETIME: JSON.stringify(
-        format(Date.now(), "yyyy/MM/dd", { locale: zhCN })
-      ),
-      __SENTRY_DEBUG__: false,
+      LASTCOMMITDATETIME: format(Date.now(), "yyyy/MM/dd", { locale: zhCN }),
+      __SENTRY_DEBUG__: "false",
     },
   },
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
@@ -76,7 +74,7 @@ const nextConfig = {
   i18n,
 };
 
-const sentryWebpackPluginOptions = {
+const sentryOptions = {
   // For all available options, see:
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
   // https://github.com/getsentry/sentry-webpack-plugin#options.
@@ -117,5 +115,5 @@ const sentryWebpackPluginOptions = {
 
 module.exports = withSentryConfig(
   withBundleAnalyzer(nextConfig),
-  sentryWebpackPluginOptions
+  sentryOptions
 );
