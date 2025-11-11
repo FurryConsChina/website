@@ -21,6 +21,10 @@ const redirectData: Record<string, { destination: string; permanent: boolean }> 
     destination: "/dreams",
     permanent: true,
   },
+  "/ssj": {
+    destination: "/hbf",
+    permanent: true,
+  },
 };
 
 export default function proxy(request: NextRequest) {
