@@ -24,6 +24,7 @@ import {
   keywordGenerator,
   organizationDetailDescriptionGenerator,
 } from "@/utils/meta";
+import axios, { AxiosError } from "axios";
 // import {
 //   WebsiteButton,
 //   QQGroupButton,
@@ -310,77 +311,88 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     organization: context.params?.organization,
   });
 
-  const data = await organizationsAPI.getOrganizationDetail(
-    reqParamsParseResult.organization
-  );
+  try {
+    const data = await organizationsAPI.getOrganizationDetail(
+      reqParamsParseResult.organization
+    );
 
-  const validOrganization = data.organization;
-  const validEvents =
-    data.events
-      ?.map((e) => ({
-        ...e,
-        organization: {
-          name: validOrganization?.name,
-          slug: validOrganization?.slug,
-          logoUrl: validOrganization?.logoUrl,
-        },
-      }))
-      .sort((a, b) => {
-        if (a.startAt && b.startAt) {
-          return isBefore(a.startAt, b.startAt) ? 1 : -1;
-        }
-        return 0;
-      }) || [];
-  const slug = context?.params?.organization;
+    const validOrganization = data.organization;
+    const validEvents =
+      data.events
+        ?.map((e) => ({
+          ...e,
+          organization: {
+            name: validOrganization?.name,
+            slug: validOrganization?.slug,
+            logoUrl: validOrganization?.logoUrl,
+          },
+        }))
+        .sort((a, b) => {
+          if (a.startAt && b.startAt) {
+            return isBefore(a.startAt, b.startAt) ? 1 : -1;
+          }
+          return 0;
+        }) || [];
+    const slug = context?.params?.organization;
 
-  if (!data) {
+    if (!data) {
+      return {
+        notFound: true,
+      };
+    }
+
     return {
-      notFound: true,
-    };
-  }
-
-  return {
-    props: {
-      organization: validOrganization,
-      events: validEvents,
-      headMetas: {
-        title: `${validOrganization?.name}`,
-        des: organizationDetailDescriptionGenerator(
-          (context.locale as currentSupportLocale) || "zh-Hans",
-          validOrganization!,
-          validEvents?.length,
-          validEvents[0]?.startAt
-        ),
-        keywords: keywordGenerator({
-          page: "organization",
-          locale: context.locale as "zh-Hans" | "en",
-          organization: validOrganization,
-        }),
-        url: `/${validOrganization?.slug}`,
-        cover: validOrganization?.logoUrl,
-      },
-      structuredData: {
-        breadcrumb: {
-          "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
-          itemListElement: [
-            {
-              "@type": "ListItem",
-              position: 1,
-              name: "展商",
-              item: `https://${PUBLIC_URL}/organization`,
-            },
-            {
-              "@type": "ListItem",
-              position: 2,
-              name: validOrganization?.name,
-            },
-          ],
+      props: {
+        organization: validOrganization,
+        events: validEvents,
+        headMetas: {
+          title: `${validOrganization?.name}`,
+          des: organizationDetailDescriptionGenerator(
+            (context.locale as currentSupportLocale) || "zh-Hans",
+            validOrganization!,
+            validEvents?.length,
+            validEvents[0]?.startAt
+          ),
+          keywords: keywordGenerator({
+            page: "organization",
+            locale: context.locale as "zh-Hans" | "en",
+            organization: validOrganization,
+          }),
+          url: `/${validOrganization?.slug}`,
+          cover: validOrganization?.logoUrl,
         },
+        structuredData: {
+          breadcrumb: {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "展商",
+                item: `https://${PUBLIC_URL}/organization`,
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: validOrganization?.name,
+              },
+            ],
+          },
+        },
+        ...(context.locale
+          ? await serverSideTranslations(context.locale, ["common"])
+          : {}),
       },
-      ...(context.locale
-        ? await serverSideTranslations(context.locale, ["common"])
-        : {}),
-    },
-  };
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 404) {
+        return {
+          notFound: true,
+        };
+      }
+    }
+    throw error;
+  }
 }
