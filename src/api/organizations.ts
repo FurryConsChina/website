@@ -51,8 +51,6 @@ export const organizationsAPI = {
       params: { slug },
     });
 
-    console.log(response.data);
-
     const validResult = OrganizationDetailResponseSchema.parse(response.data);
 
     return validResult;
