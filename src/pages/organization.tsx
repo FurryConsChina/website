@@ -63,9 +63,9 @@ function OrganizationItem({
     >
       <div className="rounded-xl border p-6 cursor-pointer h-full flex flex-row items-center justify-center md:flex-col">
         {organization.logoUrl && (
-          <div className="relative w-2/4 md:h-3/4 max-h-12 mx-auto">
+          <div className="relative w-2/4 md:h-3/4 min-h-12 max-h-12 mx-auto">
             <Image
-              className="object-contain h-full max-h-12 mx-auto"
+              className="object-contain h-full min-h-12 max-h-12 mx-auto"
               src={organization.logoUrl}
               alt={`${organization.name}'s logo`}
               width={124}
