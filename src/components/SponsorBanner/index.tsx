@@ -27,7 +27,7 @@ export default function SponsorBanner() {
             styles.sponsorBanner
           )}
           containerClassName="w-full"
-          src="organizations/furrychina/2025-dec-shanghai-con/2f9827aeedcc8978b3f579bf642a27ae.jpg"
+          src="organizations/furrychina/2025-dec-shanghai-con/home_banner.jpg"
           alt="Sponsor Banner"
         />
         <span className="absolute top-2 right-2 bg-[#76b578] text-white text-xs md:text-sm px-1 rounded md:top-4 md:right-4">
