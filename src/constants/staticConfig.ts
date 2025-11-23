@@ -39,11 +39,11 @@ export const FriendSiteLinks = [
 
 export const AboutUsLinks = [
   {
-    link: "https://docs.furrycons.cn/blog/about",
+    link: "/about",
     label: "我们是谁",
   },
   {
-    link: "https://docs.furrycons.cn/blog/contact-us",
+    link: "/about#contact",
     label: "联系方式",
   },
   {
