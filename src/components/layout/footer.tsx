@@ -4,6 +4,7 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { zhCN } from "date-fns/locale";
 import { useTranslation } from "next-i18next";
+import Image from "@/components/image";
 
 export default function Footer({ isCNRegion }: { isCNRegion: boolean }) {
   const dateString = format(LASTCOMMITDATETIME, "yyyy/MM/dd", { locale: zhCN });
@@ -55,7 +56,9 @@ export default function Footer({ isCNRegion }: { isCNRegion: boolean }) {
             </div>
 
             <div className="text-left">
-              <h3 className="text-gray-700 hidden md:block mb-2">{t("footer.aboutUs")}</h3>
+              <h3 className="text-gray-700 hidden md:block mb-2">
+                {t("footer.aboutUs")}
+              </h3>
               <ul className="flex md:flex-col">
                 {AboutUsLinks.map((link) => (
                   <li key={link.link}>
@@ -94,6 +97,18 @@ export default function Footer({ isCNRegion }: { isCNRegion: boolean }) {
               </span>
             )}
           </div>
+          {isCNRegion && (
+            <div className="mt-1 flex items-center md:justify-end gap-1">
+              <Image alt="beian" src="/ga.png" width={16} height={16} />
+              <a
+                href="https://beian.mps.gov.cn/#/query/webSearch?code=31010502007546"
+                target="_blank"
+                rel="noreferrer"
+              >
+                沪公网安备31010502007546号
+              </a>
+            </div>
+          )}
         </div>
       </div>
     </footer>
