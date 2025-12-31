@@ -34,7 +34,7 @@ export default function Home(props: { events: EventItem[] }) {
   return (
     <>
       <div>
-        <SponsorBanner />
+        {/* <SponsorBanner /> */}
         <Filter
           selectedFilter={selectedFilter}
           onChange={(filter) => setFilter(filter)}
