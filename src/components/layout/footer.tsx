@@ -99,7 +99,7 @@ export default function Footer({ isCNRegion }: { isCNRegion: boolean }) {
           </div>
           {isCNRegion && (
             <div className="mt-1 flex items-center md:justify-end gap-1">
-              <Image alt="beian" src="/ga.png" width={16} height={16} />
+              <Image alt="beian" src="ga.png" width={16} height={16} />
               <a
                 href="https://beian.mps.gov.cn/#/query/webSearch?code=31010502007546"
                 target="_blank"
