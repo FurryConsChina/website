@@ -7,7 +7,7 @@ const OrganizationDetailResponseSchema = z.object({
   organization: OrganizationSchema,
   events: z.array(
     z.object({
-      id: z.string().uuid(),
+      id: z.uuid(),
       name: z.string(),
       address: z.string().nullable(),
       region: z
