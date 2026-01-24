@@ -1,5 +1,4 @@
-import { getEventList } from "@/api/events";
-import { getRegionDetail, getRegionList } from "@/api/region";
+import { RegionAPI } from "@/api/region";
 import { EventItem } from "@/types/event";
 import { Region } from "@/types/region";
 import { sendTrack } from "@/utils/track";
@@ -13,6 +12,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { groupBy } from "es-toolkit";
 import { useTranslation } from "next-i18next";
 import { monthNumberFormatter } from "@/utils/locale";
+import { EventsAPI } from "@/api/events";
 
 export default function CityDetail({
   region,
@@ -164,8 +164,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     .parse(params?.code);
 
   const [region, regionEvents] = await Promise.all([
-    getRegionDetail(regionCode),
-    getEventList({
+    RegionAPI.getRegionDetail(regionCode),
+    EventsAPI.getEventList({
       eventRegionCode: [regionCode],
       current: "1",
       pageSize: "50",

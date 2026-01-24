@@ -15,20 +15,20 @@ export const RegionTypeLabel = {
 };
 
 export const RegionSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   name: z.string(),
   code: z.string(),
-  type: z.nativeEnum(RegionType),
+  type: z.enum(RegionType),
   level: z.number(),
-  parentId: z.string().uuid().nullish(),
+  parentId: z.uuid().nullish(),
   parent: z
     .object({
-      id: z.string().uuid(),
+      id: z.uuid(),
       name: z.string(),
       code: z.string(),
-      type: z.nativeEnum(RegionType),
+      type: z.enum(RegionType),
       level: z.number(),
-      parentId: z.string().uuid().nullish(),
+      parentId: z.uuid().nullish(),
       countryCode: z.string().nullish(),
       isOverseas: z.boolean(),
       addressFormat: z.string().nullish(),
@@ -41,10 +41,8 @@ export const RegionSchema = z.object({
       longitude: z.number().nullish(),
       sortOrder: z.number().nullish(),
       remark: z.string().nullish(),
-      createdAt: z.string().datetime(),
-      updatedAt: z.string().datetime(),
-      deletedAt: z.string().datetime().nullish(),
-      version: z.number(),
+      createdAt: z.iso.datetime(),
+      updatedAt: z.iso.datetime(),
     })
     .nullable(),
   countryCode: z.string().nullish(),
@@ -59,10 +57,8 @@ export const RegionSchema = z.object({
   longitude: z.number().nullish(),
   sortOrder: z.number(),
   remark: z.string().nullish(),
-  createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime(),
-  deletedAt: z.string().datetime().nullish(),
-  version: z.number(),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
 });
 
 export type Region = z.infer<typeof RegionSchema>;

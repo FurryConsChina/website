@@ -6,30 +6,25 @@ export const OrganizationStatus = {
 };
 
 export const OrganizationSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   slug: z.string().min(1),
   name: z.string().min(1),
-  description: z.string().nullable(),
-  status: z.enum(["active", "inactive"]),
-  type: z.string().nullable(),
-  logoUrl: z.string().nullable(),
-  richMediaConfig: z.any().nullable(),
-  contactMail: z.string().email().nullable(),
-  website: z.string().url().nullable(),
-  twitter: z.string().url().nullable(),
-  weibo: z.string().url().nullable(),
-  qqGroup: z.string().nullable(),
-  bilibili: z.string().url().nullable(),
-  wikifur: z.string().url().nullable(),
-  facebook: z.string().url().nullable(),
-  plurk: z.string().url().nullable(),
-  rednote: z.string().url().nullable(),
-  creationTime: z
-    .string()
-    .refine((date) => !isNaN(Date.parse(date)), {
-      message: "Invalid date format",
-    })
-    .nullable(),
+  description: z.string().nullish(),
+  status: z.enum(OrganizationStatus),
+  type: z.string().nullish(),
+  logoUrl: z.string().nullish(),
+  richMediaConfig: z.any().nullish(),
+  contactMail: z.email().nullish(),
+  website: z.url().nullish(),
+  twitter: z.url().nullish(),
+  weibo: z.url().nullish(),
+  qqGroup: z.string().nullish(),
+  bilibili: z.url().nullish(),
+  wikifur: z.url().nullish(),
+  facebook: z.url().nullish(),
+  plurk: z.url().nullish(),
+  rednote: z.url().nullish(),
+  creationTime: z.iso.datetime().nullish(),
 });
 
 export type OrganizationType = z.infer<typeof OrganizationSchema>;

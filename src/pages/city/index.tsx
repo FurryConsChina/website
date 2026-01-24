@@ -1,18 +1,11 @@
-import { eventGroupByYear } from "@/utils/event";
-import { sendTrack } from "@/utils/track";
-import Link from "next/link";
-import { useMemo } from "react";
-import { getEventCoverImgPath } from "@/utils/imageLoader";
-import { format } from "date-fns";
-import Image from "@/components/image";
-import { FaLink } from "react-icons/fa6";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { EventSchema, EventItem } from "@/types/event";
-import { eventsAPI, getEventList } from "@/api/events";
-import { CityPageMeta, currentSupportLocale } from "@/utils/meta";
-import { getRegionList } from "@/api/region";
+import { RegionAPI } from "@/api/region";
 import { Region, RegionType } from "@/types/region";
+import { CityPageMeta, currentSupportLocale } from "@/utils/meta";
+import { sendTrack } from "@/utils/track";
 import { groupBy } from "es-toolkit";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Link from "next/link";
+import { FaLink } from "react-icons/fa6";
 
 const regionGroupLabel = {
   special: "特别行政区",
@@ -89,7 +82,7 @@ export default function City(props: {
 export async function getServerSideProps({ locale }: { locale: string }) {
   const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
 
-  const regions = await getRegionList({
+  const regions = await RegionAPI.getRegionList({
     current: 1,
     pageSize: 100,
     withEvents: true,

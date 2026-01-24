@@ -2,7 +2,7 @@ import { eventGroupByMonth, eventGroupByYear } from "@/utils/event";
 import SimpleEventCard from "@/components/SimpleEventCard";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
-import { eventsAPI } from "@/api/events";
+import { EventsAPI } from "@/api/events";
 import { EventItem } from "@/types/event";
 import { monthNumberFormatter } from "@/utils/locale";
 import { currentSupportLocale, YearPageMeta } from "@/utils/meta";
@@ -87,16 +87,19 @@ export default function Years({ events }: { events: EventItem[] }) {
 
 export async function getStaticProps({ locale }: { locale: string }) {
   const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
-  const events = await eventsAPI.getYearEvents();
+  const events = await EventsAPI.getEventList({
+    current: "1",
+    pageSize: "999",
+  });
 
   return {
     props: {
-      events: events,
+      events: events.records,
       headMetas: {
         title: YearPageMeta[locale as currentSupportLocale].title,
         des: YearPageMeta[locale as currentSupportLocale].description(
           12,
-          events?.length || 0
+          events.total || 0
         ),
         link: "/years",
       },

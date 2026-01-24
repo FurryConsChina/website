@@ -3,7 +3,7 @@ import { Field, Label, Switch } from "@headlessui/react";
 import { groupBy } from "lodash-es";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { eventsAPI } from "@/api/events";
+import { EventsAPI } from "@/api/events";
 import EventCard from "@/components/eventCard";
 import { FriendSiteBlock } from "@/components/layout/footer";
 import {
@@ -19,6 +19,7 @@ import { FeatureSchema } from "@/types/feature";
 import { monthNumberFormatter } from "@/utils/locale";
 import { keywordGenerator } from "@/utils/meta";
 import SponsorBanner from "@/components/SponsorBanner";
+import { endOfYear, startOfYear } from "date-fns";
 
 export default function Home(props: { events: EventItem[] }) {
   const { t } = useTranslation();
@@ -251,11 +252,21 @@ function Filter({
 }
 
 export async function getStaticProps({ locale }: { locale: string }) {
-  const events = await eventsAPI.getHomeEvents();
+  const events = await EventsAPI.getEventList({
+    current: "1",
+    pageSize: "999",
+    eventStartAt: startOfYear(new Date()).toISOString(),
+    eventStatus: [
+      EventStatus.EventScheduled,
+      EventStatus.EventPostponed,
+      EventStatus.EventRescheduled,
+      EventStatus.EventMovedOnline,
+    ],
+  });
 
   return {
     props: {
-      events: events,
+      events: events.records,
       headMetas: {
         keywords: keywordGenerator({
           page: "home",

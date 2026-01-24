@@ -29,6 +29,14 @@ const nextConfig = {
     loader: "custom",
     loaderFile: "./src/utils/imageLoader.ts",
   },
+  rewrites: async () => {
+    return [
+      {
+        source: "/sitemap/:path*",
+        destination: "https://static.furrycons.cn/sitemap/:path*",
+      },
+    ];
+  },
   redirects: async () => {
     return [
       {
