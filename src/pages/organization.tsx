@@ -5,7 +5,7 @@ import Link from "next/link";
 import { sendTrack } from "@/utils/track";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
-import { organizationsAPI } from "@/api/organizations";
+import { OrganizationsAPI } from "@/api/organizations";
 import { OrganizationType } from "@/types/organization";
 import { currentSupportLocale, OrganizationPageMeta } from "@/utils/meta";
 
@@ -90,7 +90,11 @@ function OrganizationItem({
 
 export async function getStaticProps({ locale }: { locale: string }) {
   const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
-  const organizations = await organizationsAPI.getAllOrganizations();
+  const organizations = await OrganizationsAPI.getOrganizationList({
+    current: "1",
+    pageSize: "999",
+    sortBy: "eventCount",
+  });
 
   if (!organizations) {
     return {
@@ -100,16 +104,16 @@ export async function getStaticProps({ locale }: { locale: string }) {
 
   const title = OrganizationPageMeta[locale as currentSupportLocale].title;
   const des = OrganizationPageMeta[locale as currentSupportLocale].description(
-    organizations.length
+    organizations.total
   );
 
   return {
     props: {
-      organizations: organizations,
+      organizations: organizations.records,
       headMetas: {
         title: OrganizationPageMeta[locale as currentSupportLocale].title,
         des: OrganizationPageMeta[locale as currentSupportLocale].description(
-          organizations.length
+          organizations.total
         ),
         link: "/organization",
       },

@@ -114,8 +114,8 @@ export const EventSchema = z.object({
       code: z.string(),
       type: z.string(),
       level: z.number(),
-      localName: z.string(),
-      sortOrder: z.number(),
+      localName: z.string().nullish(),
+      sortOrder: z.number().nullish(),
     })
     .nullable(),
   thumbnail: z.string().nullable(),

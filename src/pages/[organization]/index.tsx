@@ -13,7 +13,7 @@ import { formatDistanceToNowStrict, isBefore } from "date-fns";
 import { zhCN } from "date-fns/locale";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
-import { organizationsAPI } from "@/api/organizations";
+import { OrganizationsAPI } from "@/api/organizations";
 import { z } from "zod";
 import { format } from "date-fns";
 import { EventItem } from "@/types/event";
@@ -312,7 +312,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   });
 
   try {
-    const data = await organizationsAPI.getOrganizationDetail(
+    const data = await OrganizationsAPI.getOrganizationDetail(
       reqParamsParseResult.organization
     );
 

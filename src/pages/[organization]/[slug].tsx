@@ -36,7 +36,6 @@ import { FaHotel, FaPeoplePulling } from "react-icons/fa6";
 import EventStatusBar from "@/components/EventStatusBar";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
-import { eventsAPI } from "@/api/events";
 import { z } from "zod";
 import {
   currentSupportLocale,
@@ -47,6 +46,7 @@ import { EventDate } from "@/components/eventCard";
 import EventSourceButton from "@/components/event/EventSourceButton";
 import { generateEventDetailStructuredData } from "@/utils/structuredData";
 import { getEventDetailUrl } from "@/utils/url";
+import { EventsAPI } from "@/api/events";
 
 const MapLoadingStatus = {
   Idle: "idle",
@@ -432,7 +432,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       organization: context.params?.organization,
     });
 
-    const event = await eventsAPI.getEventDetail(
+    const event = await EventsAPI.getEventDetail(
       reqParamsParseResult.slug,
       reqParamsParseResult.organization
     );
