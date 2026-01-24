@@ -1,6 +1,7 @@
 import { OrganizationType } from "@/types/organization";
 import API from "@/api";
 import { ListResponse } from "@/types/api";
+import { EventItem } from "@/types/event";
 
 export class OrganizationsAPI {
   static async getOrganizationList(params: {
@@ -17,12 +18,12 @@ export class OrganizationsAPI {
   }
 
   static async getOrganizationDetail(slug: string) {
-    const response = await API.get<OrganizationType>(
-      "internal/website/organization/detail",
-      {
-        params: { slug },
-      }
-    );
+    const response = await API.get<{
+      organization: OrganizationType;
+      events: EventItem[];
+    }>("internal/website/organization/detail", {
+      params: { slug },
+    });
 
     return response.data;
   }

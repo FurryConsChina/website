@@ -208,7 +208,7 @@ function eventDescriptionGenerator(
     name?: string;
     organization?: { name: string };
     address?: string | null;
-    region?: { localName: string } | null;
+    region?: { localName?: string | null } | null;
     startAt?: string | null;
     endAt?: string | null;
   }
