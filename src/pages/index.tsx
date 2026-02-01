@@ -14,14 +14,14 @@ import {
 import { sendTrack } from "@/utils/track";
 
 import { DurationType } from "@/types/list";
-import { EventScale, EventStatus, type EventItem } from "@/types/event";
+import { EventScale, EventStatus, type EventListItem } from "@/types/event";
 import { FeatureSchema } from "@/types/feature";
 import { monthNumberFormatter } from "@/utils/locale";
 import { keywordGenerator } from "@/utils/meta";
 import SponsorBanner from "@/components/SponsorBanner";
 import { endOfYear, startOfYear } from "date-fns";
 
-export default function Home(props: { events: EventItem[] }) {
+export default function Home(props: { events: EventListItem[] }) {
   const { t } = useTranslation();
   const [selectedFilter, setFilter] = useState({
     onlyAvailable: true,
@@ -75,7 +75,7 @@ function DurationSection({
   events,
 }: {
   durationType: string;
-  events: EventItem[];
+  events: EventListItem[];
 }) {
   const { t, i18n } = useTranslation();
 
@@ -266,7 +266,32 @@ export async function getStaticProps({ locale }: { locale: string }) {
 
   return {
     props: {
-      events: events.records,
+      events: events.records.map((event) => ({
+        id: event.id,
+        slug: event.slug,
+        name: event.name,
+        startAt: event.startAt,
+        endAt: event.endAt,
+        scale: event.scale,
+        type: event.type,
+        locationType: event.locationType,
+        address: event.address,
+        region: event.region ? { localName: event.region.localName ?? null } : null,
+        organization: {
+          slug: event.organization.slug,
+          name: event.organization.name,
+        },
+        features: event.features
+          ? { self: event.features.self ?? null }
+          : null,
+        commonFeatures: event.commonFeatures
+          ? event.commonFeatures.map((feature) => ({ name: feature.name }))
+          : null,
+        thumbnail: event.thumbnail,
+        media: event.media?.images
+          ? { images: event.media.images.map((image) => ({ url: image.url })) }
+          : null,
+      })),
       headMetas: {
         keywords: keywordGenerator({
           page: "home",

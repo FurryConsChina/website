@@ -1,10 +1,12 @@
-import { EventItem } from "@/types/event";
 import { ImageLoaderProps } from "next/image";
 
 const GLOBAL_AUTO_CDN_IMAGE_URL = "images.furrycons.cn";
 const GLOBAL_MANUAL_CDN_IMAGE_URL = "images.furryeventchina.com";
 
-export const getEventCoverImgPath = (event: Partial<EventItem>) => {
+export const getEventCoverImgPath = (event: {
+  thumbnail?: string | null;
+  media?: { images?: { url: string }[] } | null;
+}) => {
   return (
     event.thumbnail ||
     event.media?.images?.[0].url ||

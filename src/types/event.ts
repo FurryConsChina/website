@@ -184,3 +184,21 @@ export const EventSchema = z.object({
 });
 
 export type EventItem = z.infer<typeof EventSchema>;
+
+export type EventListItem = {
+  id: string;
+  slug: string;
+  name: string;
+  startAt: string | null;
+  endAt: string | null;
+  scale: string;
+  type: string | null;
+  locationType: string | null;
+  address: string | null;
+  region: { localName: string | null } | null;
+  organization: { slug: string; name: string };
+  features?: { self?: string[] | null } | null;
+  commonFeatures?: { name: string }[] | null;
+  thumbnail?: string | null;
+  media?: { images?: { url: string }[] } | null;
+};
