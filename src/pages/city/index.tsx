@@ -1,6 +1,7 @@
 import { RegionAPI } from "@/api/region";
 import { Region, RegionType } from "@/types/region";
 import { CityPageMeta, currentSupportLocale } from "@/utils/meta";
+import { breadcrumbGenerator } from "@/utils/structuredData";
 import { sendTrack } from "@/utils/track";
 import { groupBy } from "es-toolkit";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -81,8 +82,6 @@ export default function City(props: {
 }
 
 export async function getServerSideProps({ locale }: { locale: string }) {
-  const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
-
   const regions = await RegionAPI.getRegionList({
     current: 1,
     pageSize: 100,
@@ -121,18 +120,14 @@ export async function getServerSideProps({ locale }: { locale: string }) {
         link: "/city",
       },
       structuredData: {
-        breadcrumb: {
-          "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
-          itemListElement: [
+        ...breadcrumbGenerator({
+          items: [
             {
-              "@type": "ListItem",
-              position: 1,
               name: CityPageMeta[locale as currentSupportLocale].title,
-              item: `https://${PUBLIC_URL}/city`,
+              item: "/city",
             },
           ],
-        },
+        }),
       },
       ...(await serverSideTranslations(locale, ["common"])),
     },

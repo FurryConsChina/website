@@ -25,6 +25,7 @@ import {
   organizationDetailDescriptionGenerator,
   OrganizationPageMeta,
 } from "@/utils/meta";
+import { breadcrumbGenerator } from "@/utils/structuredData";
 import axios, { AxiosError } from "axios";
 // import {
 //   WebsiteButton,
@@ -299,8 +300,6 @@ export default function OrganizationDetail(props: {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
-
   const orgParamsSchema = z.object({
     organization: z
       .string()
@@ -365,23 +364,17 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
           cover: validOrganization?.logoUrl,
         },
         structuredData: {
-          breadcrumb: {
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            itemListElement: [
+          ...breadcrumbGenerator({
+            items: [
               {
-                "@type": "ListItem",
-                position: 1,
                 name: OrganizationPageMeta[locale].title,
-                item: `https://${PUBLIC_URL}/organization`,
+                item: "/organization",
               },
               {
-                "@type": "ListItem",
-                position: 2,
                 name: validOrganization?.name,
               },
             ],
-          },
+          }),
         },
         ...(context.locale
           ? await serverSideTranslations(context.locale, ["common"])

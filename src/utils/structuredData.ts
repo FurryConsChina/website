@@ -3,8 +3,9 @@ import { getEventCoverImgPath, imageUrl } from "@/utils/imageLoader";
 import { currentSupportLocale } from "@/utils/meta";
 import { getOrganizationDetailUrl } from "@/utils/url";
 
-export function 
-generateEventDetailStructuredData({
+const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
+
+export function generateEventDetailStructuredData({
   event,
   locale,
 }: {
@@ -106,5 +107,37 @@ generateEventDetailStructuredData({
       license: "https://creativecommons.org/licenses/by-nc/4.0/",
       acquireLicensePage: "https://docs.furrycons.cn/blog/about",
     })),
+  };
+}
+
+function toAbsoluteUrl(value?: string | null) {
+  if (!value) return undefined;
+  if (value.startsWith("http://") || value.startsWith("https://")) {
+    return value;
+  }
+  if (!PUBLIC_URL) return value;
+  if (value.startsWith("/")) return `https://${PUBLIC_URL}${value}`;
+  return `https://${PUBLIC_URL}/${value}`;
+}
+
+export function breadcrumbGenerator({
+  items,
+}: {
+  items: { name?: string | null; item?: string | null }[];
+}) {
+  return {
+    breadcrumb: {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: items.map((item, index) => {
+        const url = toAbsoluteUrl(item.item);
+        return {
+          "@type": "ListItem",
+          position: index + 1,
+          name: item.name,
+          ...(url ? { item: url } : {}),
+        };
+      }),
+    },
   };
 }

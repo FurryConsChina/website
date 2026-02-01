@@ -8,6 +8,7 @@ import { useTranslation } from "next-i18next";
 import { OrganizationsAPI } from "@/api/organizations";
 import { OrganizationType } from "@/types/organization";
 import { currentSupportLocale, OrganizationPageMeta } from "@/utils/meta";
+import { breadcrumbGenerator } from "@/utils/structuredData";
 
 export default function OrganizationPage({
   organizations,
@@ -91,7 +92,6 @@ function OrganizationItem({
 }
 
 export async function getStaticProps({ locale }: { locale: string }) {
-  const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
   const organizations = await OrganizationsAPI.getOrganizationList({
     current: "1",
     pageSize: "999",
@@ -115,18 +115,14 @@ export async function getStaticProps({ locale }: { locale: string }) {
         link: "/organization",
       },
       structuredData: {
-        breadcrumb: {
-          "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
-          itemListElement: [
+        ...breadcrumbGenerator({
+          items: [
             {
-              "@type": "ListItem",
-              position: 1,
               name: OrganizationPageMeta[locale as currentSupportLocale].title,
-              item: `https://${PUBLIC_URL}/organization`,
+              item: "/organization",
             },
           ],
-        },
+        }),
       },
       ...(await serverSideTranslations(locale, ["common"])),
     },

@@ -6,6 +6,7 @@ import { EventsAPI } from "@/api/events";
 import { EventItem } from "@/types/event";
 import { monthNumberFormatter } from "@/utils/locale";
 import { currentSupportLocale, YearPageMeta } from "@/utils/meta";
+import { breadcrumbGenerator } from "@/utils/structuredData";
 
 export default function Years({ events }: { events: EventItem[] }) {
   const groupByYearEvents = eventGroupByYear(events, "asc");
@@ -88,7 +89,6 @@ export default function Years({ events }: { events: EventItem[] }) {
 }
 
 export async function getStaticProps({ locale }: { locale: string }) {
-  const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
   const events = await EventsAPI.getEventList({
     current: "1",
     pageSize: "999",
@@ -106,18 +106,14 @@ export async function getStaticProps({ locale }: { locale: string }) {
         link: "/years",
       },
       structuredData: {
-        breadcrumb: {
-          "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
-          itemListElement: [
+        ...breadcrumbGenerator({
+          items: [
             {
-              "@type": "ListItem",
-              position: 1,
               name: YearPageMeta[locale as currentSupportLocale].title,
-              item: `https://${PUBLIC_URL}/years`,
+              item: "/years",
             },
           ],
-        },
+        }),
       },
       ...(await serverSideTranslations(locale, ["common"])),
     },
