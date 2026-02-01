@@ -111,6 +111,8 @@ export default function CityDetail({
 }
 
 function MonthSection({ events }: { events: EventItem[] }) {
+  const { t } = useTranslation();
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
       {events.map((event) => (
@@ -130,7 +132,7 @@ function MonthSection({ events }: { events: EventItem[] }) {
         >
           <div className="rounded-xl duration-500 transition group-hover:border-gray-400 w-full h-full absolute brightness-75 hover:brightness-100">
             <Image
-              alt="活动背景"
+              alt={t("city.eventBackgroundAlt", { name: event.name })}
               src={getEventCoverImgPath(event)}
               width={350}
               className="h-full w-full object-cover rounded-xl overflow-hidden"
@@ -142,9 +144,11 @@ function MonthSection({ events }: { events: EventItem[] }) {
             {event.startAt && event.endAt && (
               <p className="text-center text-white">
                 {event.startAt && (
-                  <span>{format(event.startAt, "MM月dd日")}</span>
+                  <span>{format(event.startAt, t("date.monthDay"))}</span>
                 )}
-                -{event.endAt && <span>{format(event.endAt, "MM月dd日")}</span>}
+                -{event.endAt && (
+                  <span>{format(event.endAt, t("date.monthDay"))}</span>
+                )}
               </p>
             )}
           </div>

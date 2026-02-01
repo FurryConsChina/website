@@ -11,6 +11,8 @@ generateEventDetailStructuredData({
   event: EventItem;
   locale: currentSupportLocale;
 }) {
+  const organizerLabel = locale === "en" ? "Organizers" : "展商";
+
   return {
     breadcrumb: {
       "@context": "https://schema.org",
@@ -19,7 +21,7 @@ generateEventDetailStructuredData({
         {
           "@type": "ListItem",
           position: 1,
-          name: "展商",
+          name: organizerLabel,
           item: getOrganizationDetailUrl({
             organizationSlug: event.organization.slug,
             locale,

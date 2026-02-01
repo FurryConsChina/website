@@ -196,6 +196,7 @@ function OrganizationPill({
   logoUrl: string | null;
   organizationName: string;
 }) {
+  const { t } = useTranslation();
   if (!logoUrl) return null;
   return (
     <div className="flex justify-between items-center rounded-full w-fit">
@@ -203,7 +204,7 @@ function OrganizationPill({
         <div className="hidden md:block border-2 rounded-full border-white">
           <Image
             src={logoUrl}
-            alt={`${organizationName}的展会标志`}
+            alt={t("organization.logoAlt", { name: organizationName })}
             className={clsx(
               "rounded-full object-cover w-[28px] h-[28px] bg-white"
             )}
@@ -234,6 +235,7 @@ function EventCover({
   fallbackWidth?: number;
   fallbackHeight?: number;
 }) {
+  const { t } = useTranslation();
   return (
     <div
       className={clsx(
@@ -245,7 +247,7 @@ function EventCover({
       <div className="relative flex items-center justify-center z-10 h-full md:w-full">
         <Image
           src={imageUrl}
-          alt={`${eventName}的活动封面`}
+          alt={t("event.coverAlt", { name: eventName })}
           containerClassName="relative md:absolute h-full"
           className={clsx("object-contain h-full")}
           sizes={sizes}
@@ -258,7 +260,7 @@ function EventCover({
 
       <Image
         src={imageUrl}
-        alt={`${eventName} mask filter`}
+        alt={t("event.coverBackgroundAlt", { name: eventName })}
         containerClassName="absolute top-0 left-0 h-full w-full"
         className={clsx("object-cover h-full w-full blur-3xl")}
         sizes={sizes}
@@ -288,23 +290,11 @@ export function EventDate({
     const result = differenceInCalendarDays(endDate, startDate) + 1;
 
     if (isSameDay(event.startAt, event.endAt)) {
-      switch (locale) {
-        case "en":
-          return "1 day";
-        case "zh-Hans":
-        default:
-          return "1天";
-      }
+      return t("date.duration.singleDay");
     }
 
     if (result) {
-      switch (locale) {
-        case "en":
-          return `${result}days`;
-        case "zh-Hans":
-        default:
-          return `${result}天`;
-      }
+      return t("date.duration.multiDay", { count: result });
     }
 
     return null;
@@ -360,9 +350,11 @@ function EventAddress({
 }: {
   event: { region: { localName: string | null } | null; address: string | null };
 }) {
+  const { t } = useTranslation();
+
   return (
-    <span aria-label="活动地址" className="truncate">
-      {event.region?.localName} {event.address || "尚未公布"}
+    <span aria-label={t("event.aria.address")} className="truncate">
+      {event.region?.localName} {event.address || t("event.unknown")}
     </span>
   );
 }

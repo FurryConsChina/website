@@ -23,6 +23,7 @@ import {
   currentSupportLocale,
   keywordGenerator,
   organizationDetailDescriptionGenerator,
+  OrganizationPageMeta,
 } from "@/utils/meta";
 import axios, { AxiosError } from "axios";
 // import {
@@ -81,7 +82,7 @@ export default function OrganizationDetail(props: {
               <Image
                 className="object-contain h-full"
                 containerClassName="h-full"
-                alt={`${organization.name}的展会徽标`}
+                alt={t("organization.logoAlt", { name: organization.name })}
                 width={200}
                 height={200}
                 src={organization.logoUrl}
@@ -341,6 +342,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       };
     }
 
+    const locale = (context.locale as currentSupportLocale) || "zh-Hans";
+
     return {
       props: {
         organization: validOrganization,
@@ -348,14 +351,14 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         headMetas: {
           title: `${validOrganization?.name}`,
           des: organizationDetailDescriptionGenerator(
-            (context.locale as currentSupportLocale) || "zh-Hans",
+            locale,
             validOrganization!,
             validEvents?.length,
             validEvents[0]?.startAt
           ),
           keywords: keywordGenerator({
             page: "organization",
-            locale: context.locale as "zh-Hans" | "en",
+            locale: locale,
             organization: validOrganization,
           }),
           url: `/${validOrganization?.slug}`,
@@ -369,7 +372,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
               {
                 "@type": "ListItem",
                 position: 1,
-                name: "展商",
+                name: OrganizationPageMeta[locale].title,
                 item: `https://${PUBLIC_URL}/organization`,
               },
               {

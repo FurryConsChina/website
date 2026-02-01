@@ -6,16 +6,13 @@ import { groupBy } from "es-toolkit";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 import { FaLink } from "react-icons/fa6";
-
-const regionGroupLabel = {
-  special: "特别行政区",
-  other: "其他地区",
-};
+import { useTranslation } from "next-i18next";
 
 export default function City(props: {
   regionGroups: Record<string, Region[]>;
 }) {
   const { regionGroups } = props;
+  const { t } = useTranslation();
 
   const groupKeys = Object.keys(regionGroups).sort((a, b) => {
     const aIsParentGroup = regionGroups[a][0].parent?.sortOrder;
@@ -31,20 +28,24 @@ export default function City(props: {
         {groupKeys.map((groupKey) => {
           const groupName = (() => {
             if (groupKey === "china") {
-              return "中国大陆";
+              return t("city.group.china");
             }
 
             const firstRegion = regionGroups[groupKey][0];
             if (firstRegion.parent?.code === groupKey) {
               return firstRegion.parent.name;
             }
-            return regionGroupLabel[groupKey as keyof typeof regionGroupLabel];
+            if (groupKey === "special") return t("city.group.special");
+            return t("city.group.other");
           })();
 
           return (
             <div key={groupKey} className="mb-8 last:mb-0">
               <h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">
-                {groupName} ({regionGroups[groupKey].length}个地区)
+                {groupName}
+                {t("city.group.count", {
+                  count: regionGroups[groupKey].length,
+                })}
               </h3>
               <ul className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-4">
                 {regionGroups[groupKey]
@@ -127,7 +128,7 @@ export async function getServerSideProps({ locale }: { locale: string }) {
             {
               "@type": "ListItem",
               position: 1,
-              name: "城市",
+              name: CityPageMeta[locale as currentSupportLocale].title,
               item: `https://${PUBLIC_URL}/city`,
             },
           ],

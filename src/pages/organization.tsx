@@ -48,6 +48,8 @@ function OrganizationItem({
 }: {
   organization: OrganizationType;
 }) {
+  const { t } = useTranslation();
+
   return (
     <Link
       href={organization.slug || ""}
@@ -67,7 +69,7 @@ function OrganizationItem({
             <Image
               className="object-contain h-full min-h-12 max-h-12 mx-auto"
               src={organization.logoUrl}
-              alt={`${organization.name}'s logo`}
+              alt={t("organization.logoAlt", { name: organization.name })}
               width={124}
               height={50}
               sizes="(max-width: 750px) 256px, (max-width: 768px) 300px, 300px"
@@ -102,11 +104,6 @@ export async function getStaticProps({ locale }: { locale: string }) {
     };
   }
 
-  const title = OrganizationPageMeta[locale as currentSupportLocale].title;
-  const des = OrganizationPageMeta[locale as currentSupportLocale].description(
-    organizations.total
-  );
-
   return {
     props: {
       organizations: organizations.records,
@@ -125,7 +122,7 @@ export async function getStaticProps({ locale }: { locale: string }) {
             {
               "@type": "ListItem",
               position: 1,
-              name: "展商",
+              name: OrganizationPageMeta[locale as currentSupportLocale].title,
               item: `https://${PUBLIC_URL}/organization`,
             },
           ],

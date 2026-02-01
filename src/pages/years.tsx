@@ -17,7 +17,9 @@ export default function Years({ events }: { events: EventItem[] }) {
   return (
     <div>
       <div className="mb-4 border rounded-xl p-6 bg-white">
-        <h2 className="font-bold text-red-400 text-2xl mb-4">总结</h2>
+        <h2 className="font-bold text-red-400 text-2xl mb-4">
+          {t("years.title")}
+        </h2>
         <div className="text-gray-600">
           {t("years.des", {
             totalYear: years.filter((year) => year !== "no-date").length,
@@ -111,7 +113,7 @@ export async function getStaticProps({ locale }: { locale: string }) {
             {
               "@type": "ListItem",
               position: 1,
-              name: "年度时间轴",
+              name: YearPageMeta[locale as currentSupportLocale].title,
               item: `https://${PUBLIC_URL}/years`,
             },
           ],
