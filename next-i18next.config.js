@@ -2,7 +2,7 @@
 module.exports = {
   i18n: {
     defaultLocale: "zh-Hans",
-    locales: ["zh-Hans", "zh-tw", "en", "ru"],
+    locales: ["zh-Hans", "zh-Hant", "en", "ru"],
     localeDetection: false,
   },
   reloadOnPrerender: process.env.NODE_ENV === "development",

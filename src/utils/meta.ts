@@ -1,7 +1,7 @@
 import { OrganizationType } from "@/types/organization";
 import { format } from "date-fns";
 
-export type currentSupportLocale = "zh-Hans" | "zh-tw" | "en" | "ru";
+export type currentSupportLocale = "zh-Hans" | "zh-Hant" | "en" | "ru";
 
 export const OrganizationPageMeta = {
   "zh-Hans": {
@@ -9,7 +9,7 @@ export const OrganizationPageMeta = {
     description: (organizationCount: number) =>
       `欢迎来到兽展日历！兽展日历共计收录了 ${organizationCount} 个和兽展/兽聚相关的展方，无论他们今天是否还在活跃，我们真挚感谢这些为兽人文化发展做出贡献的团体。`,
   },
-  "zh-tw": {
+  "zh-Hant": {
     title: "展商名單",
     description: (organizationCount: number) =>
       `歡迎來到獸展日曆！獸展日曆共計收錄了 ${organizationCount} 個和獸展/獸聚相關的展方，無論他們今天是否還在活躍，我們真摯感謝這些為獸人文化發展做出貢獻的團體。`,
@@ -28,7 +28,7 @@ export const CityPageMeta = {
     description: (cities: number) =>
       `欢迎来到兽展日历！兽展日历共收录 ${cities} 个城市举办过的兽展(兽聚)活动信息，快来看看这些城市有没有你所在的地方吧！`,
   },
-   "zh-tw": {
+   "zh-Hant": {
     title: "獸展城市列表",
     description: (cities: number) =>
       `歡迎來到獸展日曆！獸展日曆共收錄 ${cities} 個城市舉辦過的獸展（獸聚）活動資訊，快來看看這些城市有沒有你所在的地方吧！`,
@@ -46,7 +46,7 @@ export const YearPageMeta = {
     description: (yearCount: number, eventCount: number) =>
       `欢迎来到兽展日历！兽展日历共计收录了 ${yearCount} 年间共计 ${eventCount} 场活动，你去过哪些呢？希望他们对你来说是最美好的回忆！`,
   },
-  "zh-tw": {
+  "zh-Hant": {
     title: "年度時間軸",
     description: (yearCount: number, eventCount: number) =>
       `歡迎來到獸展日曆！獸展日曆共計收錄了 ${yearCount} 年間共計 ${eventCount} 場活動，你去過哪些呢？ 希望他們對你來說是最美好的回憶！`,
@@ -63,7 +63,7 @@ const universalKeywords = (locale: currentSupportLocale) => {
     case "zh-Hans":
     default:
       return ["兽聚", "兽展", "兽聚日历", "兽展日历"];
-    case "zh-tw":
+    case "zh-Hant":
       return ["獸聚", "獸展", "獸聚日曆", "獸展日曆"];
     case "en":
       return ["Furry Convention", "Furry Con", "Furry Convention Calendar"];
@@ -80,7 +80,7 @@ function generateHomeKeywords(nowYear: number, locale: currentSupportLocale) {
         `${nowYear}兽聚`,
         `${nowYear}兽聚时间表`,
       ];
-    case "zh-tw":
+    case "zh-Hant":
       return [
         `${nowYear}獸展`,
         `${nowYear}獸展時程表`,
@@ -118,7 +118,7 @@ function generateEventKeywords(
           ? [`${startYear}${event.city}兽聚`, `${startYear}${event.city}兽展`]
           : []),
       ];
-    case "zh-tw":
+    case "zh-Hant":
     default:
       return [
         `${event?.name}`,
@@ -167,7 +167,7 @@ function generateOrganizationKeywords(
         `${organization?.name}兽聚`,
         `${organization?.name}兽展`,
       ];
-    case "zh-tw":
+    case "zh-Hant":
       return [
         `${organization?.name}`,
         `${organization?.name}獸聚`,
@@ -227,6 +227,14 @@ function titleGenerator(locale: currentSupportLocale, title?: string) {
   switch (locale) {
     case "en":
       return title ? `${title}——FurConsCalendar` : "FurConsCalendar";
+    case "zh-Hant":
+      return title
+        ? `${title}—獸展日曆 | 獸聚日曆`
+        : "獸展日曆 | 獸聚日曆";
+    case "ru":
+      return title
+        ? `${title}—兽展日历 | 兽聚日历`
+        : "兽展日历 | 兽聚日历";
     case "zh-Hans":
     default:
       return title
@@ -240,7 +248,7 @@ function descriptionGenerator(locale: currentSupportLocale) {
     case "zh-Hans":
     default:
       return "欢迎来到兽展日历！兽展日历致力于为您提供最新最全的兽展、兽聚等相关资讯整合，来这里寻找感兴趣的展会，叫上朋友一起来玩吧！";
-    case "zh-tw":
+    case "zh-Hant":
       return "歡迎來到獸展日曆！ 獸展日曆致力於為您提供最新最全的獸展、獸聚等相關資訊整合，來這裡尋找感興趣的展會，叫上朋友一起來玩吧！";
     case "en":
       return "FurConsCalendar is dedicated to providing the latest and most comprehensive information on furry conventions and gatherings. Come here to find interesting events and invite your friends to join the fun!";
@@ -279,7 +287,7 @@ function eventDescriptionGenerator(
             event?.region?.localName
           }${event?.address}”举办，喜欢的朋友记得关注开始售票时间～`
         : `欢迎来到兽展日历！兽展日历提供关于“${event?.name}”的详细信息：这是由“${event?.organization?.name}”举办的兽展，将在“${event?.region?.localName}${event?.address}”举办，喜欢的朋友记得关注开始售票时间～`;
-    case "zh-tw":
+    case "zh-Hant":
       return event.startAt && event.endAt
         ? `歡迎來到獸展日曆！獸展日曆提供關於“${
             event?.name
@@ -326,7 +334,7 @@ function organizationDetailDescriptionGenerator(
           ? `他们是这样介绍自己的：“${organization?.description}”。`
           : "不过他们没怎么介绍自己。"
       }`;
-    case "zh-tw":
+    case "zh-Hant":
       return `歡迎來到獸展日曆！ 獸展日曆提供關於 ${
         organization?.name
       } 的相關信息，這家展商已累計舉辦 ${eventCount} 場獸展，最近的一場在${

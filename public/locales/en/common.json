@@ -29,6 +29,7 @@
   "homepage.noResultTip": "Try different search criteria, or... wait a bit longer?",
   "homepage.noResultContact": "Know of an upcoming convention? Let us know! Contact info is in the footer.",
   "event.filter.onlyAvailable": "Only view upcoming conventions",
+  "event.filter.all": "All sizes",
   "event.filter.cosy": "Mini (0-100 attendees)",
   "event.filter.small": "Small (100-500 attendees)",
   "event.filter.medium": "Medium (500-1,000 attendees)",

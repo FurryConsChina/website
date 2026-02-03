@@ -17,12 +17,15 @@ import { useTranslation } from "next-i18next";
 const IS_CN_REGION = process.env.NEXT_PUBLIC_REGION === "CN";
 const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
 
-const getCanonicalUrl = (locale: string | undefined, path: string) => {
+const getCanonicalUrl = (
+  locale: currentSupportLocale | undefined,
+  path: string,
+) => {
   switch (locale) {
     case "ru":
       return `https://www.furrycons.cn/ru${path}`;
-    case "zh-tw":
-      return `https://www.furrycons.cn/tw${path}`;
+    case "zh-Hant":
+      return `https://www.furrycons.cn/zh-Hant${path}`;
     case "en":
       return `https://www.furrycons.cn/en${path}`;
     case "zh-Hans":
@@ -31,6 +34,9 @@ const getCanonicalUrl = (locale: string | undefined, path: string) => {
       return `https://www.furrycons.cn${path}`;
   }
 };
+
+const getBaseUrl = () =>
+  PUBLIC_URL ? `https://${PUBLIC_URL}` : "https://www.furrycons.cn";
 
 export default function Layout({
   children,
@@ -52,8 +58,11 @@ export default function Layout({
   const locale = router.locale;
 
   // Remove search parameters from asPath
-  const cleanPath = asPath.split('?')[0];
+  const cleanPath = asPath.split("?")[0];
   const Path = cleanPath === "/" ? "" : cleanPath;
+  const baseUrl = getBaseUrl();
+  const metaPath = headMetas?.url ?? Path;
+  const metaUrl = `${baseUrl}${metaPath}`;
 
   const { i18n } = useTranslation();
 
@@ -63,7 +72,7 @@ export default function Layout({
         <title>
           {titleGenerator(
             i18n.language as currentSupportLocale,
-            headMetas?.title
+            headMetas?.title,
           )}
         </title>
         <meta
@@ -79,7 +88,9 @@ export default function Layout({
           content={
             headMetas?.keywords
               ? headMetas.keywords
-              : universalKeywords(i18n.language as "zh-Hans" | "zh-tw" | "en" | "ru").join(",")
+              : universalKeywords(
+                  i18n.language as currentSupportLocale,
+                ).join(",")
           }
           key="keywords"
         />
@@ -88,7 +99,7 @@ export default function Layout({
           property="og:title"
           content={titleGenerator(
             i18n.language as currentSupportLocale,
-            headMetas?.title
+            headMetas?.title,
           )}
         />
         <meta property="og:type" content="website" />
@@ -101,9 +112,7 @@ export default function Layout({
         />
         <meta
           property="og:url"
-          content={
-            `https://${PUBLIC_URL}${headMetas?.url}` || `https://${PUBLIC_URL}`
-          }
+          content={metaUrl}
           key="url"
         />
         <meta
@@ -112,18 +121,12 @@ export default function Layout({
           key="image"
         />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta property="twitter:domain" content={`${PUBLIC_URL}`} />
-        <meta
-          property="twitter:url"
-          content={
-            `https://${PUBLIC_URL}${headMetas?.url}` || `https://${PUBLIC_URL}`
-          }
-        />
+        <meta property="twitter:url" content={metaUrl} />
         <meta
           name="twitter:title"
           content={titleGenerator(
             i18n.language as currentSupportLocale,
-            headMetas?.title
+            headMetas?.title,
           )}
         />
         <meta
@@ -156,7 +159,13 @@ export default function Layout({
           sizes="16x16"
           href="/favicon-16x16.png"
         />
-        <link rel="canonical" href={getCanonicalUrl(locale, Path)} />
+        <link
+          rel="canonical"
+          href={getCanonicalUrl(
+            locale as currentSupportLocale | undefined,
+            Path,
+          )}
+        />
 
         <link
           rel="alternate"
@@ -166,14 +175,14 @@ export default function Layout({
 
         <link
           rel="alternate"
-          hrefLang="zh-HK"
-          href={`https://www.furrycons.cn${Path}`}
+          hrefLang="zh-hk"
+          href={`https://www.furrycons.cn/zh-Hant${Path}`}
         />
 
         <link
           rel="alternate"
           hrefLang="zh-tw"
-          href={`https://www.furrycons.cn/tw${Path}`}
+          href={`https://www.furrycons.cn/zh-Hant${Path}`}
         />
 
         <link
@@ -187,7 +196,7 @@ export default function Layout({
           hrefLang="ru"
           href={`https://www.furrycons.cn/ru${Path}`}
         />
-        
+
         <link
           rel="alternate"
           hrefLang="x-default"

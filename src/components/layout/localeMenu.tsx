@@ -44,7 +44,7 @@ export default function LocaleMenu() {
             <li>
               <Link
                 href={pathname}
-                locale="zh-tw"
+                locale="zh-Hant"
                 className="px-4 py-2 w-full block text-center  hover:bg-gray-100 rounded-md"
                 onClick={() => setOpen(false)}
               >
