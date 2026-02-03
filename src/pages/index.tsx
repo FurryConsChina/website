@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Field, Label, Switch } from "@headlessui/react";
-import { groupBy } from "lodash-es";
+import { groupBy } from 'es-toolkit/compat';
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { EventsAPI } from "@/api/events";

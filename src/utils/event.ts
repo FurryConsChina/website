@@ -1,5 +1,5 @@
 import { DurationType, SelectedFilterType } from "@/types/list";
-import groupBy from "lodash-es/groupBy";
+import { groupBy } from "es-toolkit/compat";
 import {
   isBefore,
   isAfter,

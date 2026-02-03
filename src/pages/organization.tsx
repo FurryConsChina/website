@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import groupBy from "lodash-es/groupBy";
+import { groupBy } from "es-toolkit/compat";
 import Image from "@/components/image";
 import Link from "next/link";
 import { sendTrack } from "@/utils/track";
