@@ -93,6 +93,7 @@ function generateEventKeywords(
   const startYear = event?.startDate ? format(event.startDate, locale === "en" ? "yyyy" : "yyyy年") : null;
   switch (locale) {
     case "zh-Hans":
+    default:
       return [
         `${event?.name}`,
         `${event?.name}兽聚`,
@@ -104,7 +105,6 @@ function generateEventKeywords(
         ...(startYear && event?.city ? [`${startYear}${event.city}兽聚`, `${startYear}${event.city}兽展`] : []),
       ];
     case "zh-Hant":
-    default:
       return [
         `${event?.name}`,
         `${event?.name}獸聚`,
