@@ -65,7 +65,7 @@ export default function Footer({ isCNRegion }: { isCNRegion: boolean }) {
                     <FriendLink
                       key={link.link}
                       link={link.link}
-                      label={link.label}
+                      label={t(link.labelKey)}
                     />
                   </li>
                 ))}

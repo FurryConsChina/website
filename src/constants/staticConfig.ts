@@ -50,22 +50,22 @@ export const FriendSiteLinks = [
 export const AboutUsLinks = [
   {
     link: "/about",
-    label: "我们是谁",
+    labelKey: "footer.aboutUsLinks.whoWeAre",
   },
   {
     link: "/about#contact",
-    label: "联系方式",
+    labelKey: "footer.aboutUsLinks.contact",
   },
   {
     link: "https://docs.furrycons.cn",
-    label: "帮助文档",
+    labelKey: "footer.aboutUsLinks.docs",
   },
   {
     link: "https://github.com/FurryConsChina/website",
-    label: "GitHub",
+    labelKey: "footer.aboutUsLinks.github",
   },
   {
-    link: "https://status.furryeventchina.com",
-    label: "状态监控",
+    link: "https://status.furrycons.cn/status/fcc",
+    labelKey: "footer.aboutUsLinks.status",
   },
 ];
