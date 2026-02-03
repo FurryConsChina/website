@@ -3859,6 +3859,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dayjs@npm:^1.11.19":
+  version: 1.11.19
+  resolution: "dayjs@npm:1.11.19"
+  checksum: 10/185b820d68492b83a3ce2b8ddc7543034edc1dfd1423183f6ae4707b29929a3cc56503a81826309279f9084680c15966b99456e74cf41f7d1f6a2f98f9c7196f
+  languageName: node
+  linkType: hard
+
 "debounce@npm:^1.2.1":
   version: 1.2.1
   resolution: "debounce@npm:1.2.1"
@@ -4774,6 +4781,7 @@ __metadata:
     baseline-browser-mapping: "npm:^2.9.19"
     clsx: "npm:^2.1.1"
     date-fns: "npm:^4.1.0"
+    dayjs: "npm:^1.11.19"
     embla-carousel-autoplay: "npm:^8.6.0"
     embla-carousel-react: "npm:^8.6.0"
     es-toolkit: "npm:^1.44.0"

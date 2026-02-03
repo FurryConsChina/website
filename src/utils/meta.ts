@@ -1,5 +1,6 @@
 import { Organization } from "@/types/organization";
 import { format } from "date-fns";
+import dayjs from "dayjs";
 
 export type currentSupportLocale = "zh-Hans" | "zh-Hant" | "en";
 
@@ -90,7 +91,7 @@ function generateEventKeywords(
   event: { name?: string; city?: string; startDate?: string | Date | null },
   locale: currentSupportLocale,
 ) {
-  const startYear = event?.startDate ? format(event.startDate, locale === "en" ? "yyyy" : "yyyy年") : null;
+  const startYear = dayjs(event.startDate).year();
   switch (locale) {
     case "zh-Hans":
     default:
@@ -188,14 +189,14 @@ function titleGenerator(locale: currentSupportLocale, title?: string) {
     case "en":
       return title ? `${title}——FurConsCalendar` : "FurConsCalendar";
     case "zh-Hant":
-      return title ? `${title}—獸展日曆 | 獸聚日曆` : "獸展日曆 | 獸聚日曆";
+      return title ? `${title}—獸展日曆` : "獸展日曆";
     case "zh-Hans":
     default:
       return title ? `${title}—FEC·兽展日历 | FEC·兽聚日历` : "FEC·兽展日历 | FEC·兽聚日历";
   }
 }
 
-function descriptionGenerator(locale: currentSupportLocale) {
+function defaultDescriptionGenerator(locale: currentSupportLocale) {
   switch (locale) {
     case "zh-Hans":
     default:
@@ -219,7 +220,7 @@ function eventDescriptionGenerator(
   },
 ) {
   if (!event) {
-    return descriptionGenerator(locale);
+    return defaultDescriptionGenerator(locale);
   }
 
   switch (locale) {
@@ -302,7 +303,7 @@ export {
   universalKeywords,
   keywordGenerator,
   titleGenerator,
-  descriptionGenerator,
+  defaultDescriptionGenerator as descriptionGenerator,
   eventDescriptionGenerator,
   organizationDetailDescriptionGenerator,
 };
