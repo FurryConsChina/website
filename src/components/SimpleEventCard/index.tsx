@@ -27,13 +27,8 @@ function SimpleEventCard({ event }: { event: EventItem }) {
         <p className="text-center text-slate-600">{event.organization?.name}</p>
         {event.startAt && event.endAt && (
           <p className="text-center text-slate-600 text-sm">
-            {event.startAt && (
-              <span>{format(event.startAt, t("date.monthDay"))}</span>
-            )}
-            -
-            {event.endAt && (
-              <span>{format(event.endAt, t("date.monthDay"))}</span>
-            )}
+            {event.startAt && <span>{format(event.startAt, t("date.monthDay"))}</span>}-
+            {event.endAt && <span>{format(event.endAt, t("date.monthDay"))}</span>}
           </p>
         )}
       </div>

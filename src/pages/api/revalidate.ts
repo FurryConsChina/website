@@ -2,10 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 const revalidateToken = process.env.REVALIDATE_TOKEN;
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const auth = req.headers.authorization;
 
   if (auth !== revalidateToken) {

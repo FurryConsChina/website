@@ -1,4 +1,4 @@
-import { OrganizationType } from "@/types/organization";
+import { Organization } from "@/types/organization";
 import { format } from "date-fns";
 
 export type currentSupportLocale = "zh-Hans" | "zh-Hant" | "en";
@@ -19,16 +19,15 @@ export const OrganizationPageMeta = {
     description: (organizationCount: number) =>
       `Welcome to the FurConsCalendar! The calendar has recorded a total of ${organizationCount} organizers related to furry conventions and gatherings. Whether they are still active today or not, we sincerely thank these groups for their contributions to the development of furry culture.`,
   },
-  
 };
 
 export const CityPageMeta = {
-   "zh-Hans": {
+  "zh-Hans": {
     title: "兽展城市列表",
     description: (cities: number) =>
       `欢迎来到兽展日历！兽展日历共收录 ${cities} 个城市举办过的兽展(兽聚)活动信息，快来看看这些城市有没有你所在的地方吧！`,
   },
-   "zh-Hant": {
+  "zh-Hant": {
     title: "獸展城市列表",
     description: (cities: number) =>
       `歡迎來到獸展日曆！獸展日曆共收錄 ${cities} 個城市舉辦過的獸展（獸聚）活動資訊，快來看看這些城市有沒有你所在的地方吧！`,
@@ -74,19 +73,9 @@ function generateHomeKeywords(nowYear: number, locale: currentSupportLocale) {
   switch (locale) {
     case "zh-Hans":
     default:
-      return [
-        `${nowYear}兽展`,
-        `${nowYear}兽展时间表`,
-        `${nowYear}兽聚`,
-        `${nowYear}兽聚时间表`,
-      ];
+      return [`${nowYear}兽展`, `${nowYear}兽展时间表`, `${nowYear}兽聚`, `${nowYear}兽聚时间表`];
     case "zh-Hant":
-      return [
-        `${nowYear}獸展`,
-        `${nowYear}獸展時程表`,
-        `${nowYear}獸聚`,
-        `${nowYear}獸聚時程表`,
-      ];
+      return [`${nowYear}獸展`, `${nowYear}獸展時程表`, `${nowYear}獸聚`, `${nowYear}獸聚時程表`];
     case "en":
       return [
         `${nowYear} Furry Conventions`,
@@ -99,11 +88,9 @@ function generateHomeKeywords(nowYear: number, locale: currentSupportLocale) {
 
 function generateEventKeywords(
   event: { name?: string; city?: string; startDate?: string | Date | null },
-  locale: currentSupportLocale
+  locale: currentSupportLocale,
 ) {
-  const startYear = event?.startDate
-    ? format(event.startDate, locale === "en" ? "yyyy" : "yyyy年")
-    : null;
+  const startYear = event?.startDate ? format(event.startDate, locale === "en" ? "yyyy" : "yyyy年") : null;
   switch (locale) {
     case "zh-Hans":
       return [
@@ -114,9 +101,7 @@ function generateEventKeywords(
         `${event?.name}时间`,
         ...(event?.city ? [`${event.city}兽聚`, `${event.city}兽展`] : []),
         ...(startYear ? [`${startYear}兽聚`, `${startYear}兽展`] : []),
-        ...(startYear && event?.city
-          ? [`${startYear}${event.city}兽聚`, `${startYear}${event.city}兽展`]
-          : []),
+        ...(startYear && event?.city ? [`${startYear}${event.city}兽聚`, `${startYear}${event.city}兽展`] : []),
       ];
     case "zh-Hant":
     default:
@@ -128,9 +113,7 @@ function generateEventKeywords(
         `${event?.name}時間`,
         ...(event?.city ? [`${event.city}獸聚`, `${event.city}獸展`] : []),
         ...(startYear ? [`${startYear}獸聚`, `${startYear}獸展`] : []),
-        ...(startYear && event?.city
-          ? [`${startYear}${event.city}獸聚`, `${startYear}${event.city}獸展`]
-          : []),
+        ...(startYear && event?.city ? [`${startYear}${event.city}獸聚`, `${startYear}${event.city}獸展`] : []),
       ];
     case "en":
       return [
@@ -139,40 +122,22 @@ function generateEventKeywords(
         `${event?.name} Furry Convention`,
         `${event?.name} Event Time`,
         `${event?.name} Schedule`,
-        ...(event?.city
-          ? [`${event.city} Furry Gathering`, `${event.city} Furry Convention`]
-          : []),
-        ...(startYear
-          ? [`${startYear} Furry Gatherings`, `${startYear} Furry Conventions`]
-          : []),
+        ...(event?.city ? [`${event.city} Furry Gathering`, `${event.city} Furry Convention`] : []),
+        ...(startYear ? [`${startYear} Furry Gatherings`, `${startYear} Furry Conventions`] : []),
         ...(startYear && event?.city
-          ? [
-              `${startYear} ${event.city} Furry Gathering`,
-              `${startYear} ${event.city} Furry Convention`,
-            ]
+          ? [`${startYear} ${event.city} Furry Gathering`, `${startYear} ${event.city} Furry Convention`]
           : []),
       ];
   }
 }
 
-function generateOrganizationKeywords(
-  organization: { name: string },
-  locale: currentSupportLocale
-) {
+function generateOrganizationKeywords(organization: { name: string }, locale: currentSupportLocale) {
   switch (locale) {
     case "zh-Hans":
     default:
-      return [
-        `${organization?.name}`,
-        `${organization?.name}兽聚`,
-        `${organization?.name}兽展`,
-      ];
+      return [`${organization?.name}`, `${organization?.name}兽聚`, `${organization?.name}兽展`];
     case "zh-Hant":
-      return [
-        `${organization?.name}`,
-        `${organization?.name}獸聚`,
-        `${organization?.name}獸展`,
-      ];
+      return [`${organization?.name}`, `${organization?.name}獸聚`, `${organization?.name}獸展`];
     case "en":
       return [
         `${organization?.name}`,
@@ -203,15 +168,10 @@ function keywordGenerator({
 
   switch (page) {
     case "home":
-      return [
-        ...universalKeywords(locale),
-        ...generateHomeKeywords(nowYear, locale),
-      ].join(",");
+      return [...universalKeywords(locale), ...generateHomeKeywords(nowYear, locale)].join(",");
 
     case "event":
-      return event
-        ? generateEventKeywords(event, locale).join(",")
-        : universalKeywords(locale).join(",");
+      return event ? generateEventKeywords(event, locale).join(",") : universalKeywords(locale).join(",");
 
     case "organization":
       return organization
@@ -228,14 +188,10 @@ function titleGenerator(locale: currentSupportLocale, title?: string) {
     case "en":
       return title ? `${title}——FurConsCalendar` : "FurConsCalendar";
     case "zh-Hant":
-      return title
-        ? `${title}—獸展日曆 | 獸聚日曆`
-        : "獸展日曆 | 獸聚日曆";
+      return title ? `${title}—獸展日曆 | 獸聚日曆` : "獸展日曆 | 獸聚日曆";
     case "zh-Hans":
     default:
-      return title
-        ? `${title}—FEC·兽展日历 | FEC·兽聚日历`
-        : "FEC·兽展日历 | FEC·兽聚日历";
+      return title ? `${title}—FEC·兽展日历 | FEC·兽聚日历` : "FEC·兽展日历 | FEC·兽聚日历";
   }
 }
 
@@ -248,8 +204,6 @@ function descriptionGenerator(locale: currentSupportLocale) {
       return "歡迎來到獸展日曆！ 獸展日曆致力於為您提供最新最全的獸展、獸聚等相關資訊整合，來這裡尋找感興趣的展會，叫上朋友一起來玩吧！";
     case "en":
       return "FurConsCalendar is dedicated to providing the latest and most comprehensive information on furry conventions and gatherings. Come here to find interesting events and invite your friends to join the fun!";
-
-    
   }
 }
 
@@ -262,7 +216,7 @@ function eventDescriptionGenerator(
     region?: { localName?: string | null } | null;
     startAt?: string | null;
     endAt?: string | null;
-  }
+  },
 ) {
   if (!event) {
     return descriptionGenerator(locale);
@@ -272,39 +226,30 @@ function eventDescriptionGenerator(
     case "zh-Hans":
     default:
       return event.startAt && event.endAt
-        ? `欢迎来到兽展日历！兽展日历提供关于“${
-            event?.name
-          }”的详细信息：这是由“${
+        ? `欢迎来到兽展日历！兽展日历提供关于“${event?.name}”的详细信息：这是由“${
             event?.organization?.name
           }”举办的兽展，将于${format(
             event?.startAt!,
-            "yyyy年MM月dd日"
+            "yyyy年MM月dd日",
           )}至${format(event?.endAt!, "yyyy年MM月dd日")}在“${
             event?.region?.localName
           }${event?.address}”举办，喜欢的朋友记得关注开始售票时间～`
         : `欢迎来到兽展日历！兽展日历提供关于“${event?.name}”的详细信息：这是由“${event?.organization?.name}”举办的兽展，将在“${event?.region?.localName}${event?.address}”举办，喜欢的朋友记得关注开始售票时间～`;
     case "zh-Hant":
       return event.startAt && event.endAt
-        ? `歡迎來到獸展日曆！獸展日曆提供關於“${
-            event?.name
-          }”的詳細信息：這是由“${
+        ? `歡迎來到獸展日曆！獸展日曆提供關於“${event?.name}”的詳細信息：這是由“${
             event?.organization?.name
-          }”舉辦的獸展，將於${format(
-            event?.startAt!,
-            "yyyy/MM/dd"
-          )}至${format(event?.endAt!, "yyyy/MM/dd")}在“${
+          }”舉辦的獸展，將於${format(event?.startAt!, "yyyy/MM/dd")}至${format(event?.endAt!, "yyyy/MM/dd")}在“${
             event?.region?.localName
           }${event?.address}”舉辦，喜歡的朋友記得關注開票時間～`
         : `歡迎來到獸展日曆！獸展日曆提供關於“${event?.name}”的詳細信息：這是由“${event?.organization?.name}”舉辦的獸展，將在“${event?.region?.localName}${event?.address}”舉辦，喜歡的朋友記得關注開票時間～`;
     case "en":
       return event.startAt && event.endAt
-        ? `Details about "${
-            event?.name
-          }": This furry convention is organized by "${
+        ? `Details about "${event?.name}": This furry convention is organized by "${
             event?.organization?.name
           }" and will be held from ${format(
             event?.startAt!,
-            "MMMM dd, yyyy"
+            "MMMM dd, yyyy",
           )} to ${format(event?.endAt!, "MMMM dd, yyyy")} at "${
             event?.region?.localName
           }${event?.address}". Stay tuned for ticket sales!`
@@ -314,9 +259,9 @@ function eventDescriptionGenerator(
 
 function organizationDetailDescriptionGenerator(
   locale: currentSupportLocale,
-  organization: OrganizationType,
+  organization: Organization,
   eventCount: number,
-  eventStartAt?: string | null
+  eventStartAt?: string | null,
 ) {
   switch (locale) {
     case "zh-Hans":

@@ -47,29 +47,21 @@ export default function Slider() {
           WildDream 创作站兽主题绘画比赛·2024
           <span className={clsx(!expand && "animate-bounce")}>
             <IoIosArrowDown
-              className={clsx(
-                "transition-all dutation-300 hover:cursor-pointer ml-2",
-                {
-                  "rotate-180": expand,
-                  "rotate-0": !expand,
-                }
-              )}
+              className={clsx("transition-all dutation-300 hover:cursor-pointer ml-2", {
+                "rotate-180": expand,
+                "rotate-0": !expand,
+              })}
             />
           </span>
         </h6>
         <div
-          className={clsx(
-            "transition-[max-height] duration-300 overflow-hidden",
-            {
-              "max-h-96": expand,
-              "max-h-0 ": !expand,
-            }
-          )}
+          className={clsx("transition-[max-height] duration-300 overflow-hidden", {
+            "max-h-96": expand,
+            "max-h-0 ": !expand,
+          })}
         >
           <div className="mb-2 flex flex-col md:flex-row md:items-center">
-            <span className="text-sm text-gray-500">
-              活动时间：2024年1月19日 - 2024年3月15日（北京时间 23:59）
-            </span>
+            <span className="text-sm text-gray-500">活动时间：2024年1月19日 - 2024年3月15日（北京时间 23:59）</span>
             <hr className="hidden md:block mr-2 h-4 border-r-[1px] border-gray-300" />
             <a
               className="text-red-400 text-sm underline underline-offset-4 inline-flex items-center"

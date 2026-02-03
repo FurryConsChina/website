@@ -9,9 +9,7 @@ import Link from "next/link";
 import { FaLink } from "react-icons/fa6";
 import { useTranslation } from "next-i18next";
 
-export default function City(props: {
-  regionGroups: Record<string, Region[]>;
-}) {
+export default function City(props: { regionGroups: Record<string, Region[]> }) {
   const { regionGroups } = props;
   const { t } = useTranslation();
 
@@ -88,9 +86,7 @@ export async function getServerSideProps({ locale }: { locale: string }) {
     withEvents: true,
   });
 
-  const regionWithoutCountry = regions.records.filter(
-    (item) => item.type !== RegionType.COUNTRY
-  );
+  const regionWithoutCountry = regions.records.filter((item) => item.type !== RegionType.COUNTRY);
 
   const regionGroups = groupBy(regionWithoutCountry, (item) => {
     if (["xianggang", "aomen"].includes(item.code)) {
@@ -114,9 +110,7 @@ export async function getServerSideProps({ locale }: { locale: string }) {
       regionGroups: regionGroups,
       headMetas: {
         title: CityPageMeta[locale as currentSupportLocale].title,
-        des: CityPageMeta[locale as currentSupportLocale].description(
-          regions.total
-        ),
+        des: CityPageMeta[locale as currentSupportLocale].description(regions.total),
         link: "/city",
       },
       structuredData: {

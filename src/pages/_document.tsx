@@ -20,12 +20,7 @@ export default function Document() {
           />
         )}
         {isEnableTrack && (
-          <Script
-            id="baidu-track"
-            type="text/javascript"
-            strategy="lazyOnload"
-            async
-          >
+          <Script id="baidu-track" type="text/javascript" strategy="lazyOnload" async>
             {`
               var _hmt = _hmt || [];
               (function() {

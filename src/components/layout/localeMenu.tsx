@@ -11,11 +11,7 @@ export default function LocaleMenu() {
   const pathname = usePathname();
   return (
     <div className="relative flex justify-center">
-      <button
-        type="button"
-        className="text-2xl text-gray-600"
-        onClick={() => setOpen(!open)}
-      >
+      <button type="button" className="text-2xl text-gray-600" onClick={() => setOpen(!open)}>
         <FaLanguage className="align-middle" size={24} />
       </button>
       {open && (

@@ -11,12 +11,7 @@ import { IoLocation } from "react-icons/io5";
 import { RiErrorWarningLine } from "react-icons/ri";
 import { TbArrowsRightLeft } from "react-icons/tb";
 import Link from "next/link";
-import {
-  EventSchema,
-  EventStatus,
-  EventStatusSchema,
-  EventItem,
-} from "@/types/event";
+import { EventSchema, EventStatus, EventStatusSchema, EventItem } from "@/types/event";
 import { sendTrack } from "@/utils/track";
 import { getEventCoverImgPath, imageUrl } from "@/utils/imageLoader";
 import Script from "next/script";
@@ -37,11 +32,7 @@ import EventStatusBar from "@/components/EventStatusBar";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { z } from "zod";
-import {
-  currentSupportLocale,
-  eventDescriptionGenerator,
-  keywordGenerator,
-} from "@/utils/meta";
+import { currentSupportLocale, eventDescriptionGenerator, keywordGenerator } from "@/utils/meta";
 import { EventDate } from "@/components/eventCard";
 import EventSourceButton from "@/components/event/EventSourceButton";
 import { generateEventDetailStructuredData } from "@/utils/structuredData";
@@ -73,15 +64,12 @@ export default function EventDetail({ event }: { event: EventItem }) {
     //定义map变量，调用 TMap.Map() 构造函数创建地图
 
     try {
-      const map = new window.TMap.Map(
-        document.getElementById("event-map-container"),
-        {
-          center: center, //设置地图中心点坐标
-          zoom: 17.2, //设置地图缩放级别
-          pitch: 43.5, //设置俯仰角
-          rotation: 45, //设置地图旋转角度
-        }
-      );
+      const map = new window.TMap.Map(document.getElementById("event-map-container"), {
+        center: center, //设置地图中心点坐标
+        zoom: 17.2, //设置地图缩放级别
+        pitch: 43.5, //设置俯仰角
+        rotation: 45, //设置地图旋转角度
+      });
 
       map.on("tilesloaded", function () {
         setMapLoadingStatus(MapLoadingStatus.Finished);
@@ -103,10 +91,7 @@ export default function EventDetail({ event }: { event: EventItem }) {
             //点标注数据数组
             id: "demo",
             styleId: "marker",
-            position: new window.TMap.LatLng(
-              event.addressLat,
-              event.addressLon
-            ),
+            position: new window.TMap.LatLng(event.addressLat, event.addressLon),
             properties: {
               title: "marker",
             },
@@ -119,9 +104,7 @@ export default function EventDetail({ event }: { event: EventItem }) {
     }
   };
 
-  const showDescriptionContainer = !!(
-    event.detail || event.media?.images?.length
-  );
+  const showDescriptionContainer = !!(event.detail || event.media?.images?.length);
 
   return (
     <>
@@ -133,15 +116,8 @@ export default function EventDetail({ event }: { event: EventItem }) {
         />
       )}
 
-      <div
-        className={clsx(
-          "flex border bg-white rounded-xl min-h-[500px] overflow-hidden",
-          "lg:flex-row flex-col"
-        )}
-      >
-        <div
-          className={clsx("event-detail__left", "lg:w-7/12 w-full h-[500px]")}
-        >
+      <div className={clsx("flex border bg-white rounded-xl min-h-[500px] overflow-hidden", "lg:flex-row flex-col")}>
+        <div className={clsx("event-detail__left", "lg:w-7/12 w-full h-[500px]")}>
           <div className={clsx("relative text-center h-full")}>
             <NextImage
               containerClassName="relative z-20"
@@ -166,7 +142,7 @@ export default function EventDetail({ event }: { event: EventItem }) {
             "event-detail__right",
             "p-6 bg-white z-10 flex",
             "flex-col sm:flex-row sm:max-lg:items-end lg:flex-col",
-            "w-full lg:w-5/12"
+            "w-full lg:w-5/12",
           )}
         >
           <div className="flex-grow">
@@ -177,10 +153,7 @@ export default function EventDetail({ event }: { event: EventItem }) {
               </p>
             )}
 
-            <h2
-              aria-label={t("event.aria.name")}
-              className="font-bold text-3xl text-gray-700"
-            >
+            <h2 aria-label={t("event.aria.name")} className="font-bold text-3xl text-gray-700">
               {event.name}
             </h2>
             <h2 className="text-gray-600 text-sm flex">
@@ -188,37 +161,24 @@ export default function EventDetail({ event }: { event: EventItem }) {
               {/* <EventStatusBar className="ml-2" pageviews="0" fav="2" /> */}
             </h2>
 
-            <p
-              aria-label={t("event.aria.location")}
-              className="flex items-center text-gray-500 mt-4"
-            >
+            <p aria-label={t("event.aria.location")} className="flex items-center text-gray-500 mt-4">
               <IoLocation className="text-gray-500 inline-block mr-2" />
               {`${event.region?.localName || t("event.unknown")} · ${
                 event.address ? event.address : t("event.unknown")
               }`}
             </p>
 
-            <p
-              aria-label={t("event.aria.time")}
-              className="flex items-center text-gray-500"
-            >
+            <p aria-label={t("event.aria.time")} className="flex items-center text-gray-500">
               <BsCalendar2DateFill className="text-gray-500 inline-block mr-2" />
-              <EventDate
-                event={event}
-                locale={i18n.language as currentSupportLocale}
-              />
+              <EventDate event={event} locale={i18n.language as currentSupportLocale} />
             </p>
 
             {!!event.type && !!event.locationType && (
-              <p
-                aria-label={t("event.aria.venueType")}
-                className="flex items-center text-gray-500"
-              >
+              <p aria-label={t("event.aria.venueType")} className="flex items-center text-gray-500">
                 <FaHotel className="text-gray-500 inline-block mr-2" />
 
                 {[
-                  event.locationType &&
-                    t(`event.locationType.${event.locationType}`),
+                  event.locationType && t(`event.locationType.${event.locationType}`),
                   event.type && t(`event.type.${event.type}`),
                 ]
                   .filter(Boolean)
@@ -226,19 +186,13 @@ export default function EventDetail({ event }: { event: EventItem }) {
               </p>
             )}
 
-            <p
-              aria-label={t("event.aria.scale")}
-              className="flex items-center text-gray-500"
-            >
+            <p aria-label={t("event.aria.scale")} className="flex items-center text-gray-500">
               <FaPeoplePulling className="text-gray-500 inline-block mr-2" />
               {t("event.scaleDes", { scale: t(`event.scale.${event.scale}`) })}
             </p>
           </div>
 
-          <EventSourceButton
-            sources={event.sources || []}
-            eventName={event.name}
-          />
+          <EventSourceButton sources={event.sources || []} eventName={event.name} />
         </div>
       </div>
 
@@ -246,15 +200,12 @@ export default function EventDetail({ event }: { event: EventItem }) {
         <div className="my-4 bg-white rounded-xl overflow-hidden elative">
           <h3 className="text-xl text-gray-600 m-4">{t("event.map")}</h3>
 
-          <div
-            id="event-map-container"
-            className="h-[450px] overflow-hidden rounded-2xl m-4 relative"
-          >
+          <div id="event-map-container" className="h-[450px] overflow-hidden rounded-2xl m-4 relative">
             <div
               className={clsx(
                 "absolute w-full bg-gray-100/70 top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 flex justify-center overflow-hidden transition duration-300",
                 mapLoadingStatus === MapLoadingStatus.Loading && "h-full",
-                mapLoadingStatus !== MapLoadingStatus.Loading && "h-0"
+                mapLoadingStatus !== MapLoadingStatus.Loading && "h-0",
               )}
             >
               <div className="flex items-center z-10">
@@ -317,7 +268,7 @@ export default function EventDetail({ event }: { event: EventItem }) {
           className={clsx(
             "bg-white rounded-xl mb-4 lg:mb-0",
             !showDescriptionContainer && "w-full",
-            showDescriptionContainer && "md:w-4/12"
+            showDescriptionContainer && "md:w-4/12",
           )}
         >
           <div className="p-4">
@@ -345,9 +296,7 @@ export default function EventDetail({ event }: { event: EventItem }) {
                   </Link>
                   <div className="flex items-center text-gray-500 mb-4">
                     <span className="text-sm">
-                      <OrganizationStatus
-                        status={event.organization?.status || ""}
-                      />
+                      <OrganizationStatus status={event.organization?.status || ""} />
                     </span>
                   </div>
                 </div>
@@ -373,42 +322,24 @@ export default function EventDetail({ event }: { event: EventItem }) {
             <div
               className={clsx(
                 "items-center text-gray-500 grid gap-4 mt-4",
-                !showDescriptionContainer && "lg:grid-cols-2"
+                !showDescriptionContainer && "lg:grid-cols-2",
               )}
             >
-              {event.organization?.website && (
-                <WebsiteButton t={t} href={event.organization.website} />
-              )}
-              {event.organization?.qqGroup && (
-                <QQGroupButton t={t} text={event.organization.qqGroup} />
-              )}
-              {event.organization?.bilibili && (
-                <BiliButton t={t} href={event.organization.bilibili} />
-              )}
+              {event.organization?.website && <WebsiteButton t={t} href={event.organization.website} />}
+              {event.organization?.qqGroup && <QQGroupButton t={t} text={event.organization.qqGroup} />}
+              {event.organization?.bilibili && <BiliButton t={t} href={event.organization.bilibili} />}
 
-              {event.organization?.weibo && (
-                <WeiboButton t={t} href={event.organization.weibo} />
-              )}
+              {event.organization?.weibo && <WeiboButton t={t} href={event.organization.weibo} />}
 
-              {event.organization?.twitter && (
-                <TwitterButton t={t} href={event.organization.twitter} />
-              )}
+              {event.organization?.twitter && <TwitterButton t={t} href={event.organization.twitter} />}
 
-              {event.organization?.contactMail && (
-                <EmailButton t={t} mail={event.organization.contactMail} />
-              )}
+              {event.organization?.contactMail && <EmailButton t={t} mail={event.organization.contactMail} />}
 
-              {event.organization?.plurk && (
-                <PlurkButton t={t} href={event.organization.plurk} />
-              )}
+              {event.organization?.plurk && <PlurkButton t={t} href={event.organization.plurk} />}
 
-              {event.organization?.facebook && (
-                <FacebookButton t={t} href={event.organization.facebook} />
-              )}
+              {event.organization?.facebook && <FacebookButton t={t} href={event.organization.facebook} />}
 
-              {event.organization?.rednote && (
-                <RednoteButton t={t} href={event.organization.rednote} />
-              )}
+              {event.organization?.rednote && <RednoteButton t={t} href={event.organization.rednote} />}
             </div>
           </div>
         </div>
@@ -435,10 +366,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       organization: context.params?.organization,
     });
 
-    const event = await EventsAPI.getEventDetail(
-      reqParamsParseResult.slug,
-      reqParamsParseResult.organization
-    );
+    const event = await EventsAPI.getEventDetail(reqParamsParseResult.slug, reqParamsParseResult.organization);
 
     if (!event) {
       return {
@@ -460,10 +388,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
               city: event.region?.localName || undefined,
             },
           }),
-          des: eventDescriptionGenerator(
-            context.locale as currentSupportLocale,
-            event
-          ),
+          des: eventDescriptionGenerator(context.locale as currentSupportLocale, event),
           url: getEventDetailUrl({
             eventSlug: event.slug,
             organizationSlug: event.organization.slug,
@@ -476,9 +401,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
           event,
           locale: context.locale as currentSupportLocale,
         }),
-        ...(context.locale
-          ? await serverSideTranslations(context.locale, ["common"])
-          : {}),
+        ...(context.locale ? await serverSideTranslations(context.locale, ["common"]) : {}),
       },
     };
   } catch (error) {

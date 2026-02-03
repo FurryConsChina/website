@@ -6,24 +6,18 @@ import { sendTrack } from "@/utils/track";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { OrganizationsAPI } from "@/api/organizations";
-import { OrganizationType } from "@/types/organization";
+import { Organization } from "@/types/organization";
 import { currentSupportLocale, OrganizationPageMeta } from "@/utils/meta";
 import { breadcrumbGenerator } from "@/utils/structuredData";
 
-export default function OrganizationPage({
-  organizations,
-}: {
-  organizations: OrganizationType[];
-}) {
+export default function OrganizationPage({ organizations }: { organizations: Organization[] }) {
   const groupByStatusOrganizations = groupBy(organizations, (o) => o.status);
   const { t } = useTranslation();
 
   return (
     <div className="bg-white p-6 rounded-xl">
       <section>
-        <h1 className="font-bold text-gray-600 text-2xl">
-          {t("organization.active")}
-        </h1>
+        <h1 className="font-bold text-gray-600 text-2xl">{t("organization.active")}</h1>
         <div className="mt-4 grid md:grid-cols-3 gap-10">
           {groupByStatusOrganizations["active"].map((o) => (
             <OrganizationItem key={o.id} organization={o} />
@@ -31,9 +25,7 @@ export default function OrganizationPage({
         </div>
       </section>
       <section className="mt-6">
-        <h1 className="font-bold text-gray-600 text-2xl">
-          {t("organization.inactive")}
-        </h1>
+        <h1 className="font-bold text-gray-600 text-2xl">{t("organization.inactive")}</h1>
         <div className="mt-4 grid md:grid-cols-3 gap-10">
           {groupByStatusOrganizations["inactive"].map((o) => (
             <OrganizationItem key={o.id} organization={o} />
@@ -44,11 +36,7 @@ export default function OrganizationPage({
   );
 }
 
-function OrganizationItem({
-  organization,
-}: {
-  organization: OrganizationType;
-}) {
+function OrganizationItem({ organization }: { organization: Organization }) {
   const { t } = useTranslation();
 
   return (
@@ -81,7 +69,7 @@ function OrganizationItem({
         <h2
           className={clsx(
             "w-3/4 tracking-wide text-gray-600 md:text-center text-lg border-l md:border-l-0 ml-4 md:ml-0 pl-4 md:pl-0 font-bold",
-            organization.logoUrl && "md:mt-4"
+            organization.logoUrl && "md:mt-4",
           )}
         >
           {organization.name}
@@ -109,9 +97,7 @@ export async function getStaticProps({ locale }: { locale: string }) {
       organizations: organizations.records,
       headMetas: {
         title: OrganizationPageMeta[locale as currentSupportLocale].title,
-        des: OrganizationPageMeta[locale as currentSupportLocale].description(
-          organizations.total
-        ),
+        des: OrganizationPageMeta[locale as currentSupportLocale].description(organizations.total),
         link: "/organization",
       },
       structuredData: {

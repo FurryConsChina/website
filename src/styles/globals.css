@@ -12,9 +12,9 @@ html,
 body {
   scroll-behavior: smooth;
   min-height: 100vh;
-  font-family: -apple-system, BlinkMacSystemFont, var(--font-rubik),
-    var(--font-noto-sans), "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji";
+  font-family:
+    -apple-system, BlinkMacSystemFont, var(--font-rubik), var(--font-noto-sans), "Segoe UI", "Noto Sans", Helvetica,
+    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
 }
 
 body {

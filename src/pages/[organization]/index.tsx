@@ -17,7 +17,7 @@ import { OrganizationsAPI } from "@/api/organizations";
 import { z } from "zod";
 import { format } from "date-fns";
 import { EventItem } from "@/types/event";
-import { OrganizationSchema, OrganizationType } from "@/types/organization";
+import { OrganizationSchema, Organization } from "@/types/organization";
 import { FeatureSchema } from "@/types/feature";
 import {
   currentSupportLocale,
@@ -37,10 +37,7 @@ import axios, { AxiosError } from "axios";
 //   WikifurButton,
 // } from "@/components/OrganizationLinkButton";
 
-export default function OrganizationDetail(props: {
-  events: EventItem[];
-  organization: OrganizationType;
-}) {
+export default function OrganizationDetail(props: { events: EventItem[]; organization: Organization }) {
   const { t } = useTranslation();
   const { organization, events } = props;
 
@@ -106,9 +103,7 @@ export default function OrganizationDetail(props: {
                   })}
                 </span>
               )}
-              <span>
-                {t("organization.totalEvent", { amount: events.length })}
-              </span>
+              <span>{t("organization.totalEvent", { amount: events.length })}</span>
               {formattedFirstEventTime && (
                 <span>
                   {t("organization.firstTimeEvent", {
@@ -132,7 +127,7 @@ export default function OrganizationDetail(props: {
 
             <div
               className={clsx(
-                "flex items-center flex-wrap first:mr-0 gap-4"
+                "flex items-center flex-wrap first:mr-0 gap-4",
                 // styles.links
               )}
             >
@@ -199,9 +194,7 @@ export default function OrganizationDetail(props: {
                   onClick={() => {
                     navigator.clipboard
                       .writeText(organization?.qqGroup || "")
-                      .then(() =>
-                        toast.success(t("organization.qqCopySuccess"))
-                      );
+                      .then(() => toast.success(t("organization.qqCopySuccess")));
                   }}
                   className="flex items-center justify-center bg-red-300 hover:bg-red-400 transition rounded-xl px-4 py-1 text-white text-center"
                 >
@@ -221,9 +214,7 @@ export default function OrganizationDetail(props: {
                     onClick={() => {
                       navigator.clipboard
                         .writeText(organization.contactMail!)
-                        .then(() =>
-                          toast.success(t("organization.mailCopySuccess"))
-                        );
+                        .then(() => toast.success(t("organization.mailCopySuccess")));
                     }}
                     className="border-l ml-2 pl-2 cursor-pointer"
                   >
@@ -273,16 +264,12 @@ export default function OrganizationDetail(props: {
 
         <div className="border-t my-8" />
         <h2 className="text-xl text-slate-600 mb-4">{t("organization.des")}</h2>
-        <p className="text-slate-700 whitespace-pre-line">
-          {organization.description || t("organization.defaultDes")}
-        </p>
+        <p className="text-slate-700 whitespace-pre-line">{organization.description || t("organization.defaultDes")}</p>
       </div>
 
       {!!events.length && (
         <section className="mt-8 p-6 bg-gray-100/80 rounded-xl shadow">
-          <h2 className="text-xl text-slate-600 mb-4">
-            {t("organization.passedEvent")}
-          </h2>
+          <h2 className="text-xl text-slate-600 mb-4">{t("organization.passedEvent")}</h2>
           <div className="grid gird-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-8">
             {events.map((e) => (
               <EventCard
@@ -312,9 +299,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   });
 
   try {
-    const data = await OrganizationsAPI.getOrganizationDetail(
-      reqParamsParseResult.organization
-    );
+    const data = await OrganizationsAPI.getOrganizationDetail(reqParamsParseResult.organization);
 
     const validOrganization = data.organization;
     const validEvents =
@@ -353,7 +338,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
             locale,
             validOrganization!,
             validEvents?.length,
-            validEvents[0]?.startAt
+            validEvents[0]?.startAt,
           ),
           keywords: keywordGenerator({
             page: "organization",
@@ -376,9 +361,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
             ],
           }),
         },
-        ...(context.locale
-          ? await serverSideTranslations(context.locale, ["common"])
-          : {}),
+        ...(context.locale ? await serverSideTranslations(context.locale, ["common"]) : {}),
       },
     };
   } catch (error) {

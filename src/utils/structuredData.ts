@@ -52,8 +52,7 @@ export function generateEventDetailStructuredData({
       name: event?.name,
       startDate: event?.startAt,
       endDate: event?.endAt,
-      eventStatus:
-        EventStatusSchema[event?.status || EventStatus.EventScheduled],
+      eventStatus: EventStatusSchema[event?.status || EventStatus.EventScheduled],
       eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
       location: {
         "@type": "Place",
@@ -91,22 +90,21 @@ export function generateEventDetailStructuredData({
         }),
       },
     },
-    imageObject: [
-      ...(event?.thumbnail ? [{ url: event.thumbnail }] : []),
-      ...(event?.media?.images || []),
-    ].map((image) => ({
-      "@context": "https://schema.org/",
-      "@type": "ImageObject",
-      contentUrl: imageUrl(image.url),
-      creditText: event?.organization?.name,
-      creator: {
-        "@type": "Organization",
-        name: event?.organization?.name,
-      },
-      copyrightNotice: event?.organization?.name,
-      license: "https://creativecommons.org/licenses/by-nc/4.0/",
-      acquireLicensePage: "https://docs.furrycons.cn/blog/about",
-    })),
+    imageObject: [...(event?.thumbnail ? [{ url: event.thumbnail }] : []), ...(event?.media?.images || [])].map(
+      (image) => ({
+        "@context": "https://schema.org/",
+        "@type": "ImageObject",
+        contentUrl: imageUrl(image.url),
+        creditText: event?.organization?.name,
+        creator: {
+          "@type": "Organization",
+          name: event?.organization?.name,
+        },
+        copyrightNotice: event?.organization?.name,
+        license: "https://creativecommons.org/licenses/by-nc/4.0/",
+        acquireLicensePage: "https://docs.furrycons.cn/blog/about",
+      }),
+    ),
   };
 }
 
@@ -120,11 +118,7 @@ function toAbsoluteUrl(value?: string | null) {
   return `https://${PUBLIC_URL}/${value}`;
 }
 
-export function breadcrumbGenerator({
-  items,
-}: {
-  items: { name?: string | null; item?: string | null }[];
-}) {
+export function breadcrumbGenerator({ items }: { items: { name?: string | null; item?: string | null }[] }) {
   return {
     breadcrumb: {
       "@context": "https://schema.org",

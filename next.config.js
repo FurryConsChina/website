@@ -73,7 +73,7 @@ const nextConfig = {
             chunks: true,
             modules: true,
           },
-        })
+        }),
       );
     }
 
@@ -121,7 +121,4 @@ const sentryOptions = {
   },
 };
 
-module.exports = withSentryConfig(
-  withBundleAnalyzer(nextConfig),
-  sentryOptions
-);
+module.exports = withSentryConfig(withBundleAnalyzer(nextConfig), sentryOptions);

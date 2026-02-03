@@ -14,13 +14,7 @@ import { useTranslation } from "next-i18next";
 import { monthNumberFormatter } from "@/utils/locale";
 import { EventsAPI } from "@/api/events";
 
-export default function CityDetail({
-  region,
-  events,
-}: {
-  region: Region;
-  events: EventItem[];
-}) {
+export default function CityDetail({ region, events }: { region: Region; events: EventItem[] }) {
   const { t, i18n } = useTranslation();
   // 按年份分组
   const groupEventsByYear = groupBy(events, (event) => {
@@ -45,9 +39,7 @@ export default function CityDetail({
             if (!a.startAt && !b.startAt) return 0;
             if (!a.startAt) return 1;
             if (!b.startAt) return -1;
-            return (
-              new Date(a.startAt).getTime() - new Date(b.startAt).getTime()
-            );
+            return new Date(a.startAt).getTime() - new Date(b.startAt).getTime();
           });
         });
 
@@ -55,7 +47,7 @@ export default function CityDetail({
       }
       return acc;
     },
-    {} as Record<string, Record<string, EventItem[]>>
+    {} as Record<string, Record<string, EventItem[]>>,
   );
 
   // 排序年份（最新的在前）
@@ -92,16 +84,12 @@ export default function CityDetail({
                     })}
               </h3>
 
-              {Object.entries(yearMonthData[year]).map(
-                ([month, monthEvents]) => (
-                  <div key={`${year}-${month}`}>
-                    <h4 className="text-lg font-medium text-gray-600 mb-3">
-                      {getMonthName(month)}
-                    </h4>
-                    <MonthSection events={monthEvents} />
-                  </div>
-                )
-              )}
+              {Object.entries(yearMonthData[year]).map(([month, monthEvents]) => (
+                <div key={`${year}-${month}`}>
+                  <h4 className="text-lg font-medium text-gray-600 mb-3">{getMonthName(month)}</h4>
+                  <MonthSection events={monthEvents} />
+                </div>
+              ))}
             </div>
           ))}
         </div>
@@ -143,12 +131,8 @@ function MonthSection({ events }: { events: EventItem[] }) {
             <h4 className="tracking-wide text-white font-bold text-lg text-center">{`${event.organization?.name} · ${event.name}`}</h4>
             {event.startAt && event.endAt && (
               <p className="text-center text-white">
-                {event.startAt && (
-                  <span>{format(event.startAt, t("date.monthDay"))}</span>
-                )}
-                -{event.endAt && (
-                  <span>{format(event.endAt, t("date.monthDay"))}</span>
-                )}
+                {event.startAt && <span>{format(event.startAt, t("date.monthDay"))}</span>}-
+                {event.endAt && <span>{format(event.endAt, t("date.monthDay"))}</span>}
               </p>
             )}
           </div>
@@ -188,7 +172,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       name: z.string(),
       startAt: z.string(),
       endAt: z.string(),
-    })
+    }),
   );
 
   return {

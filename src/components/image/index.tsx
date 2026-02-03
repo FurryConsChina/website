@@ -67,9 +67,7 @@ function Image({
         className={className}
         src={srcString}
         alt={alt}
-        onLoad={(e) =>
-          onLoadingComplete && onLoadingComplete(e.target as HTMLImageElement)
-        }
+        onLoad={(e) => onLoadingComplete && onLoadingComplete(e.target as HTMLImageElement)}
         sizes={sizes}
         srcSet={getSrcset({ src, quality, sizes, width, height })}
         loading={priority ? "eager" : "lazy"}
@@ -79,23 +77,11 @@ function Image({
   );
 }
 
-function ImgSources({
-  avifsrcSet,
-  webpsrcSet,
-  sizes,
-}: {
-  avifsrcSet?: string;
-  webpsrcSet?: string;
-  sizes?: string;
-}) {
+function ImgSources({ avifsrcSet, webpsrcSet, sizes }: { avifsrcSet?: string; webpsrcSet?: string; sizes?: string }) {
   return (
     <>
-      {avifsrcSet && (
-        <source type="image/avif" srcSet={avifsrcSet} sizes={sizes} />
-      )}
-      {webpsrcSet && (
-        <source type="image/webp" srcSet={webpsrcSet} sizes={sizes} />
-      )}
+      {avifsrcSet && <source type="image/avif" srcSet={avifsrcSet} sizes={sizes} />}
+      {webpsrcSet && <source type="image/webp" srcSet={webpsrcSet} sizes={sizes} />}
     </>
   );
 }
@@ -132,7 +118,7 @@ function getSrcset({
             height,
             avif,
             webp,
-          })} ${parseInt(w)}w`
+          })} ${parseInt(w)}w`,
       )
       .join(", ");
   } else {

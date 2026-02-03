@@ -7,11 +7,7 @@ export const getEventCoverImgPath = (event: {
   thumbnail?: string | null;
   media?: { images?: { url: string }[] } | null;
 }) => {
-  return (
-    event.thumbnail ||
-    event.media?.images?.[0].url ||
-    `fec-event-default-cover.png`
-  );
+  return event.thumbnail || event.media?.images?.[0].url || `fec-event-default-cover.png`;
 };
 
 export const imageUrl = (src: string) => {

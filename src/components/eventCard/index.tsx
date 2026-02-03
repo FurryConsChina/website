@@ -1,27 +1,16 @@
-import Link from "next/link";
-import React, { useEffect, useMemo } from "react";
 import clsx from "clsx";
-import {
-  format,
-  differenceInDays,
-  isSameDay,
-  differenceInHours,
-  getOverlappingDaysInIntervals,
-  startOfDay,
-  endOfDay,
-  differenceInCalendarDays,
-} from "date-fns";
-import { zhCN, enUS } from "date-fns/locale";
-
-import Image from "@/components/image";
-import { sendTrack } from "@/utils/track";
-import { getEventCoverImgPath } from "@/utils/imageLoader";
-
-import type { EventListItem } from "@/types/event";
-
-import styles from "@/components/eventCard/index.module.css";
+import { differenceInCalendarDays, format, isSameDay } from "date-fns";
+import { enUS, zhCN } from "date-fns/locale";
+import Link from "next/link";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "next-i18next";
+import Image from "@/components/image";
+import { getEventCoverImgPath } from "@/utils/imageLoader";
+import { sendTrack } from "@/utils/track";
 import { currentSupportLocale } from "@/utils/meta";
+
+import type { EventCardItem } from "@/types/event";
+import styles from "@/components/eventCard/index.module.css";
 
 let instancesCount = 0;
 
@@ -31,16 +20,14 @@ export default function EventCard({
   fallbackWidth,
   fallbackHeight,
 }: {
-  event: EventListItem;
+  event: EventCardItem;
   sizes?: string;
   fallbackWidth?: number;
   fallbackHeight?: number;
 }) {
   const { t, i18n } = useTranslation();
   const finalEventCoverImage = getEventCoverImgPath(event);
-  const isDefaultCover = finalEventCoverImage.includes(
-    "fec-event-default-cover"
-  );
+  const isDefaultCover = finalEventCoverImage.includes("fec-event-default-cover");
 
   useEffect(() => {
     instancesCount += 1;
@@ -68,12 +55,12 @@ export default function EventCard({
 
   return (
     <Link
-      href={`/${event.organization?.slug}/${event.slug}`}
+      href={`/${event.organization.slug}/${event.slug}`}
       onClick={() =>
         sendTrack({
           eventName: "click-event-card",
           eventValue: {
-            href: `/${event.organization?.slug}/${event.slug}`,
+            href: `/${event.organization.slug}/${event.slug}`,
           },
         })
       }
@@ -83,20 +70,16 @@ export default function EventCard({
           sendTrack({
             eventName: "hover-event-card",
             eventValue: {
-              href: `/${event.organization?.slug}/${event.slug}`,
+              href: `/${event.organization.slug}/${event.slug}`,
             },
           })
         }
         className={clsx(
           "bg-white rounded-xl h-[150px] md:h-[384px] relative group md:outline md:outline-[5px] outline-white transition-all duration-300 drop-shadow-sm hover:shadow-2xl hover:-translate-y-2 overflow-hidden",
-          "hover:outline-red-400 hover:scale-105"
+          "hover:outline-red-400 hover:scale-105",
         )}
       >
-        <div
-          className={clsx(
-            "flex md:flex-col justify-between md:justify-end h-full rounded-xl relative"
-          )}
-        >
+        <div className={clsx("flex md:flex-col justify-between md:justify-end h-full rounded-xl relative")}>
           <EventCover
             imageUrl={finalEventCoverImage}
             eventName={event.name}
@@ -113,17 +96,13 @@ export default function EventCard({
               "p-2 md:p-3",
               // tags.length && "group-hover:md:h-[50%]",
               "transition-all duration-300 rounded-r-xl md:rounded-xl z-10 bg-white/90 group-hover:md:bg-white",
-              styles.eventCardDescContainer
+              styles.eventCardDescContainer,
             )}
           >
             <div className="flex items-center justify-between1">
-              <h5
-                aria-label="The name of the cons organizer"
-                className={clsx("text-xs md:text-sm text-slate-500")}
-              >
+              <h5 aria-label="The name of the cons organizer" className={clsx("text-xs md:text-sm text-slate-500")}>
                 {[
-                  event.locationType &&
-                    t(`event.locationType.${event.locationType}`),
+                  event.locationType && t(`event.locationType.${event.locationType}`),
                   event.type && t(`event.type.${event.type}`),
                 ]
                   .filter(Boolean)
@@ -134,46 +113,25 @@ export default function EventCard({
             <h4
               className={clsx(
                 "font-bold text-lg md:text-xl text-slate-800 group-hover:text-red-400 transition-colors duration-75 leading-5",
-                "md:truncate md:group-hover:text-clip md:group-hover:whitespace-normal"
+                "md:truncate md:group-hover:text-clip md:group-hover:whitespace-normal",
               )}
             >
-              {[event.region?.localName, event.organization.name]
-                .filter(Boolean)
-                .join(" ")}
+              {[event.region?.localName, event.organization.name].filter(Boolean).join(" ")}
             </h4>
 
-            <h5
-              aria-label="The name of the cons"
-              className={clsx("text-xs md:text-sm text-slate-500")}
-            >
+            <h5 aria-label="The name of the cons" className={clsx("text-xs md:text-sm text-slate-500")}>
               {event.name}
             </h5>
 
-            <div
-              className="mt-2 flex items-start text-xs md:text-sm text-slate-600 "
-              suppressHydrationWarning
-            >
+            <div className="mt-2 flex items-start text-xs md:text-sm text-slate-600 " suppressHydrationWarning>
               {/* <BsCalendar2DateFill className="mr-1 flex-shrink-0 text-xs h-5" /> */}
-              <i
-                className={clsx(
-                  styles.calendarIcon,
-                  "hidden md:block mr-1 flex-shrink-0 text-xs h-5"
-                )}
-              />
-              <EventDate
-                event={event}
-                locale={i18n.language as currentSupportLocale}
-              />
+              <i className={clsx(styles.calendarIcon, "hidden md:block mr-1 flex-shrink-0 text-xs h-5")} />
+              <EventDate event={event} locale={i18n.language as currentSupportLocale} />
             </div>
 
             <div className="mt-1 flex items-start text-xs md:text-sm text-slate-600 truncate group-hover:text-clip group-hover:whitespace-normal">
               {/* <IoLocation className="hidden md:block mr-1 flex-shrink-0 text-xs h-5" /> */}
-              <i
-                className={clsx(
-                  styles.locationIcon,
-                  "hidden md:block mr-1 flex-shrink-0 text-xs h-5"
-                )}
-              />
+              <i className={clsx(styles.locationIcon, "hidden md:block mr-1 flex-shrink-0 text-xs h-5")} />
               <EventAddress event={event} />
             </div>
 
@@ -189,13 +147,7 @@ export default function EventCard({
   );
 }
 
-function OrganizationPill({
-  logoUrl,
-  organizationName,
-}: {
-  logoUrl: string | null;
-  organizationName: string;
-}) {
+function OrganizationPill({ logoUrl, organizationName }: { logoUrl: string | null; organizationName: string }) {
   const { t } = useTranslation();
   if (!logoUrl) return null;
   return (
@@ -205,9 +157,7 @@ function OrganizationPill({
           <Image
             src={logoUrl}
             alt={t("organization.logoAlt", { name: organizationName })}
-            className={clsx(
-              "rounded-full object-cover w-[28px] h-[28px] bg-white"
-            )}
+            className={clsx("rounded-full object-cover w-[28px] h-[28px] bg-white")}
             width={100}
             height={100}
             sizes="100px"
@@ -241,7 +191,7 @@ function EventCover({
       className={clsx(
         "relative md:absolute top-0 left-0 w-[40%] flex-grow-0 flex items-center justify-center",
         "md:w-full md:h-3/5",
-        "md:group-hover:scale-125 transition-all duration-300"
+        "md:group-hover:scale-125 transition-all duration-300",
       )}
     >
       <div className="relative flex items-center justify-center z-10 h-full md:w-full">
@@ -348,7 +298,10 @@ export function EventDate({
 function EventAddress({
   event,
 }: {
-  event: { region: { localName: string | null } | null; address: string | null };
+  event: {
+    region: { localName: string | null } | null;
+    address: string | null;
+  };
 }) {
   const { t } = useTranslation();
 
@@ -363,10 +316,7 @@ function Tags({ tags }: { tags: string[] }) {
   return (
     <div className="flex flex-nowrap gap-1 scrollbar-hide overflow-x-auto scrollbar-width-0">
       {tags.map((t) => (
-        <span
-          className="text-xs bg-slate-100 px-1 rounded text-gray-700 whitespace-nowrap"
-          key={t}
-        >
+        <span className="text-xs bg-slate-100 px-1 rounded text-gray-700 whitespace-nowrap" key={t}>
           {t}
         </span>
       ))}

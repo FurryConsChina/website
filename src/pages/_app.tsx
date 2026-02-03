@@ -32,10 +32,7 @@ function App({ Component, pageProps }: AppProps) {
           --font-rubik: ${rubik.style.fontFamily};
         }
       `}</style>
-      <Layout
-        headMetas={pageProps.headMetas}
-        structuredData={pageProps.structuredData}
-      >
+      <Layout headMetas={pageProps.headMetas} structuredData={pageProps.structuredData}>
         <Component {...pageProps} />
       </Layout>
       {isEnableTrack && <GoogleAnalytics gaId="G-RBND7XQ43D" />}

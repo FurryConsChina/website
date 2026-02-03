@@ -1,14 +1,6 @@
 import { DurationType, SelectedFilterType } from "@/types/list";
 import { groupBy } from "es-toolkit/compat";
-import {
-  isBefore,
-  isAfter,
-  getYear,
-  getMonth,
-  setDefaultOptions,
-  compareAsc,
-  compareDesc,
-} from "date-fns";
+import { isBefore, isAfter, getYear, getMonth, setDefaultOptions, compareAsc, compareDesc } from "date-fns";
 import { zhCN } from "date-fns/locale";
 type EventListable = {
   startAt: string | null;
@@ -18,13 +10,8 @@ type EventListable = {
 
 setDefaultOptions({ locale: zhCN });
 
-export function eventGroupByYear<T extends EventListable>(
-  data: T[],
-  order: "asc" | "desc"
-) {
-  const groupByStartDate = groupBy(data, (e) =>
-    e.startAt ? new Date(e.startAt).getFullYear() : "no-date"
-  );
+export function eventGroupByYear<T extends EventListable>(data: T[], order: "asc" | "desc") {
+  const groupByStartDate = groupBy(data, (e) => (e.startAt ? new Date(e.startAt).getFullYear() : "no-date"));
 
   const years = Object.keys(groupByStartDate).sort((a, b) => {
     if (a !== "no-date" && b !== "no-date") {
@@ -45,13 +32,8 @@ export function eventGroupByYear<T extends EventListable>(
   }));
 }
 
-export function eventGroupByMonth<T extends EventListable>(
-  data: T[],
-  monthOrder: "asc" | "desc"
-) {
-  const groupByStartDate = groupBy(data, (e) =>
-    e.startAt ? new Date(e.startAt).getMonth() + 1 : "no-date"
-  );
+export function eventGroupByMonth<T extends EventListable>(data: T[], monthOrder: "asc" | "desc") {
+  const groupByStartDate = groupBy(data, (e) => (e.startAt ? new Date(e.startAt).getMonth() + 1 : "no-date"));
 
   const months = Object.keys(groupByStartDate).sort((a, b) => {
     if (a !== "no-date" && b !== "no-date") {
@@ -77,15 +59,10 @@ export function eventGroupByMonth<T extends EventListable>(
   }));
 }
 
-export function filteringEvents<T extends EventListable>(
-  events: T[],
-  selectedFilter: SelectedFilterType
-) {
+export function filteringEvents<T extends EventListable>(events: T[], selectedFilter: SelectedFilterType) {
   return events.filter((event) => {
     const now = Date.now();
-    const endTime = event.endAt
-      ? new Date(new Date(event.endAt).setHours(23, 59, 59, 999)).getTime()
-      : null;
+    const endTime = event.endAt ? new Date(new Date(event.endAt).setHours(23, 59, 59, 999)).getTime() : null;
     if (selectedFilter.onlyAvailable) {
       // for now, if event is cancelled, the data willn't include it at all.
       // if (event.status === EventStatus.EventCancelled) {
@@ -96,10 +73,7 @@ export function filteringEvents<T extends EventListable>(
       }
     }
 
-    if (
-      selectedFilter.eventScale[0] !== "all" &&
-      !selectedFilter.eventScale.includes(event.scale)
-    ) {
+    if (selectedFilter.eventScale[0] !== "all" && !selectedFilter.eventScale.includes(event.scale)) {
       return false;
     }
     return true;
@@ -116,9 +90,7 @@ function getDateMonth(testDate: string) {
   return isNextYear ? dateBelongMonth + 12 : dateBelongMonth;
 }
 
-export function groupByCustomDurationEvent<T extends EventListable>(
-  events: T[]
-) {
+export function groupByCustomDurationEvent<T extends EventListable>(events: T[]) {
   const currentMonth = getMonth(new Date()) + 1;
   const now = Date.now();
 
@@ -129,25 +101,14 @@ export function groupByCustomDurationEvent<T extends EventListable>(
   };
 
   events.forEach((event) => {
-    const startTime = event.startAt
-      ? new Date(new Date(event.startAt).setHours(0, 0, 0, 0)).getTime()
-      : null;
-    const endTime = event.endAt
-      ? new Date(new Date(event.endAt).setHours(23, 59, 59, 999)).getTime()
-      : null;
+    const startTime = event.startAt ? new Date(new Date(event.startAt).setHours(0, 0, 0, 0)).getTime() : null;
+    const endTime = event.endAt ? new Date(new Date(event.endAt).setHours(23, 59, 59, 999)).getTime() : null;
 
-    const startMonth = event.startAt
-      ? getDateMonth(event.startAt.toString())
-      : null;
+    const startMonth = event.startAt ? getDateMonth(event.startAt.toString()) : null;
     const endMonth = event.endAt ? getDateMonth(event.endAt.toString()) : null;
 
     //next events
-    if (
-      startTime === null ||
-      endTime === null ||
-      startMonth === null ||
-      endMonth === null
-    ) {
+    if (startTime === null || endTime === null || startMonth === null || endMonth === null) {
       return durationObject.next.push(event);
     }
 
@@ -167,10 +128,7 @@ export function groupByCustomDurationEvent<T extends EventListable>(
   return durationObject;
 }
 
-export function sortEvents<T extends EventListable>(
-  events: T[],
-  order: "asc" | "desc"
-) {
+export function sortEvents<T extends EventListable>(events: T[], order: "asc" | "desc") {
   return events.sort((a, b) => {
     if (!a.endAt) {
       return 1;
