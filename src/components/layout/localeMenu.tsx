@@ -41,6 +41,26 @@ export default function LocaleMenu() {
                 {t("locale.en")}
               </Link>
             </li>
+            <li>
+              <Link
+                href={pathname}
+                locale="zh-tw"
+                className="px-4 py-2 w-full block text-center  hover:bg-gray-100 rounded-md"
+                onClick={() => setOpen(false)}
+              >
+                繁體中文
+              </Link>
+            </li>
+            <li>
+              <Link
+                href={pathname}
+                locale="ru"
+                className="px-4 py-2 w-full block text-center  hover:bg-gray-100 rounded-md"
+                onClick={() => setOpen(false)}
+              >
+                Русский
+              </Link>
+            </li>
           </ul>
         </div>
       )}

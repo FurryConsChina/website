@@ -19,6 +19,10 @@ const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
 
 const getCanonicalUrl = (locale: string | undefined, path: string) => {
   switch (locale) {
+    case "ru":
+      return `https://www.furrycons.cn/ru${path}`;
+    case "zh-tw":
+      return `https://www.furrycons.cn/tw${path}`;
     case "en":
       return `https://www.furrycons.cn/en${path}`;
     case "zh-Hans":
@@ -75,7 +79,7 @@ export default function Layout({
           content={
             headMetas?.keywords
               ? headMetas.keywords
-              : universalKeywords(i18n.language as "zh-Hans" | "en").join(",")
+              : universalKeywords(i18n.language as "zh-Hans" | "zh-tw" | "en" | "ru").join(",")
           }
           key="keywords"
         />
@@ -168,8 +172,8 @@ export default function Layout({
 
         <link
           rel="alternate"
-          hrefLang="zh-TW"
-          href={`https://www.furrycons.cn${Path}`}
+          hrefLang="zh-tw"
+          href={`https://www.furrycons.cn/tw${Path}`}
         />
 
         <link
@@ -178,6 +182,12 @@ export default function Layout({
           href={`https://www.furrycons.cn/en${Path}`}
         />
 
+        <link
+          rel="alternate"
+          hrefLang="ru"
+          href={`https://www.furrycons.cn/ru${Path}`}
+        />
+        
         <link
           rel="alternate"
           hrefLang="x-default"
