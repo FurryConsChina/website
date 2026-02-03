@@ -1,6 +1,5 @@
+import { PUBLIC_URL } from "@/utils/env";
 import { currentSupportLocale } from "@/utils/meta";
-
-const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
 
 export function getOrganizationDetailUrl({
   organizationSlug,

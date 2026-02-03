@@ -1,9 +1,8 @@
 import { EventStatus, EventStatusSchema, EventItem } from "@/types/event";
+import { PUBLIC_URL } from "@/utils/env";
 import { getEventCoverImgPath, imageUrl } from "@/utils/imageLoader";
 import { currentSupportLocale } from "@/utils/meta";
 import { getOrganizationDetailUrl } from "@/utils/url";
-
-const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
 
 export function generateEventDetailStructuredData({
   event,

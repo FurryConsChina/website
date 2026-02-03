@@ -8,9 +8,7 @@ import { useRouter } from "next/router";
 import { Toaster } from "react-hot-toast";
 import Sidebar from "@/components/Sidebar";
 import { useTranslation } from "next-i18next";
-
-const IS_CN_REGION = process.env.NEXT_PUBLIC_REGION === "CN";
-const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
+import { IS_CN_REGION, PUBLIC_URL } from "@/utils/env";
 
 const getCanonicalUrl = (locale: currentSupportLocale | undefined, path: string) => {
   switch (locale) {
