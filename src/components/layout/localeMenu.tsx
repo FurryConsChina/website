@@ -51,7 +51,7 @@ export default function LocaleMenu() {
                 繁體中文
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link
                 href={pathname}
                 locale="ru"
@@ -60,7 +60,7 @@ export default function LocaleMenu() {
               >
                 Русский
               </Link>
-            </li>
+            </li> */}
           </ul>
         </div>
       )}

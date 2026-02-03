@@ -22,8 +22,6 @@ const getCanonicalUrl = (
   path: string,
 ) => {
   switch (locale) {
-    case "ru":
-      return `https://www.furrycons.cn/ru${path}`;
     case "zh-Hant":
       return `https://www.furrycons.cn/zh-Hant${path}`;
     case "en":
@@ -190,12 +188,11 @@ export default function Layout({
           hrefLang="en"
           href={`https://www.furrycons.cn/en${Path}`}
         />
-
-        <link
+        {/* <link
           rel="alternate"
           hrefLang="ru"
           href={`https://www.furrycons.cn/ru${Path}`}
-        />
+        /> */}
 
         <link
           rel="alternate"

@@ -1,7 +1,7 @@
 import { OrganizationType } from "@/types/organization";
 import { format } from "date-fns";
 
-export type currentSupportLocale = "zh-Hans" | "zh-Hant" | "en" | "ru";
+export type currentSupportLocale = "zh-Hans" | "zh-Hant" | "en";
 
 export const OrganizationPageMeta = {
   "zh-Hans": {
@@ -231,10 +231,6 @@ function titleGenerator(locale: currentSupportLocale, title?: string) {
       return title
         ? `${title}—獸展日曆 | 獸聚日曆`
         : "獸展日曆 | 獸聚日曆";
-    case "ru":
-      return title
-        ? `${title}—兽展日历 | 兽聚日历`
-        : "兽展日历 | 兽聚日历";
     case "zh-Hans":
     default:
       return title
