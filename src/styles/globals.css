@@ -18,10 +18,21 @@ body {
 }
 
 body {
-  background-color: rgb(250, 250, 250);
+  background-color: rgb(245 245 247);
 }
 
 a {
   color: inherit;
   text-decoration: none;
+}
+
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
 }

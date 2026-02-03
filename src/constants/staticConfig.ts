@@ -35,15 +35,25 @@ export const FriendSiteLinks = [
     description:
       "Nyanket 喵通贩 是最早立足于提供 票务一体化解决方案 的服务商，我们与兽展的故事起源于兽夏祭。",
   },
+  {
+    link: "https://furryfandomclub.cn/?utm_source=fcc",
+    label: "FurryFandomClub",
+    description: "超棒的Furry爱好者聚集地",
+  },
+  {
+    link: "https://weibazhen.com/?utm_source=fcc",
+    label: "尾巴帧·毛毛短片",
+    description: "你的兽设，值得被电影镜头记录下属于自己的故事！",
+  },
 ];
 
 export const AboutUsLinks = [
   {
-    link: "https://docs.furrycons.cn/blog/about",
+    link: "/about",
     label: "我们是谁",
   },
   {
-    link: "https://docs.furrycons.cn/blog/contact-us",
+    link: "/about#contact",
     label: "联系方式",
   },
   {

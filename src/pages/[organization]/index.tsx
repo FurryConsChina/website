@@ -13,18 +13,20 @@ import { formatDistanceToNowStrict, isBefore } from "date-fns";
 import { zhCN } from "date-fns/locale";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
-import { organizationsAPI } from "@/api/organizations";
+import { OrganizationsAPI } from "@/api/organizations";
 import { z } from "zod";
 import { format } from "date-fns";
-import { EventType } from "@/types/event";
+import { EventItem } from "@/types/event";
 import { OrganizationSchema, OrganizationType } from "@/types/organization";
 import { FeatureSchema } from "@/types/feature";
 import {
   currentSupportLocale,
   keywordGenerator,
   organizationDetailDescriptionGenerator,
+  OrganizationPageMeta,
 } from "@/utils/meta";
-import { HTTPError } from "ky";
+import { breadcrumbGenerator } from "@/utils/structuredData";
+import axios, { AxiosError } from "axios";
 // import {
 //   WebsiteButton,
 //   QQGroupButton,
@@ -36,7 +38,7 @@ import { HTTPError } from "ky";
 // } from "@/components/OrganizationLinkButton";
 
 export default function OrganizationDetail(props: {
-  events: EventType[];
+  events: EventItem[];
   organization: OrganizationType;
 }) {
   const { t } = useTranslation();
@@ -81,7 +83,7 @@ export default function OrganizationDetail(props: {
               <Image
                 className="object-contain h-full"
                 containerClassName="h-full"
-                alt={`${organization.name}的展会徽标`}
+                alt={t("organization.logoAlt", { name: organization.name })}
                 width={200}
                 height={200}
                 src={organization.logoUrl}
@@ -298,20 +300,21 @@ export default function OrganizationDetail(props: {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
+  const orgParamsSchema = z.object({
+    organization: z
+      .string()
+      .min(1)
+      .regex(/^[a-zA-Z0-9-]+$/),
+  });
+
+  const reqParamsParseResult = orgParamsSchema.parse({
+    organization: context.params?.organization,
+  });
+
   try {
-    const orgParamsSchema = z.object({
-      organization: z
-        .string()
-        .min(1)
-        .regex(/^[a-zA-Z0-9-]+$/),
-    });
-
-    const reqParamsParseResult = orgParamsSchema.parse({
-      organization: context.params?.organization,
-    });
-
-    const data = await organizationsAPI.getOrganizationDetail(reqParamsParseResult.organization);
+    const data = await OrganizationsAPI.getOrganizationDetail(
+      reqParamsParseResult.organization
+    );
 
     const validOrganization = data.organization;
     const validEvents =
@@ -338,6 +341,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       };
     }
 
+    const locale = (context.locale as currentSupportLocale) || "zh-Hans";
+
     return {
       props: {
         organization: validOrganization,
@@ -345,37 +350,31 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         headMetas: {
           title: `${validOrganization?.name}`,
           des: organizationDetailDescriptionGenerator(
-            (context.locale as currentSupportLocale) || "zh-Hans",
+            locale,
             validOrganization!,
             validEvents?.length,
             validEvents[0]?.startAt
           ),
           keywords: keywordGenerator({
             page: "organization",
-            locale: context.locale as "zh-Hans" | "en",
+            locale: locale,
             organization: validOrganization,
           }),
           url: `/${validOrganization?.slug}`,
           cover: validOrganization?.logoUrl,
         },
         structuredData: {
-          breadcrumb: {
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            itemListElement: [
+          ...breadcrumbGenerator({
+            items: [
               {
-                "@type": "ListItem",
-                position: 1,
-                name: "展商",
-                item: `https://${PUBLIC_URL}/organization`,
+                name: OrganizationPageMeta[locale].title,
+                item: "/organization",
               },
               {
-                "@type": "ListItem",
-                position: 2,
                 name: validOrganization?.name,
               },
             ],
-          },
+          }),
         },
         ...(context.locale
           ? await serverSideTranslations(context.locale, ["common"])
@@ -383,11 +382,13 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       },
     };
   } catch (error) {
-    if (error instanceof HTTPError && error.response.status === 404) {
-      return {
-        notFound: true,
-      };
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 404) {
+        return {
+          notFound: true,
+        };
+      }
     }
-    throw new Error(`Organization render error: ${error}`);
+    throw error;
   }
 }

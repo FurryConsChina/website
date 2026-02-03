@@ -15,7 +15,7 @@ import {
   EventSchema,
   EventStatus,
   EventStatusSchema,
-  EventType,
+  EventItem,
 } from "@/types/event";
 import { sendTrack } from "@/utils/track";
 import { getEventCoverImgPath, imageUrl } from "@/utils/imageLoader";
@@ -36,7 +36,6 @@ import { FaHotel, FaPeoplePulling } from "react-icons/fa6";
 import EventStatusBar from "@/components/EventStatusBar";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
-import { eventsAPI } from "@/api/events";
 import { z } from "zod";
 import {
   currentSupportLocale,
@@ -47,6 +46,7 @@ import { EventDate } from "@/components/eventCard";
 import EventSourceButton from "@/components/event/EventSourceButton";
 import { generateEventDetailStructuredData } from "@/utils/structuredData";
 import { getEventDetailUrl } from "@/utils/url";
+import { EventsAPI } from "@/api/events";
 
 const MapLoadingStatus = {
   Idle: "idle",
@@ -55,7 +55,7 @@ const MapLoadingStatus = {
   Error: "error",
 };
 
-export default function EventDetail({ event }: { event: EventType }) {
+export default function EventDetail({ event }: { event: EventItem }) {
   const { t, i18n } = useTranslation();
   const [mapLoadingStatus, setMapLoadingStatus] = useState(() => {
     if (event.addressLat && event.addressLon) {
@@ -147,7 +147,7 @@ export default function EventDetail({ event }: { event: EventType }) {
               containerClassName="relative z-20"
               priority
               src={finalEventCoverImage}
-              alt={`${event.name}的活动海报`}
+              alt={t("event.coverAlt", { name: event.name })}
               className="mx-auto h-full object-contain z-20 relative"
               autoFormat
             />
@@ -155,7 +155,7 @@ export default function EventDetail({ event }: { event: EventType }) {
             <NextImage
               containerClassName="absolute top-0 left-0 w-full h-full z-10 blur brightness-50"
               src={finalEventCoverImage}
-              alt={`${event.name}的活动海报`}
+              alt={t("event.coverAlt", { name: event.name })}
               className="mx-auto h-full w-full object-cover"
               autoFormat
             />
@@ -178,7 +178,7 @@ export default function EventDetail({ event }: { event: EventType }) {
             )}
 
             <h2
-              aria-label="活动名称"
+              aria-label={t("event.aria.name")}
               className="font-bold text-3xl text-gray-700"
             >
               {event.name}
@@ -189,7 +189,7 @@ export default function EventDetail({ event }: { event: EventType }) {
             </h2>
 
             <p
-              aria-label="活动举办地点"
+              aria-label={t("event.aria.location")}
               className="flex items-center text-gray-500 mt-4"
             >
               <IoLocation className="text-gray-500 inline-block mr-2" />
@@ -199,7 +199,7 @@ export default function EventDetail({ event }: { event: EventType }) {
             </p>
 
             <p
-              aria-label="活动时间"
+              aria-label={t("event.aria.time")}
               className="flex items-center text-gray-500"
             >
               <BsCalendar2DateFill className="text-gray-500 inline-block mr-2" />
@@ -211,7 +211,7 @@ export default function EventDetail({ event }: { event: EventType }) {
 
             {!!event.type && !!event.locationType && (
               <p
-                aria-label="活动场地类型"
+                aria-label={t("event.aria.venueType")}
                 className="flex items-center text-gray-500"
               >
                 <FaHotel className="text-gray-500 inline-block mr-2" />
@@ -227,7 +227,7 @@ export default function EventDetail({ event }: { event: EventType }) {
             )}
 
             <p
-              aria-label="活动规模"
+              aria-label={t("event.aria.scale")}
               className="flex items-center text-gray-500"
             >
               <FaPeoplePulling className="text-gray-500 inline-block mr-2" />
@@ -296,7 +296,10 @@ export default function EventDetail({ event }: { event: EventType }) {
                 {event.media?.images?.map((cover, index) => (
                   <div className="relative" key={cover.url}>
                     <NextImage
-                      alt={`${event.name}的详情图片-${index + 1}`}
+                      alt={t("event.detailImageAlt", {
+                        name: event.name,
+                        index: index + 1,
+                      })}
                       src={cover.url}
                       className="w-full"
                       priority
@@ -432,7 +435,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       organization: context.params?.organization,
     });
 
-    const event = await eventsAPI.getEventDetail(
+    const event = await EventsAPI.getEventDetail(
       reqParamsParseResult.slug,
       reqParamsParseResult.organization
     );

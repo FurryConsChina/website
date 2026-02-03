@@ -114,8 +114,8 @@ export const EventSchema = z.object({
       code: z.string(),
       type: z.string(),
       level: z.number(),
-      localName: z.string(),
-      sortOrder: z.number(),
+      localName: z.string().nullish(),
+      sortOrder: z.number().nullish(),
     })
     .nullable(),
   thumbnail: z.string().nullable(),
@@ -183,4 +183,22 @@ export const EventSchema = z.object({
   }),
 });
 
-export type EventType = z.infer<typeof EventSchema>;
+export type EventItem = z.infer<typeof EventSchema>;
+
+export type EventListItem = {
+  id: string;
+  slug: string;
+  name: string;
+  startAt: string | null;
+  endAt: string | null;
+  scale: string;
+  type: string | null;
+  locationType: string | null;
+  address: string | null;
+  region: { localName: string | null } | null;
+  organization: { slug: string; name: string };
+  features?: { self?: string[] | null } | null;
+  commonFeatures?: { name: string }[] | null;
+  thumbnail?: string | null;
+  media?: { images?: { url: string }[] } | null;
+};

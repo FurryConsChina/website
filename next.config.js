@@ -15,9 +15,7 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 
 const { i18n } = require("./next-i18next.config");
 
-const isProd = process.env.NODE_ENV === "production";
 const IS_CN_REGION = process.env.NEXT_PUBLIC_REGION === "CN";
-const STATIC_CDN_URL = process.env.NEXT_PUBLIC_STATIC_CDN_URL;
 
 const gitRevisionPlugin = new GitRevisionPlugin();
 
@@ -31,7 +29,14 @@ const nextConfig = {
     loader: "custom",
     loaderFile: "./src/utils/imageLoader.ts",
   },
-  assetPrefix: isProd && STATIC_CDN_URL ? STATIC_CDN_URL : undefined,
+  rewrites: async () => {
+    return [
+      {
+        source: "/sitemap/:path*",
+        destination: "https://static.furrycons.cn/sitemap/:path*",
+      },
+    ];
+  },
   redirects: async () => {
     return [
       {
@@ -46,22 +51,19 @@ const nextConfig = {
       },
     ];
   },
+  compiler: {
+    define: {
+      VERSION: gitRevisionPlugin.version(),
+      COMMITHASH: gitRevisionPlugin.commithash().slice(0, 7),
+      BRANCH: gitRevisionPlugin.branch(),
+      // LASTCOMMITDATETIME: JSON.stringify(
+      //   gitRevisionPlugin.lastcommitdatetime()
+      // ),
+      LASTCOMMITDATETIME: format(Date.now(), "yyyy/MM/dd", { locale: zhCN }),
+      __SENTRY_DEBUG__: "false",
+    },
+  },
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
-    config.plugins.push(
-      new webpack.DefinePlugin({
-        VERSION: JSON.stringify(gitRevisionPlugin.version()),
-        COMMITHASH: JSON.stringify(gitRevisionPlugin.commithash().slice(0, 7)),
-        BRANCH: JSON.stringify(gitRevisionPlugin.branch()),
-        // LASTCOMMITDATETIME: JSON.stringify(
-        //   gitRevisionPlugin.lastcommitdatetime()
-        // ),
-        LASTCOMMITDATETIME: JSON.stringify(
-          format(Date.now(), "yyyy/MM/dd", { locale: zhCN })
-        ),
-        __SENTRY_DEBUG__: false,
-      })
-    );
-
     if (!dev && !isServer) {
       config.plugins.push(
         new StatsWriterPlugin({
@@ -80,33 +82,46 @@ const nextConfig = {
   i18n,
 };
 
-const sentryWebpackPluginOptions = {
+const sentryOptions = {
+  // For all available options, see:
+  // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
+  // https://github.com/getsentry/sentry-webpack-plugin#options.
+
   // Additional config options for the Sentry Webpack plugin. Keep in mind that
   // the following options are set automatically, and overriding them is not
   // recommended:
   //   release, url, authToken, configFile, stripPrefix,
   //   urlPrefix, include, ignore
 
-  org: true ? "kemono-games" : "jipai",
-  project: true ? "fec-web" : "furryeventchina",
-
+  // Upload a larger set of source maps for prettier stack traces (increases build time)
   widenClientFileUpload: true,
-  silent: true, // Suppresses all logs
+  // Only print logs for uploading source maps in CI
+  silent: !process.env.CI,
+  // Automatically tree-shake Sentry logger statements to reduce bundle size
   disableLogger: true,
   deleteSourceMapsAfterUpload: true,
   reactComponentAnnotation: {
     enabled: true,
   },
 
+  // Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)
+  // See the following for more information:
+  // https://docs.sentry.io/product/crons/
+  // https://vercel.com/docs/cron-jobs
+  automaticVercelMonitors: true,
+
+  // Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
+  // This can increase your server load as well as your hosting bill.
+  // Note: Check that the configured route will not match with your Next.js middleware, otherwise reporting of client-
+  // side errors will fail.
+  // tunnelRoute: "/monitoring",
+
   errorHandler: (error) => {
     console.warn("Sentry build error occurred:", error);
   },
-
-  // For all available options, see:
-  // https://github.com/getsentry/sentry-webpack-plugin#options.
 };
 
 module.exports = withSentryConfig(
   withBundleAnalyzer(nextConfig),
-  sentryWebpackPluginOptions
+  sentryOptions
 );

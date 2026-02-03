@@ -1,4 +1,4 @@
-FROM node:18-alpine AS base
+FROM node:20-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -54,6 +54,9 @@ RUN chown nextjs:nodejs .next
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+#No idea why next-i18n want this
+COPY --from=builder --chown=nextjs:nodejs /app/next.config.js ./next.config.js
+COPY --from=builder --chown=nextjs:nodejs /app/next-i18next.config.js ./next-i18next.config.js
 
 USER nextjs
 

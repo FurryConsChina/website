@@ -1,6 +1,5 @@
-import { getEventList } from "@/api/events";
-import { getRegionDetail, getRegionList } from "@/api/region";
-import { EventType } from "@/types/event";
+import { RegionAPI } from "@/api/region";
+import { EventItem } from "@/types/event";
 import { Region } from "@/types/region";
 import { sendTrack } from "@/utils/track";
 import { GetServerSidePropsContext } from "next";
@@ -13,13 +12,14 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { groupBy } from "es-toolkit";
 import { useTranslation } from "next-i18next";
 import { monthNumberFormatter } from "@/utils/locale";
+import { EventsAPI } from "@/api/events";
 
 export default function CityDetail({
   region,
   events,
 }: {
   region: Region;
-  events: EventType[];
+  events: EventItem[];
 }) {
   const { t, i18n } = useTranslation();
   // 按年份分组
@@ -55,7 +55,7 @@ export default function CityDetail({
       }
       return acc;
     },
-    {} as Record<string, Record<string, EventType[]>>
+    {} as Record<string, Record<string, EventItem[]>>
   );
 
   // 排序年份（最新的在前）
@@ -110,7 +110,9 @@ export default function CityDetail({
   );
 }
 
-function MonthSection({ events }: { events: EventType[] }) {
+function MonthSection({ events }: { events: EventItem[] }) {
+  const { t } = useTranslation();
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
       {events.map((event) => (
@@ -130,7 +132,7 @@ function MonthSection({ events }: { events: EventType[] }) {
         >
           <div className="rounded-xl duration-500 transition group-hover:border-gray-400 w-full h-full absolute brightness-75 hover:brightness-100">
             <Image
-              alt="活动背景"
+              alt={t("city.eventBackgroundAlt", { name: event.name })}
               src={getEventCoverImgPath(event)}
               width={350}
               className="h-full w-full object-cover rounded-xl overflow-hidden"
@@ -142,9 +144,11 @@ function MonthSection({ events }: { events: EventType[] }) {
             {event.startAt && event.endAt && (
               <p className="text-center text-white">
                 {event.startAt && (
-                  <span>{format(event.startAt, "MM月dd日")}</span>
+                  <span>{format(event.startAt, t("date.monthDay"))}</span>
                 )}
-                -{event.endAt && <span>{format(event.endAt, "MM月dd日")}</span>}
+                -{event.endAt && (
+                  <span>{format(event.endAt, t("date.monthDay"))}</span>
+                )}
               </p>
             )}
           </div>
@@ -164,8 +168,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     .parse(params?.code);
 
   const [region, regionEvents] = await Promise.all([
-    getRegionDetail(regionCode),
-    getEventList({
+    RegionAPI.getRegionDetail(regionCode),
+    EventsAPI.getEventList({
       eventRegionCode: [regionCode],
       current: "1",
       pageSize: "50",

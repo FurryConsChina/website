@@ -10,11 +10,18 @@ import {
   compareDesc,
 } from "date-fns";
 import { zhCN } from "date-fns/locale";
-import { EventType } from "@/types/event";
+type EventListable = {
+  startAt: string | null;
+  endAt: string | null;
+  scale: string;
+};
 
 setDefaultOptions({ locale: zhCN });
 
-export function eventGroupByYear(data: EventType[], order: "asc" | "desc") {
+export function eventGroupByYear<T extends EventListable>(
+  data: T[],
+  order: "asc" | "desc"
+) {
   const groupByStartDate = groupBy(data, (e) =>
     e.startAt ? new Date(e.startAt).getFullYear() : "no-date"
   );
@@ -38,8 +45,8 @@ export function eventGroupByYear(data: EventType[], order: "asc" | "desc") {
   }));
 }
 
-export function eventGroupByMonth(
-  data: EventType[],
+export function eventGroupByMonth<T extends EventListable>(
+  data: T[],
   monthOrder: "asc" | "desc"
 ) {
   const groupByStartDate = groupBy(data, (e) =>
@@ -70,8 +77,8 @@ export function eventGroupByMonth(
   }));
 }
 
-export function filteringEvents(
-  events: EventType[],
+export function filteringEvents<T extends EventListable>(
+  events: T[],
   selectedFilter: SelectedFilterType
 ) {
   return events.filter((event) => {
@@ -109,15 +116,15 @@ function getDateMonth(testDate: string) {
   return isNextYear ? dateBelongMonth + 12 : dateBelongMonth;
 }
 
-export function groupByCustomDurationEvent(events: EventType[]) {
+export function groupByCustomDurationEvent<T extends EventListable>(
+  events: T[]
+) {
   const currentMonth = getMonth(new Date()) + 1;
   const now = Date.now();
 
-  const durationObject: { [x in DurationType]: EventType[] } = {
+  const durationObject: { [x in DurationType]: T[] } = {
     now: [],
-    soon: [],
     next: [],
-    nextYear: [],
     passed: [],
   };
 
@@ -154,30 +161,16 @@ export function groupByCustomDurationEvent(events: EventType[]) {
       return durationObject.now.push(event);
     }
 
-    //Soon events
-    if (
-      (startMonth === currentMonth ||
-        (currentMonth + 1 === startMonth &&
-          currentMonth + 1 === endMonth &&
-          startMonth <= 12)) &&
-      isBefore(now, startTime)
-    ) {
-      return durationObject.soon.push(event);
-    }
-
-    //next year events
-    if (startMonth > currentMonth) {
-      if (startMonth > 12) {
-        return durationObject.nextYear.push(event);
-      }
-      return durationObject.next.push(event);
-    }
+    return durationObject.next.push(event);
   });
 
   return durationObject;
 }
 
-export function sortEvents(events: EventType[], order: "asc" | "desc") {
+export function sortEvents<T extends EventListable>(
+  events: T[],
+  order: "asc" | "desc"
+) {
   return events.sort((a, b) => {
     if (!a.endAt) {
       return 1;

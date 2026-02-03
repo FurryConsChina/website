@@ -2,8 +2,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { FaLanguage } from "react-icons/fa6";
+import { useTranslation } from "next-i18next";
 
 export default function LocaleMenu() {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
 
   const pathname = usePathname();
@@ -26,7 +28,7 @@ export default function LocaleMenu() {
                 className="px-4 py-2 w-full block text-center  hover:bg-gray-100 rounded-md"
                 onClick={() => setOpen(false)}
               >
-                中文
+                {t("locale.zhHans")}
               </Link>
             </li>
             <li>
@@ -36,7 +38,7 @@ export default function LocaleMenu() {
                 className="px-4 py-2 w-full block text-center  hover:bg-gray-100 rounded-md"
                 onClick={() => setOpen(false)}
               >
-                English
+                {t("locale.en")}
               </Link>
             </li>
             <li>

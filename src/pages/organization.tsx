@@ -5,9 +5,10 @@ import Link from "next/link";
 import { sendTrack } from "@/utils/track";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
-import { organizationsAPI } from "@/api/organizations";
+import { OrganizationsAPI } from "@/api/organizations";
 import { OrganizationType } from "@/types/organization";
 import { currentSupportLocale, OrganizationPageMeta } from "@/utils/meta";
+import { breadcrumbGenerator } from "@/utils/structuredData";
 
 export default function OrganizationPage({
   organizations,
@@ -48,6 +49,8 @@ function OrganizationItem({
 }: {
   organization: OrganizationType;
 }) {
+  const { t } = useTranslation();
+
   return (
     <Link
       href={organization.slug || ""}
@@ -63,11 +66,11 @@ function OrganizationItem({
     >
       <div className="rounded-xl border p-6 cursor-pointer h-full flex flex-row items-center justify-center md:flex-col">
         {organization.logoUrl && (
-          <div className="relative w-2/4 md:h-3/4 max-h-12 mx-auto">
+          <div className="relative w-2/4 md:h-3/4 min-h-12 max-h-12 mx-auto">
             <Image
-              className="object-contain h-full max-h-12 mx-auto"
+              className="object-contain h-full min-h-12 max-h-12 mx-auto"
               src={organization.logoUrl}
-              alt={`${organization.name}'s logo`}
+              alt={t("organization.logoAlt", { name: organization.name })}
               width={124}
               height={50}
               sizes="(max-width: 750px) 256px, (max-width: 768px) 300px, 300px"
@@ -89,8 +92,11 @@ function OrganizationItem({
 }
 
 export async function getStaticProps({ locale }: { locale: string }) {
-  const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
-  const organizations = await organizationsAPI.getAllOrganizations();
+  const organizations = await OrganizationsAPI.getOrganizationList({
+    current: "1",
+    pageSize: "999",
+    sortBy: "eventCount",
+  });
 
   if (!organizations) {
     return {
@@ -98,34 +104,25 @@ export async function getStaticProps({ locale }: { locale: string }) {
     };
   }
 
-  const title = OrganizationPageMeta[locale as currentSupportLocale].title;
-  const des = OrganizationPageMeta[locale as currentSupportLocale].description(
-    organizations.length
-  );
-
   return {
     props: {
-      organizations: organizations,
+      organizations: organizations.records,
       headMetas: {
         title: OrganizationPageMeta[locale as currentSupportLocale].title,
         des: OrganizationPageMeta[locale as currentSupportLocale].description(
-          organizations.length
+          organizations.total
         ),
         link: "/organization",
       },
       structuredData: {
-        breadcrumb: {
-          "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
-          itemListElement: [
+        ...breadcrumbGenerator({
+          items: [
             {
-              "@type": "ListItem",
-              position: 1,
-              name: "展商",
-              item: `https://${PUBLIC_URL}/organization`,
+              name: OrganizationPageMeta[locale as currentSupportLocale].title,
+              item: "/organization",
             },
           ],
-        },
+        }),
       },
       ...(await serverSideTranslations(locale, ["common"])),
     },

@@ -2,12 +2,13 @@ import { eventGroupByMonth, eventGroupByYear } from "@/utils/event";
 import SimpleEventCard from "@/components/SimpleEventCard";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
-import { eventsAPI } from "@/api/events";
-import { EventType } from "@/types/event";
+import { EventsAPI } from "@/api/events";
+import { EventItem } from "@/types/event";
 import { monthNumberFormatter } from "@/utils/locale";
 import { currentSupportLocale, YearPageMeta } from "@/utils/meta";
+import { breadcrumbGenerator } from "@/utils/structuredData";
 
-export default function Years({ events }: { events: EventType[] }) {
+export default function Years({ events }: { events: EventItem[] }) {
   const groupByYearEvents = eventGroupByYear(events, "asc");
 
   const { t, i18n } = useTranslation();
@@ -17,7 +18,9 @@ export default function Years({ events }: { events: EventType[] }) {
   return (
     <div>
       <div className="mb-4 border rounded-xl p-6 bg-white">
-        <h2 className="font-bold text-red-400 text-2xl mb-4">总结</h2>
+        <h2 className="font-bold text-red-400 text-2xl mb-4">
+          {t("years.title")}
+        </h2>
         <div className="text-gray-600">
           {t("years.des", {
             totalYear: years.filter((year) => year !== "no-date").length,
@@ -86,33 +89,31 @@ export default function Years({ events }: { events: EventType[] }) {
 }
 
 export async function getStaticProps({ locale }: { locale: string }) {
-  const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
-  const events = await eventsAPI.getYearEvents();
+  const events = await EventsAPI.getEventList({
+    current: "1",
+    pageSize: "999",
+  });
 
   return {
     props: {
-      events: events,
+      events: events.records,
       headMetas: {
         title: YearPageMeta[locale as currentSupportLocale].title,
         des: YearPageMeta[locale as currentSupportLocale].description(
           12,
-          events?.length || 0
+          events.total || 0
         ),
         link: "/years",
       },
       structuredData: {
-        breadcrumb: {
-          "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
-          itemListElement: [
+        ...breadcrumbGenerator({
+          items: [
             {
-              "@type": "ListItem",
-              position: 1,
-              name: "年度时间轴",
-              item: `https://${PUBLIC_URL}/years`,
+              name: YearPageMeta[locale as currentSupportLocale].title,
+              item: "/years",
             },
           ],
-        },
+        }),
       },
       ...(await serverSideTranslations(locale, ["common"])),
     },

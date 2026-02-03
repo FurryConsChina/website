@@ -17,7 +17,7 @@ import Image from "@/components/image";
 import { sendTrack } from "@/utils/track";
 import { getEventCoverImgPath } from "@/utils/imageLoader";
 
-import type { EventType } from "@/types/event";
+import type { EventListItem } from "@/types/event";
 
 import styles from "@/components/eventCard/index.module.css";
 import { useTranslation } from "next-i18next";
@@ -31,7 +31,7 @@ export default function EventCard({
   fallbackWidth,
   fallbackHeight,
 }: {
-  event: EventType;
+  event: EventListItem;
   sizes?: string;
   fallbackWidth?: number;
   fallbackHeight?: number;
@@ -108,10 +108,11 @@ export default function EventCard({
 
           <div
             className={clsx(
-              "w-[60%]",
-              "md:w-full md:h-2/5",
-              tags.length && "group-hover:md:h-[50%]",
-              "p-2 md:p-4 transition-all duration-300 rounded-r-xl md:rounded-xl z-10 bg-white/90 group-hover:md:bg-white",
+              "w-[60%] md:w-full",
+              // "md:h-2/5",
+              "p-2 md:p-3",
+              // tags.length && "group-hover:md:h-[50%]",
+              "transition-all duration-300 rounded-r-xl md:rounded-xl z-10 bg-white/90 group-hover:md:bg-white",
               styles.eventCardDescContainer
             )}
           >
@@ -177,7 +178,7 @@ export default function EventCard({
             </div>
 
             {!!tags.length && (
-              <div className="mt-4 md:hidden md:group-hover:block">
+              <div className={clsx("mt-4", "")}>
                 <Tags tags={tags} />
               </div>
             )}
@@ -195,6 +196,7 @@ function OrganizationPill({
   logoUrl: string | null;
   organizationName: string;
 }) {
+  const { t } = useTranslation();
   if (!logoUrl) return null;
   return (
     <div className="flex justify-between items-center rounded-full w-fit">
@@ -202,7 +204,7 @@ function OrganizationPill({
         <div className="hidden md:block border-2 rounded-full border-white">
           <Image
             src={logoUrl}
-            alt={`${organizationName}的展会标志`}
+            alt={t("organization.logoAlt", { name: organizationName })}
             className={clsx(
               "rounded-full object-cover w-[28px] h-[28px] bg-white"
             )}
@@ -233,18 +235,19 @@ function EventCover({
   fallbackWidth?: number;
   fallbackHeight?: number;
 }) {
+  const { t } = useTranslation();
   return (
     <div
       className={clsx(
         "relative md:absolute top-0 left-0 w-[40%] flex-grow-0 flex items-center justify-center",
         "md:w-full md:h-3/5",
-        "md:group-hover:scale-150 transition-all duration-300"
+        "md:group-hover:scale-125 transition-all duration-300"
       )}
     >
       <div className="relative flex items-center justify-center z-10 h-full md:w-full">
         <Image
           src={imageUrl}
-          alt={`${eventName}的活动封面`}
+          alt={t("event.coverAlt", { name: eventName })}
           containerClassName="relative md:absolute h-full"
           className={clsx("object-contain h-full")}
           sizes={sizes}
@@ -257,38 +260,7 @@ function EventCover({
 
       <Image
         src={imageUrl}
-        alt={`${eventName} mask filter`}
-        containerClassName="absolute top-0 left-0 h-full w-full"
-        className={clsx("object-cover h-full w-full blur-3xl")}
-        sizes={sizes}
-        autoFormat
-        priority={instancesCount <= 3}
-        fallbackHeight={fallbackHeight}
-        fallbackWidth={fallbackWidth}
-      />
-    </div>
-  );
-}
-
-function EventBackgroundBlur({
-  imageUrl,
-  eventName,
-  sizes,
-  fallbackHeight,
-  fallbackWidth,
-}: {
-  imageUrl: string;
-  eventName: string;
-  isDefault: boolean;
-  sizes?: string;
-  fallbackWidth?: number;
-  fallbackHeight?: number;
-}) {
-  return (
-    <div>
-      <Image
-        src={imageUrl}
-        alt={`${eventName} mask filter`}
+        alt={t("event.coverBackgroundAlt", { name: eventName })}
         containerClassName="absolute top-0 left-0 h-full w-full"
         className={clsx("object-cover h-full w-full blur-3xl")}
         sizes={sizes}
@@ -305,7 +277,7 @@ export function EventDate({
   event,
   locale = "zh-Hans",
 }: {
-  event: EventType;
+  event: { startAt: string | null; endAt: string | null };
   locale?: currentSupportLocale;
 }) {
   const { t } = useTranslation();
@@ -318,23 +290,11 @@ export function EventDate({
     const result = differenceInCalendarDays(endDate, startDate) + 1;
 
     if (isSameDay(event.startAt, event.endAt)) {
-      switch (locale) {
-        case "en":
-          return "1 day";
-        case "zh-Hans":
-        default:
-          return "1天";
-      }
+      return t("date.duration.singleDay");
     }
 
     if (result) {
-      switch (locale) {
-        case "en":
-          return `${result}days`;
-        case "zh-Hans":
-        default:
-          return `${result}天`;
-      }
+      return t("date.duration.multiDay", { count: result });
     }
 
     return null;
@@ -385,23 +345,26 @@ export function EventDate({
   return `${startDateLabel} - ${endDateLabel}`;
 }
 
-function EventAddress({ event }: { event: EventType }) {
+function EventAddress({
+  event,
+}: {
+  event: { region: { localName: string | null } | null; address: string | null };
+}) {
+  const { t } = useTranslation();
+
   return (
-    <span
-      aria-label="活动地址"
-      className="truncate group-hover:text-clip group-hover:whitespace-normal"
-    >
-      {event.region?.localName} {event.address || "尚未公布"}
+    <span aria-label={t("event.aria.address")} className="truncate">
+      {event.region?.localName} {event.address || t("event.unknown")}
     </span>
   );
 }
 
 function Tags({ tags }: { tags: string[] }) {
   return (
-    <div className="flex flex-wrap gap-1">
+    <div className="flex flex-nowrap gap-1 scrollbar-hide overflow-x-auto scrollbar-width-0">
       {tags.map((t) => (
         <span
-          className="text-xs bg-slate-100 px-1 rounded text-gray-700"
+          className="text-xs bg-slate-100 px-1 rounded text-gray-700 whitespace-nowrap"
           key={t}
         >
           {t}
