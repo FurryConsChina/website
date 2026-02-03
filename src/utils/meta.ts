@@ -1,6 +1,8 @@
 import { Organization } from "@/types/organization";
-import { format } from "date-fns";
 import dayjs from "dayjs";
+import "dayjs/locale/zh-cn";
+import "dayjs/locale/zh-tw";
+import { getDayjsLocale } from "@/utils/locale";
 
 export type currentSupportLocale = "zh-Hans" | "zh-Hant" | "en";
 
@@ -184,6 +186,11 @@ function keywordGenerator({
   }
 }
 
+function formatDate(value: string | Date | null | undefined, formatPattern: string, locale: currentSupportLocale) {
+  if (!value) return "";
+  return dayjs(value).locale(getDayjsLocale(locale)).format(formatPattern);
+}
+
 function titleGenerator(locale: currentSupportLocale, title?: string) {
   switch (locale) {
     case "en":
@@ -229,10 +236,11 @@ function eventDescriptionGenerator(
       return event.startAt && event.endAt
         ? `欢迎来到兽展日历！兽展日历提供关于“${event?.name}”的详细信息：这是由“${
             event?.organization?.name
-          }”举办的兽展，将于${format(
+          }”举办的兽展，将于${formatDate(
             event?.startAt!,
-            "yyyy年MM月dd日",
-          )}至${format(event?.endAt!, "yyyy年MM月dd日")}在“${
+            "YYYY年MM月DD日",
+            locale,
+          )}至${formatDate(event?.endAt!, "YYYY年MM月DD日", locale)}在“${
             event?.region?.localName
           }${event?.address}”举办，喜欢的朋友记得关注开始售票时间～`
         : `欢迎来到兽展日历！兽展日历提供关于“${event?.name}”的详细信息：这是由“${event?.organization?.name}”举办的兽展，将在“${event?.region?.localName}${event?.address}”举办，喜欢的朋友记得关注开始售票时间～`;
@@ -240,7 +248,11 @@ function eventDescriptionGenerator(
       return event.startAt && event.endAt
         ? `歡迎來到獸展日曆！獸展日曆提供關於“${event?.name}”的詳細信息：這是由“${
             event?.organization?.name
-          }”舉辦的獸展，將於${format(event?.startAt!, "yyyy/MM/dd")}至${format(event?.endAt!, "yyyy/MM/dd")}在“${
+          }”舉辦的獸展，將於${formatDate(event?.startAt!, "YYYY/MM/DD", locale)}至${formatDate(
+            event?.endAt!,
+            "YYYY/MM/DD",
+            locale,
+          )}在“${
             event?.region?.localName
           }${event?.address}”舉辦，喜歡的朋友記得關注開票時間～`
         : `歡迎來到獸展日曆！獸展日曆提供關於“${event?.name}”的詳細信息：這是由“${event?.organization?.name}”舉辦的獸展，將在“${event?.region?.localName}${event?.address}”舉辦，喜歡的朋友記得關注開票時間～`;
@@ -248,10 +260,11 @@ function eventDescriptionGenerator(
       return event.startAt && event.endAt
         ? `Details about "${event?.name}": This furry convention is organized by "${
             event?.organization?.name
-          }" and will be held from ${format(
-            event?.startAt!,
-            "MMMM dd, yyyy",
-          )} to ${format(event?.endAt!, "MMMM dd, yyyy")} at "${
+          }" and will be held from ${formatDate(event?.startAt!, "MMMM DD, YYYY", locale)} to ${formatDate(
+            event?.endAt!,
+            "MMMM DD, YYYY",
+            locale,
+          )} at "${
             event?.region?.localName
           }${event?.address}". Stay tuned for ticket sales!`
         : `Welcome to FurConsCalendar! FCC provides detailed information about "${event?.name}": This furry convention is organized by "${event?.organization?.name}" and will be held at "${event?.region?.localName}${event?.address}". Stay tuned for ticket sales!`;
@@ -270,7 +283,7 @@ function organizationDetailDescriptionGenerator(
       return `欢迎来到兽展日历！兽展日历提供关于 ${
         organization?.name
       } 的有关信息，这家展商已累计举办 ${eventCount} 场兽展，最近的一场在${
-        eventStartAt ? format(eventStartAt, "yyyy年MM月dd日") : "未知时间线"
+        eventStartAt ? formatDate(eventStartAt, "YYYY年MM月DD日", locale) : "未知时间线"
       }，${
         organization?.description
           ? `他们是这样介绍自己的：“${organization?.description}”。`
@@ -280,7 +293,7 @@ function organizationDetailDescriptionGenerator(
       return `歡迎來到獸展日曆！ 獸展日曆提供關於 ${
         organization?.name
       } 的相關信息，這家展商已累計舉辦 ${eventCount} 場獸展，最近的一場在${
-        eventStartAt ? format(eventStartAt, "yyyy/MM/dd") : "未知時間線"
+        eventStartAt ? formatDate(eventStartAt, "YYYY/MM/DD", locale) : "未知時間線"
       }，${
         organization?.description
           ? `他們是這樣介紹自己的：“${organization?.description}”。`
@@ -290,7 +303,7 @@ function organizationDetailDescriptionGenerator(
       return `Welcome to FurConsCalendar! FCC provides detailed information about "${
         organization?.name
       }": This organizer has hosted a total of ${eventCount} furry conventions, with the most recent one held on ${
-        eventStartAt ? format(eventStartAt, "MMMM dd, yyyy") : "unknown date"
+        eventStartAt ? formatDate(eventStartAt, "MMMM DD, YYYY", locale) : "unknown date"
       }. ${
         organization?.description
           ? `Here's how they describe themselves: "${organization?.description}".`

@@ -7,18 +7,20 @@ import Link from "next/link";
 import z from "zod";
 import Image from "@/components/image";
 import { getEventCoverImgPath } from "@/utils/imageLoader";
-import { format } from "date-fns";
+import "dayjs/locale/zh-cn";
+import "dayjs/locale/zh-tw";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { groupBy } from "es-toolkit";
 import { useTranslation } from "next-i18next";
-import { monthNumberFormatter } from "@/utils/locale";
+import { getDayjsLocale, monthNumberFormatter } from "@/utils/locale";
 import { EventsAPI } from "@/api/events";
+import dayjs from "dayjs";
 
 export default function CityDetail({ region, events }: { region: Region; events: EventItem[] }) {
   const { t, i18n } = useTranslation();
   // 按年份分组
   const groupEventsByYear = groupBy(events, (event) => {
-    const year = event.startAt ? format(event.startAt, "yyyy") : "no-date";
+    const year = event.startAt ? dayjs(event.startAt).year() : "no-date";
     return year;
   });
 
@@ -30,7 +32,7 @@ export default function CityDetail({ region, events }: { region: Region; events:
       } else {
         // 按月份分组
         const monthGroups = groupBy(yearEvents, (event) => {
-          return event.startAt ? format(event.startAt, "M") : "no-date";
+          return event.startAt ? dayjs(event.startAt).format("M") : "no-date";
         });
 
         // 对每个月份内的事件按开始日期排序
@@ -99,7 +101,9 @@ export default function CityDetail({ region, events }: { region: Region; events:
 }
 
 function MonthSection({ events }: { events: EventItem[] }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const dateFormat = t("date.monthDay") || "MM月DD日";
+  const dayjsLocale = getDayjsLocale(i18n.language);
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
@@ -131,8 +135,8 @@ function MonthSection({ events }: { events: EventItem[] }) {
             <h4 className="tracking-wide text-white font-bold text-lg text-center">{`${event.organization?.name} · ${event.name}`}</h4>
             {event.startAt && event.endAt && (
               <p className="text-center text-white">
-                {event.startAt && <span>{format(event.startAt, t("date.monthDay"))}</span>}-
-                {event.endAt && <span>{format(event.endAt, t("date.monthDay"))}</span>}
+                {event.startAt && <span>{dayjs(event.startAt).locale(dayjsLocale).format(dateFormat)}</span>}-
+                {event.endAt && <span>{dayjs(event.endAt).locale(dayjsLocale).format(dateFormat)}</span>}
               </p>
             )}
           </div>

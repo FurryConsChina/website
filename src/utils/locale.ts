@@ -9,3 +9,14 @@ export function monthNumberFormatter(month: string, locale: string): string {
 
   return month;
 }
+
+export function getDayjsLocale(locale: string): "zh-cn" | "zh-tw" | "en" {
+  switch (locale) {
+    case "zh-Hans":
+      return "zh-cn";
+    case "zh-Hant":
+      return "zh-tw";
+    default:
+      return "en";
+  }
+}

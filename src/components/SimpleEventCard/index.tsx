@@ -1,11 +1,16 @@
 import { sendTrack } from "@/utils/track";
 import Link from "next/link";
-import { format } from "date-fns";
+import dayjs from "dayjs";
+import "dayjs/locale/zh-cn";
+import "dayjs/locale/zh-tw";
 import { EventItem } from "@/types/event";
 import { useTranslation } from "next-i18next";
+import { getDayjsLocale } from "@/utils/locale";
 
 function SimpleEventCard({ event }: { event: EventItem }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const dateFormat = t("date.monthDay") || "MM月DD日";
+  const dayjsLocale = getDayjsLocale(i18n.language);
 
   return (
     <Link
@@ -27,8 +32,9 @@ function SimpleEventCard({ event }: { event: EventItem }) {
         <p className="text-center text-slate-600">{event.organization?.name}</p>
         {event.startAt && event.endAt && (
           <p className="text-center text-slate-600 text-sm">
-            {event.startAt && <span>{format(event.startAt, t("date.monthDay"))}</span>}-
-            {event.endAt && <span>{format(event.endAt, t("date.monthDay"))}</span>}
+            {event.startAt && <span>{dayjs(event.startAt).locale(dayjsLocale).format(dateFormat)}</span>}
+            -
+            {event.endAt && <span>{dayjs(event.endAt).locale(dayjsLocale).format(dateFormat)}</span>}
           </p>
         )}
       </div>

@@ -1,17 +1,14 @@
 import { DurationType, SelectedFilterType } from "@/types/list";
 import { groupBy } from "es-toolkit/compat";
-import { isBefore, isAfter, getYear, getMonth, setDefaultOptions, compareAsc, compareDesc } from "date-fns";
-import { zhCN } from "date-fns/locale";
+import dayjs from "dayjs";
 type EventListable = {
   startAt: string | null;
   endAt: string | null;
   scale: string;
 };
 
-setDefaultOptions({ locale: zhCN });
-
 export function eventGroupByYear<T extends EventListable>(data: T[], order: "asc" | "desc") {
-  const groupByStartDate = groupBy(data, (e) => (e.startAt ? new Date(e.startAt).getFullYear() : "no-date"));
+  const groupByStartDate = groupBy(data, (e) => (e.startAt ? dayjs(e.startAt).year() : "no-date"));
 
   const years = Object.keys(groupByStartDate).sort((a, b) => {
     if (a !== "no-date" && b !== "no-date") {
@@ -33,7 +30,7 @@ export function eventGroupByYear<T extends EventListable>(data: T[], order: "asc
 }
 
 export function eventGroupByMonth<T extends EventListable>(data: T[], monthOrder: "asc" | "desc") {
-  const groupByStartDate = groupBy(data, (e) => (e.startAt ? new Date(e.startAt).getMonth() + 1 : "no-date"));
+  const groupByStartDate = groupBy(data, (e) => (e.startAt ? dayjs(e.startAt).month() + 1 : "no-date"));
 
   const months = Object.keys(groupByStartDate).sort((a, b) => {
     if (a !== "no-date" && b !== "no-date") {
@@ -81,18 +78,17 @@ export function filteringEvents<T extends EventListable>(events: T[], selectedFi
 }
 
 function isDateBelongNextYear(testDate: string) {
-  return getYear(new Date(testDate)) > getYear(new Date());
+  return dayjs(testDate).year() > dayjs().year();
 }
 
 function getDateMonth(testDate: string) {
   const isNextYear = isDateBelongNextYear(testDate);
-  const dateBelongMonth = getMonth(new Date(testDate)) + 1;
+  const dateBelongMonth = dayjs(testDate).month() + 1;
   return isNextYear ? dateBelongMonth + 12 : dateBelongMonth;
 }
 
 export function groupByCustomDurationEvent<T extends EventListable>(events: T[]) {
-  const currentMonth = getMonth(new Date()) + 1;
-  const now = Date.now();
+  const now = dayjs();
 
   const durationObject: { [x in DurationType]: T[] } = {
     now: [],
@@ -101,8 +97,8 @@ export function groupByCustomDurationEvent<T extends EventListable>(events: T[])
   };
 
   events.forEach((event) => {
-    const startTime = event.startAt ? new Date(new Date(event.startAt).setHours(0, 0, 0, 0)).getTime() : null;
-    const endTime = event.endAt ? new Date(new Date(event.endAt).setHours(23, 59, 59, 999)).getTime() : null;
+    const startTime = event.startAt ? dayjs(event.startAt).startOf("day") : null;
+    const endTime = event.endAt ? dayjs(event.endAt).endOf("day") : null;
 
     const startMonth = event.startAt ? getDateMonth(event.startAt.toString()) : null;
     const endMonth = event.endAt ? getDateMonth(event.endAt.toString()) : null;
@@ -113,12 +109,12 @@ export function groupByCustomDurationEvent<T extends EventListable>(events: T[])
     }
 
     //Passed events
-    if (isAfter(now, endTime)) {
+    if (endTime && now.isAfter(endTime)) {
       return durationObject.passed.push(event);
     }
 
     //Now events
-    if (isAfter(now, startTime) && isBefore(now, endTime)) {
+    if (startTime && endTime && now.isAfter(startTime) && now.isBefore(endTime)) {
       return durationObject.now.push(event);
     }
 
@@ -139,10 +135,15 @@ export function sortEvents<T extends EventListable>(events: T[], order: "asc" | 
     }
 
     if (a.startAt && b.startAt) {
-      if (order === "asc") {
-        return compareAsc(a.startAt, b.startAt);
+      const aDate = dayjs(a.startAt);
+      const bDate = dayjs(b.startAt);
+      if (aDate.isSame(bDate)) {
+        return 0;
       }
-      return compareDesc(a.startAt, b.startAt);
+      if (order === "asc") {
+        return aDate.isBefore(bDate) ? -1 : 1;
+      }
+      return aDate.isAfter(bDate) ? -1 : 1;
     }
 
     return 0;

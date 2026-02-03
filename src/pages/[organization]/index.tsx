@@ -9,13 +9,14 @@ import toast from "react-hot-toast";
 import { FaPaw, FaQq, FaTwitter, FaWeibo } from "react-icons/fa";
 import { MdOutlineContentCopy } from "react-icons/md";
 import { SiBilibili, SiXiaohongshu } from "react-icons/si";
-import { formatDistanceToNowStrict, isBefore } from "date-fns";
-import { zhCN } from "date-fns/locale";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/zh-cn";
+import "dayjs/locale/zh-tw";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { OrganizationsAPI } from "@/api/organizations";
 import { z } from "zod";
-import { format } from "date-fns";
 import { EventItem } from "@/types/event";
 import { OrganizationSchema, Organization } from "@/types/organization";
 import { FeatureSchema } from "@/types/feature";
@@ -26,6 +27,7 @@ import {
   OrganizationPageMeta,
 } from "@/utils/meta";
 import { breadcrumbGenerator } from "@/utils/structuredData";
+import { getDayjsLocale } from "@/utils/locale";
 import axios, { AxiosError } from "axios";
 // import {
 //   WebsiteButton,
@@ -37,9 +39,12 @@ import axios, { AxiosError } from "axios";
 //   WikifurButton,
 // } from "@/components/OrganizationLinkButton";
 
+dayjs.extend(relativeTime);
+
 export default function OrganizationDetail(props: { events: EventItem[]; organization: Organization }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { organization, events } = props;
+  const dayjsLocale = getDayjsLocale(i18n.language);
 
   const formattedFirstEventTime = useMemo(() => {
     const theBeginningEvent = events[events.length - 1];
@@ -64,12 +69,12 @@ export default function OrganizationDetail(props: { events: EventItem[]; organiz
         year: date.getUTCFullYear(),
         month: date.getUTCMonth() + 1,
         day: date.getUTCDate(),
-        createDistance: formatDistanceToNowStrict(date, { locale: zhCN }),
+        createDistance: dayjs(date).locale(dayjsLocale).toNow(true),
       };
     } else {
       return null;
     }
-  }, [organization.creationTime]);
+  }, [organization.creationTime, dayjsLocale]);
 
   return (
     <div>
@@ -314,7 +319,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         }))
         .sort((a, b) => {
           if (a.startAt && b.startAt) {
-            return isBefore(a.startAt, b.startAt) ? 1 : -1;
+            return dayjs(a.startAt).isBefore(b.startAt) ? 1 : -1;
           }
           return 0;
         }) || [];

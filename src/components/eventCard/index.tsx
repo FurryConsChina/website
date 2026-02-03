@@ -1,6 +1,7 @@
 import clsx from "clsx";
-import { differenceInCalendarDays, format, isSameDay } from "date-fns";
-import { enUS, zhCN } from "date-fns/locale";
+import dayjs from "dayjs";
+import "dayjs/locale/zh-cn";
+import "dayjs/locale/zh-tw";
 import Link from "next/link";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "next-i18next";
@@ -8,6 +9,7 @@ import Image from "@/components/image";
 import { getEventCoverImgPath } from "@/utils/imageLoader";
 import { sendTrack } from "@/utils/track";
 import { currentSupportLocale } from "@/utils/meta";
+import { getDayjsLocale } from "@/utils/locale";
 
 import type { EventCardItem } from "@/types/event";
 import styles from "@/components/eventCard/index.module.css";
@@ -231,15 +233,15 @@ export function EventDate({
   locale?: currentSupportLocale;
 }) {
   const { t } = useTranslation();
+  const dayjsLocale = getDayjsLocale(locale);
   const distanceInTwoDate = useMemo(() => {
     if (!event.startAt || !event.endAt) return;
 
-    const startDate = new Date(event.startAt);
-    const endDate = new Date(event.endAt);
+    const startDate = dayjs(event.startAt).startOf("day");
+    const endDate = dayjs(event.endAt).startOf("day");
+    const result = endDate.diff(startDate, "day") + 1;
 
-    const result = differenceInCalendarDays(endDate, startDate) + 1;
-
-    if (isSameDay(event.startAt, event.endAt)) {
+    if (startDate.isSame(endDate, "day")) {
       return t("date.duration.singleDay");
     }
 
@@ -252,37 +254,31 @@ export function EventDate({
 
   const startDateMonth = useMemo(() => {
     if (event.startAt) {
-      return `${format(event.startAt, "yyyy/MM", {
-        locale: locale === "zh-Hans" ? zhCN : enUS,
-      })}`;
+      return `${dayjs(event.startAt).locale(dayjsLocale).format("YYYY/MM")}`;
     }
 
     return null;
-  }, [event.startAt, locale]);
+  }, [event.startAt, dayjsLocale]);
 
   const startDateLabel = useMemo(() => {
     if (event.startAt) {
-      return `${format(event.startAt, "yyyy/MM/dd", {
-        locale: locale === "zh-Hans" ? zhCN : enUS,
-      })}(${format(event.startAt, "E", {
-        locale: locale === "zh-Hans" ? zhCN : enUS,
-      })})`;
+      return `${dayjs(event.startAt).locale(dayjsLocale).format("YYYY/MM/DD")}(${dayjs(event.startAt)
+        .locale(dayjsLocale)
+        .format("ddd")})`;
     }
 
     return null;
-  }, [event.startAt, locale]);
+  }, [event.startAt, dayjsLocale]);
 
   const endDateLabel = useMemo(() => {
     if (event.endAt) {
-      return `${format(event.endAt, "MM/dd", {
-        locale: locale === "zh-Hans" ? zhCN : enUS,
-      })}(${format(event.endAt, "E", {
-        locale: locale === "zh-Hans" ? zhCN : enUS,
-      })})`;
+      return `${dayjs(event.endAt).locale(dayjsLocale).format("MM/DD")}(${dayjs(event.endAt)
+        .locale(dayjsLocale)
+        .format("ddd")})`;
     }
 
     return null;
-  }, [event.endAt, locale]);
+  }, [event.endAt, dayjsLocale]);
 
   if (!startDateLabel || !endDateLabel) {
     return startDateMonth || t("event.unknown");

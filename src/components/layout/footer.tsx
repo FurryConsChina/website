@@ -1,13 +1,10 @@
 import { AboutUsLinks, FriendSiteLinks } from "@/constants/staticConfig";
 import { sendTrack } from "@/utils/track";
 import Link from "next/link";
-import { format } from "date-fns";
-import { zhCN } from "date-fns/locale";
 import { useTranslation } from "next-i18next";
 import Image from "@/components/image";
 
 export default function Footer({ isCNRegion }: { isCNRegion: boolean }) {
-  const dateString = format(LASTCOMMITDATETIME, "yyyy/MM/dd", { locale: zhCN });
   const { t } = useTranslation();
 
   return (

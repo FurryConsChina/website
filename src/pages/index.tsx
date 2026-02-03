@@ -15,7 +15,7 @@ import { FeatureSchema } from "@/types/feature";
 import { monthNumberFormatter } from "@/utils/locale";
 import { keywordGenerator } from "@/utils/meta";
 import SponsorBanner from "@/components/SponsorBanner";
-import { endOfYear, startOfYear } from "date-fns";
+import dayjs from "dayjs";
 
 export default function Home(props: { events: EventCardItem[] }) {
   const { t } = useTranslation();
@@ -222,7 +222,7 @@ export async function getStaticProps({ locale }: { locale: string }) {
   const events = await EventsAPI.getEventList({
     current: "1",
     pageSize: "999",
-    eventStartAt: startOfYear(new Date()).toISOString(),
+    eventStartAt: dayjs().startOf("year").toISOString(),
     eventStatus: [
       EventStatus.EventScheduled,
       EventStatus.EventPostponed,
