@@ -12,7 +12,6 @@
   "dependencies": {
     "@headlessui/react": "^2.2.9",
     "@next/third-parties": "^16.1.6",
-    "@radix-ui/react-collapsible": "^1.1.12",
     "@sentry/nextjs": "^10.38.0",
     "autoprefixer": "^10.4.24",
     "axios": "^1.13.4",
