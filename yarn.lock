@@ -4600,7 +4600,7 @@ __metadata:
     eslint-config-next: "npm:16.1.6"
     eslint-config-prettier: "npm:^10.1.8"
     git-revision-webpack-plugin: "npm:^5.0.0"
-    i18next: "npm:^25.8.1"
+    i18next: "npm:^25.8.2"
     next: "npm:16.1.6"
     next-i18next: "npm:^15.4.3"
     postcss: "npm:^8.5.6"
@@ -5001,9 +5001,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"i18next@npm:^25.8.1":
-  version: 25.8.1
-  resolution: "i18next@npm:25.8.1"
+"i18next@npm:^25.8.2":
+  version: 25.8.2
+  resolution: "i18next@npm:25.8.2"
   dependencies:
     "@babel/runtime": "npm:^7.28.4"
   peerDependencies:
@@ -5011,7 +5011,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/be43ac1edb424a098eec29c0b1d059d11cbd9a8d4cd369d341368bcb260df6af5b814349342bbc5d61be9ac2fe6c9f018b794afc074b42c74aedbd600b8e3e6a
+  checksum: 10/4397cf43443654725fe55fba623360039e002ed977724d0d0d33e68e3db317dc84bcf2e8bc4cbdf81645ac6916b48b16fa805d56cb4173280c568db70792b949
   languageName: node
   linkType: hard
 

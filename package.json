@@ -24,7 +24,7 @@
     "eslint": "9.39.2",
     "eslint-config-next": "16.1.6",
     "git-revision-webpack-plugin": "^5.0.0",
-    "i18next": "^25.8.1",
+    "i18next": "^25.8.2",
     "next": "16.1.6",
     "next-i18next": "^15.4.3",
     "postcss": "^8.5.6",
