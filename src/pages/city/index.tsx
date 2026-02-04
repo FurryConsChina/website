@@ -1,21 +1,17 @@
 import { RegionAPI } from "@/api/region";
 import { Region, RegionType } from "@/types/region";
 import { CityPageMeta, currentSupportLocale } from "@/utils/meta";
+import { breadcrumbGenerator } from "@/utils/structuredData";
 import { sendTrack } from "@/utils/track";
 import { groupBy } from "es-toolkit";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import Link from "next/link";
 import { FaLink } from "react-icons/fa6";
+import { useTranslation } from "next-i18next";
 
-const regionGroupLabel = {
-  special: "特别行政区",
-  other: "其他地区",
-};
-
-export default function City(props: {
-  regionGroups: Record<string, Region[]>;
-}) {
+export default function City(props: { regionGroups: Record<string, Region[]> }) {
   const { regionGroups } = props;
+  const { t } = useTranslation();
 
   const groupKeys = Object.keys(regionGroups).sort((a, b) => {
     const aIsParentGroup = regionGroups[a][0].parent?.sortOrder;
@@ -31,20 +27,24 @@ export default function City(props: {
         {groupKeys.map((groupKey) => {
           const groupName = (() => {
             if (groupKey === "china") {
-              return "中国大陆";
+              return t("city.group.china");
             }
 
             const firstRegion = regionGroups[groupKey][0];
             if (firstRegion.parent?.code === groupKey) {
               return firstRegion.parent.name;
             }
-            return regionGroupLabel[groupKey as keyof typeof regionGroupLabel];
+            if (groupKey === "special") return t("city.group.special");
+            return t("city.group.other");
           })();
 
           return (
             <div key={groupKey} className="mb-8 last:mb-0">
               <h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">
-                {groupName} ({regionGroups[groupKey].length}个地区)
+                {groupName}
+                {t("city.group.count", {
+                  count: regionGroups[groupKey].length,
+                })}
               </h3>
               <ul className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-4">
                 {regionGroups[groupKey]
@@ -80,17 +80,13 @@ export default function City(props: {
 }
 
 export async function getServerSideProps({ locale }: { locale: string }) {
-  const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
-
   const regions = await RegionAPI.getRegionList({
     current: 1,
     pageSize: 100,
     withEvents: true,
   });
 
-  const regionWithoutCountry = regions.records.filter(
-    (item) => item.type !== RegionType.COUNTRY
-  );
+  const regionWithoutCountry = regions.records.filter((item) => item.type !== RegionType.COUNTRY);
 
   const regionGroups = groupBy(regionWithoutCountry, (item) => {
     if (["xianggang", "aomen"].includes(item.code)) {
@@ -114,24 +110,18 @@ export async function getServerSideProps({ locale }: { locale: string }) {
       regionGroups: regionGroups,
       headMetas: {
         title: CityPageMeta[locale as currentSupportLocale].title,
-        des: CityPageMeta[locale as currentSupportLocale].description(
-          regions.total
-        ),
+        des: CityPageMeta[locale as currentSupportLocale].description(regions.total),
         link: "/city",
       },
       structuredData: {
-        breadcrumb: {
-          "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
-          itemListElement: [
+        ...breadcrumbGenerator({
+          items: [
             {
-              "@type": "ListItem",
-              position: 1,
-              name: "城市",
-              item: `https://${PUBLIC_URL}/city`,
+              name: CityPageMeta[locale as currentSupportLocale].title,
+              item: "/city",
             },
           ],
-        },
+        }),
       },
       ...(await serverSideTranslations(locale, ["common"])),
     },

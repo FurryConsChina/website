@@ -1,27 +1,23 @@
 import { useMemo, useState } from "react";
 import { Field, Label, Switch } from "@headlessui/react";
-import { groupBy } from "lodash-es";
+import { groupBy } from "es-toolkit/compat";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { EventsAPI } from "@/api/events";
 import EventCard from "@/components/eventCard";
 import { FriendSiteBlock } from "@/components/layout/footer";
-import {
-  filteringEvents,
-  groupByCustomDurationEvent,
-  sortEvents,
-} from "@/utils/event";
+import { filteringEvents, groupByCustomDurationEvent, sortEvents } from "@/utils/event";
 import { sendTrack } from "@/utils/track";
 
 import { DurationType } from "@/types/list";
-import { EventScale, EventStatus, type EventItem } from "@/types/event";
+import { EventScale, EventStatus, type EventCardItem } from "@/types/event";
 import { FeatureSchema } from "@/types/feature";
 import { monthNumberFormatter } from "@/utils/locale";
 import { keywordGenerator } from "@/utils/meta";
 import SponsorBanner from "@/components/SponsorBanner";
-import { endOfYear, startOfYear } from "date-fns";
+import dayjs from "dayjs";
 
-export default function Home(props: { events: EventItem[] }) {
+export default function Home(props: { events: EventCardItem[] }) {
   const { t } = useTranslation();
   const [selectedFilter, setFilter] = useState({
     onlyAvailable: true,
@@ -29,17 +25,13 @@ export default function Home(props: { events: EventItem[] }) {
   });
 
   const filteredEvents = filteringEvents(props.events, selectedFilter);
-  const groupByCustomDurationEvents =
-    groupByCustomDurationEvent(filteredEvents);
+  const groupByCustomDurationEvents = groupByCustomDurationEvent(filteredEvents);
 
   return (
     <>
       <div>
         {/* <SponsorBanner /> */}
-        <Filter
-          selectedFilter={selectedFilter}
-          onChange={(filter) => setFilter(filter)}
-        />
+        <Filter selectedFilter={selectedFilter} onChange={(filter) => setFilter(filter)} />
 
         {filteredEvents.length === 0 && (
           <div className="bg-white border rounded-xl p-6 mt-6 text-center h-96 flex justify-center flex-col">
@@ -48,9 +40,7 @@ export default function Home(props: { events: EventItem[] }) {
               <br></br>
               {t("homepage.noResultTip")}
             </h1>
-            <p className="text-base text-gray-400 mt-2">
-              {t("homepage.noResultContact")}
-            </p>
+            <p className="text-base text-gray-400 mt-2">{t("homepage.noResultContact")}</p>
           </div>
         )}
 
@@ -61,7 +51,7 @@ export default function Home(props: { events: EventItem[] }) {
               durationType={type}
               events={groupByCustomDurationEvents[type as DurationType]}
             />
-          ) : null
+          ) : null,
         )}
 
         <FriendSiteBlock />
@@ -70,13 +60,7 @@ export default function Home(props: { events: EventItem[] }) {
   );
 }
 
-function DurationSection({
-  durationType,
-  events,
-}: {
-  durationType: string;
-  events: EventItem[];
-}) {
+function DurationSection({ durationType, events }: { durationType: string; events: EventCardItem[] }) {
   const { t, i18n } = useTranslation();
 
   const groupByMonthEvent = useMemo(() => {
@@ -88,7 +72,7 @@ function DurationSection({
           return "unknown";
         }
         return `${endDate.getFullYear()}-${endDate.getMonth() + 1}`;
-      }
+      },
     );
   }, [events]);
 
@@ -101,9 +85,7 @@ function DurationSection({
       }
       return parseInt(a.split("-")[1]) - parseInt(b.split("-")[1]);
     });
-    return durationType === DurationType.Passed
-      ? sortedResult.reverse()
-      : sortedResult;
+    return durationType === DurationType.Passed ? sortedResult.reverse() : sortedResult;
   }, [groupByMonthEvent, durationType]);
 
   if (durationType === DurationType.Now) {
@@ -111,9 +93,7 @@ function DurationSection({
       <div className="rounded-xl bg-gray-100/80 p-2 md:p-6 my-4">
         <h3 className="text-lg md:text-xl text-red-400 font-bold mb-2 md:mb-6">
           {t("homepage.group.status.now")}
-          <span className="text-sm text-gray-500 font-bold ml-1">
-            {t("homepage.total", { total: events.length })}
-          </span>
+          <span className="text-sm text-gray-500 font-bold ml-1">{t("homepage.total", { total: events.length })}</span>
         </h3>
         <div className="grid gap-4 md:gap-8 grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {sortEvents(events, "asc").map((event) => (
@@ -137,17 +117,11 @@ function DurationSection({
             {month !== "unknown"
               ? parseInt(month.split("-")[0]) === new Date().getFullYear()
                 ? t("homepage.month", {
-                    month: monthNumberFormatter(
-                      month.split("-")[1],
-                      i18n.language
-                    ),
+                    month: monthNumberFormatter(month.split("-")[1], i18n.language),
                   })
                 : t("homepage.monthWithYear", {
                     year: parseInt(month.split("-")[0]),
-                    month: monthNumberFormatter(
-                      month.split("-")[1],
-                      i18n.language
-                    ),
+                    month: monthNumberFormatter(month.split("-")[1], i18n.language),
                   })
               : null}
             <span className="text-sm text-gray-500 font-bold ml-1">
@@ -182,10 +156,7 @@ function Filter({
   onChange,
   selectedFilter,
 }: {
-  onChange: (filter: {
-    onlyAvailable: boolean;
-    eventScale: (typeof EventScale)[keyof typeof EventScale][];
-  }) => void;
+  onChange: (filter: { onlyAvailable: boolean; eventScale: (typeof EventScale)[keyof typeof EventScale][] }) => void;
   selectedFilter: {
     onlyAvailable: boolean;
     eventScale: (typeof EventScale)[keyof typeof EventScale][];
@@ -206,16 +177,12 @@ function Filter({
     });
   };
 
-  const selectedScaleValue = EventScaleScaleOptions.filter((e) =>
-    selectedFilter.eventScale.includes(e.key)
-  );
+  const selectedScaleValue = EventScaleScaleOptions.filter((e) => selectedFilter.eventScale.includes(e.key));
   return (
     <div className="bg-white border rounded-xl p-6 flex sm:items-center flex-col sm:flex-row relative">
       <Field>
         <div className="flex items-center max-sm:mb-4 max-sm:justify-between">
-          <Label className="mr-4 text-gray-600">
-            {t("event.filter.onlyAvailable")}
-          </Label>
+          <Label className="mr-4 text-gray-600">{t("event.filter.onlyAvailable")}</Label>
           <Switch
             checked={selectedFilter.onlyAvailable}
             onChange={(v) => handleFilter("onlyAvailable", v)}
@@ -255,7 +222,7 @@ export async function getStaticProps({ locale }: { locale: string }) {
   const events = await EventsAPI.getEventList({
     current: "1",
     pageSize: "999",
-    eventStartAt: startOfYear(new Date()).toISOString(),
+    eventStartAt: dayjs().startOf("year").toISOString(),
     eventStatus: [
       EventStatus.EventScheduled,
       EventStatus.EventPostponed,
@@ -266,7 +233,26 @@ export async function getStaticProps({ locale }: { locale: string }) {
 
   return {
     props: {
-      events: events.records,
+      events: events.records.map((event) => ({
+        id: event.id,
+        slug: event.slug,
+        name: event.name,
+        startAt: event.startAt,
+        endAt: event.endAt,
+        scale: event.scale,
+        type: event.type,
+        locationType: event.locationType,
+        address: event.address,
+        region: event.region ? { localName: event.region.localName ?? null } : null,
+        organization: {
+          slug: event.organization.slug,
+          name: event.organization.name,
+        },
+        features: event.features ? { self: event.features.self ?? null } : null,
+        commonFeatures: event.commonFeatures ? event.commonFeatures.map((feature) => ({ name: feature.name })) : null,
+        thumbnail: event.thumbnail,
+        media: event.media?.images ? { images: event.media.images.map((image) => ({ url: image.url })) } : null,
+      })),
       headMetas: {
         keywords: keywordGenerator({
           page: "home",

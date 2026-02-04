@@ -4,6 +4,6 @@
   @apply text-gray-300;
 }
 
-.links :not(:last-child){
-    @apply mr-2;
+.links :not(:last-child) {
+  @apply mr-2;
 }

@@ -1,5 +1,6 @@
 {
-  "name": "FEC·兽展日历",
+  "name": "FurConsCalendar · 兽展日历",
+  "short_name": "FEC",
   "start_url": "/",
   "display": "standalone",
   "icons": [

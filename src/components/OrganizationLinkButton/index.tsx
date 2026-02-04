@@ -25,7 +25,7 @@ function OrganizationLinkButton({
 }) {
   const className = clsx(
     "flex items-center rounded-xl px-4 py-3 text-white w-full text-left md:hover:-translate-x-2 shadow transition duration-300",
-    bgColorClass
+    bgColorClass,
   );
 
   const track = () => {
@@ -49,13 +49,7 @@ function OrganizationLinkButton({
     </>
   );
   return href ? (
-    <a
-      href={href}
-      target="_blank"
-      rel="noreferrer"
-      className={className}
-      onClick={track}
-    >
+    <a href={href} target="_blank" rel="noreferrer" className={className} onClick={track}>
       {buttonContext}
     </a>
   ) : (
@@ -72,11 +66,7 @@ function OrganizationLinkButton({
 }
 
 export const WebsiteButton = ({ href, t }: { href: string; t: TFunction }) => (
-  <OrganizationLinkButton
-    href={href}
-    bgColorClass="bg-sky-400"
-    icon={<HiOutlineHome />}
-  >
+  <OrganizationLinkButton href={href} bgColorClass="bg-sky-400" icon={<HiOutlineHome />}>
     {t("organization.website")}
   </OrganizationLinkButton>
 );
@@ -86,9 +76,7 @@ export const QQGroupButton = ({ text, t }: { text: string; t: TFunction }) => (
     bgColorClass="bg-[#4d9aff]"
     icon={<FaQq />}
     onClick={() => {
-      navigator.clipboard
-        .writeText(text)
-        .then(() => toast.success(t("organization.qqCopySuccess")));
+      navigator.clipboard.writeText(text).then(() => toast.success(t("organization.qqCopySuccess")));
     }}
     label={t("organization.copyQq")}
   >
@@ -97,31 +85,19 @@ export const QQGroupButton = ({ text, t }: { text: string; t: TFunction }) => (
 );
 
 export const BiliButton = ({ href, t }: { href: string; t: TFunction }) => (
-  <OrganizationLinkButton
-    bgColorClass="bg-[#fb7299]"
-    href={href}
-    icon={<SiBilibili />}
-  >
+  <OrganizationLinkButton bgColorClass="bg-[#fb7299]" href={href} icon={<SiBilibili />}>
     {t("organization.bilibili")}
   </OrganizationLinkButton>
 );
 
 export const WeiboButton = ({ href, t }: { href: string; t: TFunction }) => (
-  <OrganizationLinkButton
-    bgColorClass="bg-[#ff5962]"
-    href={href}
-    icon={<FaWeibo />}
-  >
+  <OrganizationLinkButton bgColorClass="bg-[#ff5962]" href={href} icon={<FaWeibo />}>
     {t("organization.weibo")}
   </OrganizationLinkButton>
 );
 
 export const TwitterButton = ({ href, t }: { href: string; t: TFunction }) => (
-  <OrganizationLinkButton
-    bgColorClass="bg-[#1da1f2]"
-    href={href}
-    icon={<FaTwitter />}
-  >
+  <OrganizationLinkButton bgColorClass="bg-[#1da1f2]" href={href} icon={<FaTwitter />}>
     {t("organization.twitter")}
   </OrganizationLinkButton>
 );
@@ -130,9 +106,7 @@ export const EmailButton = ({ mail, t }: { mail: string; t: TFunction }) => (
   <OrganizationLinkButton
     bgColorClass="bg-emerald-500"
     onClick={() => {
-      navigator.clipboard
-        .writeText(mail)
-        .then(() => toast.success(t("organization.mailCopySuccess")));
+      navigator.clipboard.writeText(mail).then(() => toast.success(t("organization.mailCopySuccess")));
     }}
     icon={<HiOutlineMail />}
     label={t("organization.copyMail")}
@@ -142,41 +116,25 @@ export const EmailButton = ({ mail, t }: { mail: string; t: TFunction }) => (
 );
 
 export const WikifurButton = ({ href, t }: { href: string; t: TFunction }) => (
-  <OrganizationLinkButton
-    bgColorClass="bg-blue-800"
-    href={href}
-    icon={<FaPaw />}
-  >
+  <OrganizationLinkButton bgColorClass="bg-blue-800" href={href} icon={<FaPaw />}>
     {t("organization.wikifur")}
   </OrganizationLinkButton>
 );
 
 export const FacebookButton = ({ href, t }: { href: string; t: TFunction }) => (
-  <OrganizationLinkButton
-    bgColorClass="bg-[#1877f2]"
-    href={href}
-    icon={<FaFacebook />}
-  >
+  <OrganizationLinkButton bgColorClass="bg-[#1877f2]" href={href} icon={<FaFacebook />}>
     {t("organization.facebook")}
   </OrganizationLinkButton>
 );
 
 export const PlurkButton = ({ href, t }: { href: string; t: TFunction }) => (
-  <OrganizationLinkButton
-    bgColorClass="bg-[#FF574D]"
-    href={href}
-    icon={<FaPaw />}
-  >
+  <OrganizationLinkButton bgColorClass="bg-[#FF574D]" href={href} icon={<FaPaw />}>
     {t("organization.plurk")}
   </OrganizationLinkButton>
 );
 
 export const RednoteButton = ({ href, t }: { href: string; t: TFunction }) => (
-  <OrganizationLinkButton
-    bgColorClass="bg-[#ff2442]"
-    href={href}
-    icon={<SiXiaohongshu />}
-  >
+  <OrganizationLinkButton bgColorClass="bg-[#ff2442]" href={href} icon={<SiXiaohongshu />}>
     {t("organization.rednote")}
   </OrganizationLinkButton>
 );

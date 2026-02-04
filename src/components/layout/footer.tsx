@@ -1,13 +1,10 @@
 import { AboutUsLinks, FriendSiteLinks } from "@/constants/staticConfig";
 import { sendTrack } from "@/utils/track";
 import Link from "next/link";
-import { format } from "date-fns";
-import { zhCN } from "date-fns/locale";
 import { useTranslation } from "next-i18next";
 import Image from "@/components/image";
 
 export default function Footer({ isCNRegion }: { isCNRegion: boolean }) {
-  const dateString = format(LASTCOMMITDATETIME, "yyyy/MM/dd", { locale: zhCN });
   const { t } = useTranslation();
 
   return (
@@ -46,27 +43,17 @@ export default function Footer({ isCNRegion }: { isCNRegion: boolean }) {
               <h3 className="text-gray-700 mb-2">{t("footer.friendsLink")}</h3>
               <div className="flex flex-col">
                 {FriendSiteLinks.map((link) => (
-                  <FriendLink
-                    key={link.link}
-                    link={link.link}
-                    label={link.label}
-                  />
+                  <FriendLink key={link.link} link={link.link} label={link.label} />
                 ))}
               </div>
             </div>
 
             <div className="text-left">
-              <h3 className="text-gray-700 hidden md:block mb-2">
-                {t("footer.aboutUs")}
-              </h3>
+              <h3 className="text-gray-700 hidden md:block mb-2">{t("footer.aboutUs")}</h3>
               <ul className="flex md:flex-col">
                 {AboutUsLinks.map((link) => (
                   <li key={link.link}>
-                    <FriendLink
-                      key={link.link}
-                      link={link.link}
-                      label={link.label}
-                    />
+                    <FriendLink key={link.link} link={link.link} label={t(link.labelKey)} />
                   </li>
                 ))}
               </ul>
@@ -76,8 +63,7 @@ export default function Footer({ isCNRegion }: { isCNRegion: boolean }) {
 
         <div className="flex flex-col text-gray-700 text-left md:text-right text-xs mt-4 md:mt-0">
           <span>
-            ©️ {isCNRegion ? "FURRYCONS.CN" : "FURRYEVENTCHINA.COM"} {2023}-
-            {new Date().getFullYear()}
+            ©️ {isCNRegion ? "FURRYCONS.CN" : "FURRYEVENTCHINA.COM"} {2023}-{new Date().getFullYear()}
           </span>
 
           <span className="block">{t("footer.disclaimer")}</span>
@@ -87,11 +73,7 @@ export default function Footer({ isCNRegion }: { isCNRegion: boolean }) {
           <div className="mt-1">
             {isCNRegion && (
               <span className="mt-2">
-                <a
-                  href="https://beian.miit.gov.cn/"
-                  target="_blank"
-                  rel="noreferrer"
-                >
+                <a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer">
                   渝ICP备18016662号-2
                 </a>
               </span>
@@ -100,11 +82,7 @@ export default function Footer({ isCNRegion }: { isCNRegion: boolean }) {
           {isCNRegion && (
             <div className="mt-1 flex items-center md:justify-end gap-1">
               <Image alt="beian" src="ga.png" width={16} height={16} />
-              <a
-                href="https://beian.mps.gov.cn/#/query/webSearch?code=31010502007546"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a href="https://beian.mps.gov.cn/#/query/webSearch?code=31010502007546" target="_blank" rel="noreferrer">
                 沪公网安备31010502007546号
               </a>
             </div>
@@ -139,9 +117,7 @@ export function FriendSiteBlock() {
   const { t } = useTranslation();
   return (
     <section className="bg-white p-3 md:p-6 rounded-xl mt-8">
-      <h3 className="font-bold text-gray-600 text-xl md:text-2xl">
-        {t("footer.friendsLink")}
-      </h3>
+      <h3 className="font-bold text-gray-600 text-xl md:text-2xl">{t("footer.friendsLink")}</h3>
       <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
         {FriendSiteLinks.map((link) => (
           <Link
@@ -160,9 +136,7 @@ export function FriendSiteBlock() {
             <h4 className="text-base md:text-lg font-bold mb-1 md:mb-3 transition duration-300 text-gray-600 group-hover:text-white decoration-transparent group-hover:decoration-current decoration-wavy">
               {link.label}
             </h4>
-            <p className="text-sm group-hover:text-white transition duration-300 text-gray-600">
-              {link.description}
-            </p>
+            <p className="text-sm group-hover:text-white transition duration-300 text-gray-600">{link.description}</p>
           </Link>
         ))}
       </div>

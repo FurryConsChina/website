@@ -7,24 +7,20 @@ import Link from "next/link";
 import z from "zod";
 import Image from "@/components/image";
 import { getEventCoverImgPath } from "@/utils/imageLoader";
-import { format } from "date-fns";
+import "dayjs/locale/zh-cn";
+import "dayjs/locale/zh-tw";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { groupBy } from "es-toolkit";
 import { useTranslation } from "next-i18next";
-import { monthNumberFormatter } from "@/utils/locale";
+import { getDayjsLocale, monthNumberFormatter } from "@/utils/locale";
 import { EventsAPI } from "@/api/events";
+import dayjs from "dayjs";
 
-export default function CityDetail({
-  region,
-  events,
-}: {
-  region: Region;
-  events: EventItem[];
-}) {
+export default function CityDetail({ region, events }: { region: Region; events: EventItem[] }) {
   const { t, i18n } = useTranslation();
   // 按年份分组
   const groupEventsByYear = groupBy(events, (event) => {
-    const year = event.startAt ? format(event.startAt, "yyyy") : "no-date";
+    const year = event.startAt ? dayjs(event.startAt).year() : "no-date";
     return year;
   });
 
@@ -36,7 +32,7 @@ export default function CityDetail({
       } else {
         // 按月份分组
         const monthGroups = groupBy(yearEvents, (event) => {
-          return event.startAt ? format(event.startAt, "M") : "no-date";
+          return event.startAt ? dayjs(event.startAt).format("M") : "no-date";
         });
 
         // 对每个月份内的事件按开始日期排序
@@ -45,9 +41,7 @@ export default function CityDetail({
             if (!a.startAt && !b.startAt) return 0;
             if (!a.startAt) return 1;
             if (!b.startAt) return -1;
-            return (
-              new Date(a.startAt).getTime() - new Date(b.startAt).getTime()
-            );
+            return new Date(a.startAt).getTime() - new Date(b.startAt).getTime();
           });
         });
 
@@ -55,7 +49,7 @@ export default function CityDetail({
       }
       return acc;
     },
-    {} as Record<string, Record<string, EventItem[]>>
+    {} as Record<string, Record<string, EventItem[]>>,
   );
 
   // 排序年份（最新的在前）
@@ -92,16 +86,12 @@ export default function CityDetail({
                     })}
               </h3>
 
-              {Object.entries(yearMonthData[year]).map(
-                ([month, monthEvents]) => (
-                  <div key={`${year}-${month}`}>
-                    <h4 className="text-lg font-medium text-gray-600 mb-3">
-                      {getMonthName(month)}
-                    </h4>
-                    <MonthSection events={monthEvents} />
-                  </div>
-                )
-              )}
+              {Object.entries(yearMonthData[year]).map(([month, monthEvents]) => (
+                <div key={`${year}-${month}`}>
+                  <h4 className="text-lg font-medium text-gray-600 mb-3">{getMonthName(month)}</h4>
+                  <MonthSection events={monthEvents} />
+                </div>
+              ))}
             </div>
           ))}
         </div>
@@ -111,6 +101,10 @@ export default function CityDetail({
 }
 
 function MonthSection({ events }: { events: EventItem[] }) {
+  const { t, i18n } = useTranslation();
+  const dateFormat = t("date.monthDay") || "MM月DD日";
+  const dayjsLocale = getDayjsLocale(i18n.language);
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
       {events.map((event) => (
@@ -130,7 +124,7 @@ function MonthSection({ events }: { events: EventItem[] }) {
         >
           <div className="rounded-xl duration-500 transition group-hover:border-gray-400 w-full h-full absolute brightness-75 hover:brightness-100">
             <Image
-              alt="活动背景"
+              alt={t("city.eventBackgroundAlt", { name: event.name })}
               src={getEventCoverImgPath(event)}
               width={350}
               className="h-full w-full object-cover rounded-xl overflow-hidden"
@@ -141,10 +135,8 @@ function MonthSection({ events }: { events: EventItem[] }) {
             <h4 className="tracking-wide text-white font-bold text-lg text-center">{`${event.organization?.name} · ${event.name}`}</h4>
             {event.startAt && event.endAt && (
               <p className="text-center text-white">
-                {event.startAt && (
-                  <span>{format(event.startAt, "MM月dd日")}</span>
-                )}
-                -{event.endAt && <span>{format(event.endAt, "MM月dd日")}</span>}
+                {event.startAt && <span>{dayjs(event.startAt).locale(dayjsLocale).format(dateFormat)}</span>}-
+                {event.endAt && <span>{dayjs(event.endAt).locale(dayjsLocale).format(dateFormat)}</span>}
               </p>
             )}
           </div>
@@ -184,7 +176,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       name: z.string(),
       startAt: z.string(),
       endAt: z.string(),
-    })
+    }),
   );
 
   return {

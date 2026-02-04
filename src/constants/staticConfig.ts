@@ -20,20 +20,17 @@ export const FriendSiteLinks = [
   {
     link: "https://fursuit.cool/?utm_source=fcc&utm_campaign=friend_link",
     label: "FurSuit 绒兽志",
-    description:
-      "「绒兽志」致力于为您提供最新最全的毛毛图鉴资讯整合，快来这里看看吧！",
+    description: "「绒兽志」致力于为您提供最新最全的毛毛图鉴资讯整合，快来这里看看吧！",
   },
   {
     link: "https://www.furwall.net/?utm_source=fcc&utm_campaign=friend_link",
     label: "绒毛墙 - 兽迷交流新天地",
-    description:
-      "让社群交流更亲密友善，还能精彩重温兽圈中每一个温馨与欢乐的瞬间，让这段旅程充满毛绒绒的爱与共鸣。",
+    description: "让社群交流更亲密友善，还能精彩重温兽圈中每一个温馨与欢乐的瞬间，让这段旅程充满毛绒绒的爱与共鸣。",
   },
   {
     link: "https://app.nyanket.cn/?utm_source=fcc",
     label: "Nyanket 喵通贩",
-    description:
-      "Nyanket 喵通贩 是最早立足于提供 票务一体化解决方案 的服务商，我们与兽展的故事起源于兽夏祭。",
+    description: "Nyanket 喵通贩 是最早立足于提供 票务一体化解决方案 的服务商，我们与兽展的故事起源于兽夏祭。",
   },
   {
     link: "https://furryfandomclub.cn/?utm_source=fcc",
@@ -50,22 +47,22 @@ export const FriendSiteLinks = [
 export const AboutUsLinks = [
   {
     link: "/about",
-    label: "我们是谁",
+    labelKey: "footer.aboutUsLinks.whoWeAre",
   },
   {
     link: "/about#contact",
-    label: "联系方式",
+    labelKey: "footer.aboutUsLinks.contact",
   },
   {
     link: "https://docs.furrycons.cn",
-    label: "帮助文档",
+    labelKey: "footer.aboutUsLinks.docs",
   },
   {
     link: "https://github.com/FurryConsChina/website",
-    label: "GitHub",
+    labelKey: "footer.aboutUsLinks.github",
   },
   {
-    link: "https://status.furryeventchina.com",
-    label: "状态监控",
+    link: "https://status.furrycons.cn/status/fcc",
+    labelKey: "footer.aboutUsLinks.status",
   },
 ];

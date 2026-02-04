@@ -22,10 +22,7 @@ export default function SponsorBanner() {
         <Image
           autoFormat
           quality={100}
-          className={clsx(
-            "rounded-xl h-[150px] sm:h-[300px] w-full object-cover",
-            styles.sponsorBanner
-          )}
+          className={clsx("rounded-xl h-[150px] sm:h-[300px] w-full object-cover", styles.sponsorBanner)}
           containerClassName="w-full"
           src="organizations/furrychina/2025-dec-shanghai-con/home_banner.jpg"
           alt="Sponsor Banner"

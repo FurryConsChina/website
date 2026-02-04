@@ -9,21 +9,25 @@ import toast from "react-hot-toast";
 import { FaPaw, FaQq, FaTwitter, FaWeibo } from "react-icons/fa";
 import { MdOutlineContentCopy } from "react-icons/md";
 import { SiBilibili, SiXiaohongshu } from "react-icons/si";
-import { formatDistanceToNowStrict, isBefore } from "date-fns";
-import { zhCN } from "date-fns/locale";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/zh-cn";
+import "dayjs/locale/zh-tw";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { OrganizationsAPI } from "@/api/organizations";
 import { z } from "zod";
-import { format } from "date-fns";
 import { EventItem } from "@/types/event";
-import { OrganizationSchema, OrganizationType } from "@/types/organization";
+import { OrganizationSchema, Organization } from "@/types/organization";
 import { FeatureSchema } from "@/types/feature";
 import {
   currentSupportLocale,
   keywordGenerator,
   organizationDetailDescriptionGenerator,
+  OrganizationPageMeta,
 } from "@/utils/meta";
+import { breadcrumbGenerator } from "@/utils/structuredData";
+import { getDayjsLocale } from "@/utils/locale";
 import axios, { AxiosError } from "axios";
 // import {
 //   WebsiteButton,
@@ -35,12 +39,12 @@ import axios, { AxiosError } from "axios";
 //   WikifurButton,
 // } from "@/components/OrganizationLinkButton";
 
-export default function OrganizationDetail(props: {
-  events: EventItem[];
-  organization: OrganizationType;
-}) {
-  const { t } = useTranslation();
+dayjs.extend(relativeTime);
+
+export default function OrganizationDetail(props: { events: EventItem[]; organization: Organization }) {
+  const { t, i18n } = useTranslation();
   const { organization, events } = props;
+  const dayjsLocale = getDayjsLocale(i18n.language);
 
   const formattedFirstEventTime = useMemo(() => {
     const theBeginningEvent = events[events.length - 1];
@@ -65,12 +69,12 @@ export default function OrganizationDetail(props: {
         year: date.getUTCFullYear(),
         month: date.getUTCMonth() + 1,
         day: date.getUTCDate(),
-        createDistance: formatDistanceToNowStrict(date, { locale: zhCN }),
+        createDistance: dayjs(date).locale(dayjsLocale).toNow(true),
       };
     } else {
       return null;
     }
-  }, [organization.creationTime]);
+  }, [organization.creationTime, dayjsLocale]);
 
   return (
     <div>
@@ -81,7 +85,7 @@ export default function OrganizationDetail(props: {
               <Image
                 className="object-contain h-full"
                 containerClassName="h-full"
-                alt={`${organization.name}的展会徽标`}
+                alt={t("organization.logoAlt", { name: organization.name })}
                 width={200}
                 height={200}
                 src={organization.logoUrl}
@@ -104,9 +108,7 @@ export default function OrganizationDetail(props: {
                   })}
                 </span>
               )}
-              <span>
-                {t("organization.totalEvent", { amount: events.length })}
-              </span>
+              <span>{t("organization.totalEvent", { amount: events.length })}</span>
               {formattedFirstEventTime && (
                 <span>
                   {t("organization.firstTimeEvent", {
@@ -130,7 +132,7 @@ export default function OrganizationDetail(props: {
 
             <div
               className={clsx(
-                "flex items-center flex-wrap first:mr-0 gap-4"
+                "flex items-center flex-wrap first:mr-0 gap-4",
                 // styles.links
               )}
             >
@@ -197,9 +199,7 @@ export default function OrganizationDetail(props: {
                   onClick={() => {
                     navigator.clipboard
                       .writeText(organization?.qqGroup || "")
-                      .then(() =>
-                        toast.success(t("organization.qqCopySuccess"))
-                      );
+                      .then(() => toast.success(t("organization.qqCopySuccess")));
                   }}
                   className="flex items-center justify-center bg-red-300 hover:bg-red-400 transition rounded-xl px-4 py-1 text-white text-center"
                 >
@@ -219,9 +219,7 @@ export default function OrganizationDetail(props: {
                     onClick={() => {
                       navigator.clipboard
                         .writeText(organization.contactMail!)
-                        .then(() =>
-                          toast.success(t("organization.mailCopySuccess"))
-                        );
+                        .then(() => toast.success(t("organization.mailCopySuccess")));
                     }}
                     className="border-l ml-2 pl-2 cursor-pointer"
                   >
@@ -271,16 +269,12 @@ export default function OrganizationDetail(props: {
 
         <div className="border-t my-8" />
         <h2 className="text-xl text-slate-600 mb-4">{t("organization.des")}</h2>
-        <p className="text-slate-700 whitespace-pre-line">
-          {organization.description || t("organization.defaultDes")}
-        </p>
+        <p className="text-slate-700 whitespace-pre-line">{organization.description || t("organization.defaultDes")}</p>
       </div>
 
       {!!events.length && (
         <section className="mt-8 p-6 bg-gray-100/80 rounded-xl shadow">
-          <h2 className="text-xl text-slate-600 mb-4">
-            {t("organization.passedEvent")}
-          </h2>
+          <h2 className="text-xl text-slate-600 mb-4">{t("organization.passedEvent")}</h2>
           <div className="grid gird-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-8">
             {events.map((e) => (
               <EventCard
@@ -298,8 +292,6 @@ export default function OrganizationDetail(props: {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
-
   const orgParamsSchema = z.object({
     organization: z
       .string()
@@ -312,9 +304,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   });
 
   try {
-    const data = await OrganizationsAPI.getOrganizationDetail(
-      reqParamsParseResult.organization
-    );
+    const data = await OrganizationsAPI.getOrganizationDetail(reqParamsParseResult.organization);
 
     const validOrganization = data.organization;
     const validEvents =
@@ -329,7 +319,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         }))
         .sort((a, b) => {
           if (a.startAt && b.startAt) {
-            return isBefore(a.startAt, b.startAt) ? 1 : -1;
+            return dayjs(a.startAt).isBefore(b.startAt) ? 1 : -1;
           }
           return 0;
         }) || [];
@@ -341,6 +331,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       };
     }
 
+    const locale = (context.locale as currentSupportLocale) || "zh-Hans";
+
     return {
       props: {
         organization: validOrganization,
@@ -348,41 +340,33 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         headMetas: {
           title: `${validOrganization?.name}`,
           des: organizationDetailDescriptionGenerator(
-            (context.locale as currentSupportLocale) || "zh-Hans",
+            locale,
             validOrganization!,
             validEvents?.length,
-            validEvents[0]?.startAt
+            validEvents[0]?.startAt,
           ),
           keywords: keywordGenerator({
             page: "organization",
-            locale: context.locale as "zh-Hans" | "en",
+            locale: locale,
             organization: validOrganization,
           }),
           url: `/${validOrganization?.slug}`,
           cover: validOrganization?.logoUrl,
         },
         structuredData: {
-          breadcrumb: {
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            itemListElement: [
+          ...breadcrumbGenerator({
+            items: [
               {
-                "@type": "ListItem",
-                position: 1,
-                name: "展商",
-                item: `https://${PUBLIC_URL}/organization`,
+                name: OrganizationPageMeta[locale].title,
+                item: "/organization",
               },
               {
-                "@type": "ListItem",
-                position: 2,
                 name: validOrganization?.name,
               },
             ],
-          },
+          }),
         },
-        ...(context.locale
-          ? await serverSideTranslations(context.locale, ["common"])
-          : {}),
+        ...(context.locale ? await serverSideTranslations(context.locale, ["common"]) : {}),
       },
     };
   } catch (error) {

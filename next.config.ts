@@ -1,26 +1,13 @@
-// This file sets a custom webpack configuration to use your Next.js app
-// with Sentry.
-// https://nextjs.org/docs/api-reference/next.config.js/introduction
-// https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
-const { format } = require("date-fns");
-const { zhCN } = require("date-fns/locale");
+import type { NextConfig } from "next";
 
-const { withSentryConfig } = require("@sentry/nextjs");
-const { GitRevisionPlugin } = require("git-revision-webpack-plugin");
-const { StatsWriterPlugin } = require("webpack-stats-plugin");
+import { withSentryConfig } from "@sentry/nextjs";
+import { GitRevisionPlugin } from "git-revision-webpack-plugin";
 
-const withBundleAnalyzer = require("@next/bundle-analyzer")({
-  enabled: process.env.NEXT_PUBLIC_ENABLE_ANALYZE === "true",
-});
-
-const { i18n } = require("./next-i18next.config");
-
-const IS_CN_REGION = process.env.NEXT_PUBLIC_REGION === "CN";
+import { i18n } from "./next-i18next.config";
 
 const gitRevisionPlugin = new GitRevisionPlugin();
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig: NextConfig = {
   output: "standalone",
   poweredByHeader: false,
   reactStrictMode: true,
@@ -53,31 +40,11 @@ const nextConfig = {
   },
   compiler: {
     define: {
-      VERSION: gitRevisionPlugin.version(),
-      COMMITHASH: gitRevisionPlugin.commithash().slice(0, 7),
-      BRANCH: gitRevisionPlugin.branch(),
-      // LASTCOMMITDATETIME: JSON.stringify(
-      //   gitRevisionPlugin.lastcommitdatetime()
-      // ),
-      LASTCOMMITDATETIME: format(Date.now(), "yyyy/MM/dd", { locale: zhCN }),
+      VERSION: gitRevisionPlugin.version() || "UNKNOWN",
+      COMMITHASH: gitRevisionPlugin.commithash()?.slice(0, 7) || "UNKNOWN",
+      BRANCH: gitRevisionPlugin.branch() || "UNKNOWN",
       __SENTRY_DEBUG__: "false",
     },
-  },
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
-    if (!dev && !isServer) {
-      config.plugins.push(
-        new StatsWriterPlugin({
-          filename: "../webpack-stats.json",
-          stats: {
-            assets: true,
-            chunks: true,
-            modules: true,
-          },
-        })
-      );
-    }
-
-    return config;
   },
   i18n,
 };
@@ -100,9 +67,11 @@ const sentryOptions = {
   // Automatically tree-shake Sentry logger statements to reduce bundle size
   disableLogger: true,
   deleteSourceMapsAfterUpload: true,
-  reactComponentAnnotation: {
-    enabled: true,
-  },
+
+  // turboPack not support yet.
+  // reactComponentAnnotation: {
+  //   enabled: true,
+  // },
 
   // Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)
   // See the following for more information:
@@ -116,12 +85,9 @@ const sentryOptions = {
   // side errors will fail.
   // tunnelRoute: "/monitoring",
 
-  errorHandler: (error) => {
+  errorHandler: (error: unknown) => {
     console.warn("Sentry build error occurred:", error);
   },
 };
 
-module.exports = withSentryConfig(
-  withBundleAnalyzer(nextConfig),
-  sentryOptions
-);
+module.exports = withSentryConfig(nextConfig, sentryOptions);

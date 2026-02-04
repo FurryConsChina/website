@@ -34,13 +34,8 @@ export default function proxy(request: NextRequest) {
   const exactMatch = redirectData[pathname];
   if (exactMatch) {
     return NextResponse.redirect(
-      new URL(
-        locale === "en"
-          ? "/en" + exactMatch.destination
-          : exactMatch.destination,
-        request.url
-      ),
-      exactMatch.permanent ? 308 : 307
+      new URL(locale === "en" ? "/en" + exactMatch.destination : exactMatch.destination, request.url),
+      exactMatch.permanent ? 308 : 307,
     );
   }
 
@@ -50,19 +45,13 @@ export default function proxy(request: NextRequest) {
   if (pathSegments.length >= 2) {
     const orgPath = "/" + pathSegments[0];
     const redirectEntry = redirectData[orgPath];
-    
+
     if (redirectEntry) {
       // 提取 slug 部分（路径的第二部分及之后的所有部分）
       const slug = pathSegments.slice(1).join("/");
       if (slug) {
         const destination = `${redirectEntry.destination}/${slug}`;
-        return NextResponse.redirect(
-          new URL(
-            locale === "en" ? "/en" + destination : destination,
-            request.url
-          ),
-          308
-        );
+        return NextResponse.redirect(new URL(locale === "en" ? "/en" + destination : destination, request.url), 308);
       }
     }
   }

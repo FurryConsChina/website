@@ -1,28 +1,23 @@
 import clsx from "clsx";
-import groupBy from "lodash-es/groupBy";
+import { groupBy } from "es-toolkit/compat";
 import Image from "@/components/image";
 import Link from "next/link";
 import { sendTrack } from "@/utils/track";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { OrganizationsAPI } from "@/api/organizations";
-import { OrganizationType } from "@/types/organization";
+import { Organization } from "@/types/organization";
 import { currentSupportLocale, OrganizationPageMeta } from "@/utils/meta";
+import { breadcrumbGenerator } from "@/utils/structuredData";
 
-export default function OrganizationPage({
-  organizations,
-}: {
-  organizations: OrganizationType[];
-}) {
+export default function OrganizationPage({ organizations }: { organizations: Organization[] }) {
   const groupByStatusOrganizations = groupBy(organizations, (o) => o.status);
   const { t } = useTranslation();
 
   return (
     <div className="bg-white p-6 rounded-xl">
       <section>
-        <h1 className="font-bold text-gray-600 text-2xl">
-          {t("organization.active")}
-        </h1>
+        <h1 className="font-bold text-gray-600 text-2xl">{t("organization.active")}</h1>
         <div className="mt-4 grid md:grid-cols-3 gap-10">
           {groupByStatusOrganizations["active"].map((o) => (
             <OrganizationItem key={o.id} organization={o} />
@@ -30,9 +25,7 @@ export default function OrganizationPage({
         </div>
       </section>
       <section className="mt-6">
-        <h1 className="font-bold text-gray-600 text-2xl">
-          {t("organization.inactive")}
-        </h1>
+        <h1 className="font-bold text-gray-600 text-2xl">{t("organization.inactive")}</h1>
         <div className="mt-4 grid md:grid-cols-3 gap-10">
           {groupByStatusOrganizations["inactive"].map((o) => (
             <OrganizationItem key={o.id} organization={o} />
@@ -43,11 +36,9 @@ export default function OrganizationPage({
   );
 }
 
-function OrganizationItem({
-  organization,
-}: {
-  organization: OrganizationType;
-}) {
+function OrganizationItem({ organization }: { organization: Organization }) {
+  const { t } = useTranslation();
+
   return (
     <Link
       href={organization.slug || ""}
@@ -67,7 +58,7 @@ function OrganizationItem({
             <Image
               className="object-contain h-full min-h-12 max-h-12 mx-auto"
               src={organization.logoUrl}
-              alt={`${organization.name}'s logo`}
+              alt={t("organization.logoAlt", { name: organization.name })}
               width={124}
               height={50}
               sizes="(max-width: 750px) 256px, (max-width: 768px) 300px, 300px"
@@ -78,7 +69,7 @@ function OrganizationItem({
         <h2
           className={clsx(
             "w-3/4 tracking-wide text-gray-600 md:text-center text-lg border-l md:border-l-0 ml-4 md:ml-0 pl-4 md:pl-0 font-bold",
-            organization.logoUrl && "md:mt-4"
+            organization.logoUrl && "md:mt-4",
           )}
         >
           {organization.name}
@@ -89,7 +80,6 @@ function OrganizationItem({
 }
 
 export async function getStaticProps({ locale }: { locale: string }) {
-  const PUBLIC_URL = process.env.NEXT_PUBLIC_WEBSITE_URL;
   const organizations = await OrganizationsAPI.getOrganizationList({
     current: "1",
     pageSize: "999",
@@ -102,34 +92,23 @@ export async function getStaticProps({ locale }: { locale: string }) {
     };
   }
 
-  const title = OrganizationPageMeta[locale as currentSupportLocale].title;
-  const des = OrganizationPageMeta[locale as currentSupportLocale].description(
-    organizations.total
-  );
-
   return {
     props: {
       organizations: organizations.records,
       headMetas: {
         title: OrganizationPageMeta[locale as currentSupportLocale].title,
-        des: OrganizationPageMeta[locale as currentSupportLocale].description(
-          organizations.total
-        ),
+        des: OrganizationPageMeta[locale as currentSupportLocale].description(organizations.total),
         link: "/organization",
       },
       structuredData: {
-        breadcrumb: {
-          "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
-          itemListElement: [
+        ...breadcrumbGenerator({
+          items: [
             {
-              "@type": "ListItem",
-              position: 1,
-              name: "展商",
-              item: `https://${PUBLIC_URL}/organization`,
+              name: OrganizationPageMeta[locale as currentSupportLocale].title,
+              item: "/organization",
             },
           ],
-        },
+        }),
       },
       ...(await serverSideTranslations(locale, ["common"])),
     },

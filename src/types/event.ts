@@ -66,33 +66,19 @@ export const EventSchema = z.object({
   id: z.string(),
   name: z.string(),
   slug: z.string(),
-  startAt: z.string().datetime().nullable(),
-  endAt: z.string().datetime().nullable(),
+  startAt: z.iso.datetime().nullable(),
+  endAt: z.iso.datetime().nullable(),
   status: z.string(),
   scale: z.string(),
-  type: z
-    .enum([
-      EventTypeMap.AllInCon,
-      EventTypeMap.ComicMarket,
-      EventTypeMap.SuitOnlyCon,
-      EventTypeMap.TravelCon,
-      EventTypeMap.FandomMeetup,
-    ])
-    .nullable(),
-  locationType: z
-    .enum([
-      EventLocationType.Hotel,
-      EventLocationType.Venue,
-      EventLocationType.Online,
-    ])
-    .nullable(),
+  type: z.enum(EventTypeMap).nullable(),
+  locationType: z.enum(EventLocationType).nullable(),
   sources: z
     .array(
       z.object({
         url: z.string(),
         name: z.string().nullable(),
         description: z.string().nullable(),
-      })
+      }),
     )
     .nullable(),
   ticketChannels: z
@@ -102,7 +88,7 @@ export const EventSchema = z.object({
         name: z.string(),
         url: z.string().nullable(),
         available: z.boolean().nullable(),
-      })
+      }),
     )
     .nullable(),
   address: z.string().nullable(),
@@ -114,8 +100,8 @@ export const EventSchema = z.object({
       code: z.string(),
       type: z.string(),
       level: z.number(),
-      localName: z.string().nullish(),
-      sortOrder: z.number().nullish(),
+      localName: z.string().nullable(),
+      sortOrder: z.number().nullable(),
     })
     .nullable(),
   thumbnail: z.string().nullable(),
@@ -128,7 +114,7 @@ export const EventSchema = z.object({
             url: z.string(),
             title: z.string().nullable(),
             description: z.string().nullable(),
-          })
+          }),
         )
         .optional(),
       videos: z
@@ -137,7 +123,7 @@ export const EventSchema = z.object({
             url: z.string(),
             title: z.string().nullable(),
             description: z.string().nullable(),
-          })
+          }),
         )
         .optional(),
       lives: z
@@ -146,7 +132,7 @@ export const EventSchema = z.object({
             url: z.string(),
             title: z.string().nullable(),
             description: z.string().nullable(),
-          })
+          }),
         )
         .optional(),
     })
@@ -155,32 +141,44 @@ export const EventSchema = z.object({
   commonFeatures: z.array(FeatureSchema).nullish(),
 
   organization: z.object({
-    id: z.string().uuid(),
-    slug: z.string().min(1),
-    name: z.string().min(1),
+    id: z.uuid(),
+    slug: z.string(),
+    name: z.string(),
     description: z.string().nullable(),
     status: z.enum(["active", "inactive"]),
     type: z.string().nullable(),
-
     logoUrl: z.string().nullable(),
     richMediaConfig: z.any().nullable(),
-    contactMail: z.string().email().nullable(),
-    website: z.string().url().nullable(),
-    twitter: z.string().url().nullable(),
-    weibo: z.string().url().nullable(),
+    contactMail: z.email().nullable(),
+    website: z.url().nullable(),
+    twitter: z.url().nullable(),
+    weibo: z.url().nullable(),
     qqGroup: z.string().nullable(),
-    bilibili: z.string().url().nullable(),
-    wikifur: z.string().url().nullable(),
-    facebook: z.string().url().nullable(),
-    plurk: z.string().url().nullable(),
-    rednote: z.string().url().nullable(),
-    creationTime: z
-      .string()
-      .refine((date) => !isNaN(Date.parse(date)), {
-        message: "Invalid date format",
-      })
-      .nullable(), // creationTime 应该是一个有效的日期字符串
+    bilibili: z.url().nullable(),
+    wikifur: z.url().nullable(),
+    facebook: z.url().nullable(),
+    plurk: z.url().nullable(),
+    rednote: z.url().nullable(),
+    creationTime: z.iso.datetime(),
   }),
 });
 
 export type EventItem = z.infer<typeof EventSchema>;
+
+export type EventCardItem = {
+  id: string;
+  slug: string;
+  name: string;
+  startAt: string | null;
+  endAt: string | null;
+  scale: string;
+  type: string | null;
+  locationType: string | null;
+  address: string | null;
+  region: { localName: string | null } | null;
+  organization: { slug: string; name: string };
+  features?: { self?: string[] | null } | null;
+  commonFeatures?: { name: string }[] | null;
+  thumbnail?: string | null;
+  media?: { images?: { url: string }[] } | null;
+};

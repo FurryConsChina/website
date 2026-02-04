@@ -3,10 +3,7 @@ import { ListResponse } from "@/types/api";
 import API from "@/api";
 
 export class EventsAPI {
-  static async getEventDetail(
-    slug: string,
-    organization: string
-  ): Promise<EventItem> {
+  static async getEventDetail(slug: string, organization: string): Promise<EventItem> {
     const response = await API.get("internal/website/event/detail", {
       params: { slug, organization },
     });
@@ -33,18 +30,15 @@ export class EventsAPI {
     eventRegionCode?: string[];
     organizationSlug?: string[];
   }) {
-    const response = await API.post<ListResponse<EventItem>>(
-      "/internal/website/event/list",
-      {
-        current,
-        pageSize,
-        eventStartAt,
-        eventEndAt,
-        eventStatus,
-        eventRegionCode,
-        organizationSlug,
-      }
-    );
+    const response = await API.post<ListResponse<EventItem>>("/internal/website/event/list", {
+      current,
+      pageSize,
+      eventStartAt,
+      eventEndAt,
+      eventStatus,
+      eventRegionCode,
+      organizationSlug,
+    });
 
     return response.data;
   }

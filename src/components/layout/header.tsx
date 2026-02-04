@@ -89,7 +89,7 @@ export default function Header() {
       <div
         className={clsx(
           "shadow bg-white flex justify-between items-center rounded-b-xl md:rounded-xl",
-          "px-2 py-2 md:p-0"
+          "px-2 py-2 md:p-0",
         )}
       >
         <HeaderLeft />
@@ -147,22 +147,14 @@ function HeaderLeft() {
               />
             </span>
           </h1>
-          <span className="text-xs md:text-base text-gray-700 font-bold">
-            {t("header.slogan")}
-          </span>
+          <span className="text-xs md:text-base text-gray-700 font-bold">{t("header.slogan")}</span>
         </div>
       </div>
     </Link>
   );
 }
 
-function HeaderNav({
-  isMenuOpen,
-  switchMenu,
-}: {
-  isMenuOpen: boolean;
-  switchMenu: (open: boolean) => void;
-}) {
+function HeaderNav({ isMenuOpen, switchMenu }: { isMenuOpen: boolean; switchMenu: (open: boolean) => void }) {
   const { t } = useTranslation();
   const { isCurrentPath } = useCurrentPath();
 
@@ -175,12 +167,7 @@ function HeaderNav({
       >
         <TbMenuDeep />
       </div>
-      <nav
-        className={clsx(
-          "hidden md:block mx-3 my-2 flex-auto",
-          "bg-gray-100 rounded-md px-3 py-2"
-        )}
-      >
+      <nav className={clsx("hidden md:block mx-3 my-2 flex-auto", "bg-gray-100 rounded-md px-3 py-2")}>
         <ol className="flex gap-4 justify-between">
           {NavLinks.map((nav) => (
             <li
@@ -189,7 +176,7 @@ function HeaderNav({
                 "font-bold rounded-md w-full",
                 isCurrentPath(nav.link)
                   ? "text-geraldine bg-white"
-                  : "text-slate-700 hover:text-geraldine hover:bg-white/70"
+                  : "text-slate-700 hover:text-geraldine hover:bg-white/70",
               )}
             >
               <Link
@@ -227,13 +214,7 @@ function HeaderRight() {
   );
 }
 
-function MobileMenu({
-  isOpen,
-  switchMenu,
-}: {
-  isOpen: boolean;
-  switchMenu: (open: boolean) => void;
-}) {
+function MobileMenu({ isOpen, switchMenu }: { isOpen: boolean; switchMenu: (open: boolean) => void }) {
   const { t } = useTranslation();
   const { isCurrentPath } = useCurrentPath();
   return (
@@ -241,15 +222,13 @@ function MobileMenu({
       className={clsx(
         "absolute top-0 left-0 -z-10 md:hidden",
         "w-full h-dvh transition-all duration-200",
-        isOpen
-          ? "bg-gray-800/70 translate-y-0"
-          : "bg-transparent -translate-y-full"
+        isOpen ? "bg-gray-800/70 translate-y-0" : "bg-transparent -translate-y-full",
       )}
     >
       <div
         className={clsx(
           "pt-14 bg-gray-100 rounded-b-xl transition-all duration-200",
-          isOpen ? "translate-y-0" : "-translate-y-full"
+          isOpen ? "translate-y-0" : "-translate-y-full",
         )}
       >
         <ol className="py-4 px-2 gap-2 grid grid-cols-2">
@@ -259,9 +238,7 @@ function MobileMenu({
                 href={nav.link}
                 className={clsx(
                   "px-2 py-4 rounded-xl font-bold shadow-sm text-base text-center tracking-wide block",
-                  isCurrentPath(nav.link)
-                    ? "text-white bg-red-400"
-                    : "text-slate-700 bg-white/70"
+                  isCurrentPath(nav.link) ? "text-white bg-red-400" : "text-slate-700 bg-white/70",
                 )}
                 onClick={() => {
                   switchMenu(false);
