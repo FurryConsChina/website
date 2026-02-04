@@ -42,6 +42,17 @@ yarn dev
 
 使用浏览器打开 http://localhost:3000 查看结果。
 
+## Docker 测试
+
+如果你想用 Docker 快速验证构建产物，可在项目根目录执行：
+
+```bash
+docker build --no-cache -t furrycons:local .
+docker run --rm -p 3000:3000 --env-file .env furrycons:local
+```
+
+然后访问 http://localhost:3000。
+
 ## 贡献
 
 如果您想为本项目做贡献，我们的看板上有很多任务等待领取，挑选一个您满意的，然后打开一个 PR！
