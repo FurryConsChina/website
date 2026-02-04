@@ -1,13 +1,11 @@
-import type { NextConfig } from "next";
+const { withSentryConfig } = require("@sentry/nextjs");
+const { GitRevisionPlugin } = require("git-revision-webpack-plugin");
 
-import { withSentryConfig } from "@sentry/nextjs";
-import { GitRevisionPlugin } from "git-revision-webpack-plugin";
-
-import { i18n } from "./next-i18next.config";
+const { i18n } = require("./next-i18next.config");
 
 const gitRevisionPlugin = new GitRevisionPlugin();
 
-const nextConfig: NextConfig = {
+const nextConfig = {
   output: "standalone",
   poweredByHeader: false,
   reactStrictMode: true,
@@ -85,7 +83,7 @@ const sentryOptions = {
   // side errors will fail.
   // tunnelRoute: "/monitoring",
 
-  errorHandler: (error: unknown) => {
+  errorHandler: (error) => {
     console.warn("Sentry build error occurred:", error);
   },
 };
