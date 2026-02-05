@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import { FaFire, FaHeart } from "react-icons/fa6";
+import React from "react";
 
 function EventStatusBar({ className, pageviews, fav }: { className?: string; pageviews: string; fav: string }) {
   return (

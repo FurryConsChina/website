@@ -234,7 +234,7 @@ export function EventDate({
 }) {
   const { t } = useTranslation();
   const dayjsLocale = getDayjsLocale(locale);
-  const distanceInTwoDate = useMemo(() => {
+  const distanceInTwoDate = (() => {
     if (!event.startAt || !event.endAt) return;
 
     const startDate = dayjs(event.startAt).startOf("day");
@@ -250,7 +250,7 @@ export function EventDate({
     }
 
     return null;
-  }, [event.startAt, event.endAt, locale]);
+  })();
 
   const startDateMonth = useMemo(() => {
     if (event.startAt) {

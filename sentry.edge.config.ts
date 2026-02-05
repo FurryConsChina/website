@@ -5,8 +5,6 @@
 
 import * as Sentry from "@sentry/nextjs";
 
-const GLOBAL_SENTRY_DSN =
-  "https://1ed2ba43a45f4dee8874d80de24b3e73@o4504660600684544.ingest.sentry.io/4504660602978304";
 const NURUPO_DSN = "https://d896357b2d18496aa9de8499bf7fd0db@sentry.abo.network/6";
 
 const DSN = NURUPO_DSN;
