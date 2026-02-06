@@ -5,5 +5,5 @@ export function getRegionName(region: Region, currentLocale: currentSupportLocal
   if (currentLocale === "zh-Hans") {
     return region.name;
   }
-  return region.localName;
+  return region.localName || region.name;
 }
