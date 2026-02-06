@@ -1,13 +1,10 @@
-# Copyright (c) HashiCorp, Inc.
-# SPDX-License-Identifier: MPL-2.0
-
-name: "Next.js Bundle Analysis"
+name: "Bundle Analysis"
 
 on:
   pull_request:
   push:
     branches:
-      - main # change this if your default branch is named differently
+      - main
   workflow_dispatch:
 
 defaults:
@@ -21,7 +18,7 @@ permissions:
   pull-requests: write # for comments
 
 jobs:
-  analyze:
+  build:
     runs-on: ubuntu-latest
     environment: Develop
     env:
@@ -29,28 +26,19 @@ jobs:
       NEXT_PUBLIC_ENABLE_TRACK: ${{ vars.ENABLE_TRACK }}
       FEC_API_TOKEN: ${{vars.FEC_API_TOKEN}}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: lts/iron
+          node-version-file: .nvmrc
       - run: "corepack enable"
 
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
 
-      # If pnpm is used, you need to switch the previous step with the following one. pnpm does not create a package-lock.json
-      # so the step above will fail to pull dependencies
-      # - uses: pnpm/action-setup@v2
-      #   name: Install pnpm
-      #   id: pnpm-install
-      #   with:
-      #     version: 7
-      #     run_install: true
-
       - name: Restore next build
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: restore-build-cache
         env:
           cache-name: cache-next-build
@@ -63,7 +51,36 @@ jobs:
 
       - name: Build next.js app
         # change this if your site requires a custom build command
-        run: ./node_modules/.bin/next build
+        run: ./node_modules/.bin/next build --webpack
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: next-build
+          include-hidden-files: true
+          path: |
+            .next
+            public
+            webpack-stats.json
+
+  bundle-analysis:
+    runs-on: ubuntu-latest
+    environment: Develop
+    needs: build
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+      - run: "corepack enable"
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: next-build
+          path: .
 
       # Here's the first place where next-bundle-analysis' own script is used
       # This step pulls the raw bundle stats for the current bundle
@@ -71,16 +88,16 @@ jobs:
         run: npx -p nextjs-bundle-analysis report
 
       - name: Upload bundle
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: bundle
           path: .next/analyze/__bundle_analysis.json
 
       - name: Download base branch bundle stats
-        uses: dawidd6/action-download-artifact@v9
+        uses: dawidd6/action-download-artifact@v14
         if: success() && github.event.number
         with:
-          workflow: nextjs_bundle_analysis.yml
+          workflow: bundle-analysis.yml
           branch: ${{ github.event.pull_request.base.ref }}
           path: .next/analyze/base
 
@@ -133,3 +150,22 @@ jobs:
           body: ${{ steps.get-comment-body.outputs.body }}
           comment-id: ${{ steps.fc.outputs.comment-id }}
           edit-mode: replace
+
+  relative-ci:
+    runs-on: ubuntu-latest
+    environment: Develop
+    needs: build
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: next-build
+          path: .
+
+      - name: Send bundle stats to RelativeCI
+        uses: relative-ci/agent-action@v3
+        with:
+          webpackStatsFile: ./webpack-stats.json
+          key: ${{ secrets.RELATIVE_CI_KEY }}

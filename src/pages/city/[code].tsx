@@ -4,7 +4,7 @@ import { Region } from "@/types/region";
 import { sendTrack } from "@/utils/track";
 import { GetServerSidePropsContext } from "next";
 import Link from "next/link";
-import z from "zod";
+import * as z from "zod/v4";
 import Image from "@/components/image";
 import { getEventCoverImgPath } from "@/utils/imageLoader";
 import "dayjs/locale/zh-cn";

@@ -8,8 +8,7 @@ import { useTranslation } from "next-i18next";
 import Image from "@/components/image";
 import { getEventCoverImgPath } from "@/utils/imageLoader";
 import { sendTrack } from "@/utils/track";
-import { currentSupportLocale } from "@/utils/meta";
-import { getDayjsLocale } from "@/utils/locale";
+import { currentSupportLocale, getDayjsLocale } from "@/utils/locale";
 
 import type { EventCardItem } from "@/types/event";
 import styles from "@/components/eventCard/index.module.css";
@@ -234,7 +233,7 @@ export function EventDate({
 }) {
   const { t } = useTranslation();
   const dayjsLocale = getDayjsLocale(locale);
-  const distanceInTwoDate = useMemo(() => {
+  const distanceInTwoDate = (() => {
     if (!event.startAt || !event.endAt) return;
 
     const startDate = dayjs(event.startAt).startOf("day");
@@ -250,7 +249,7 @@ export function EventDate({
     }
 
     return null;
-  }, [event.startAt, event.endAt, locale]);
+  })();
 
   const startDateMonth = useMemo(() => {
     if (event.startAt) {

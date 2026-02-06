@@ -2,9 +2,7 @@ import { Organization } from "@/types/organization";
 import dayjs from "dayjs";
 import "dayjs/locale/zh-cn";
 import "dayjs/locale/zh-tw";
-import { getDayjsLocale } from "@/utils/locale";
-
-export type currentSupportLocale = "zh-Hans" | "zh-Hant" | "en";
+import { currentSupportLocale, getDayjsLocale } from "@/utils/locale";
 
 export const OrganizationPageMeta = {
   "zh-Hans": {

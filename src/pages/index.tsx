@@ -11,8 +11,7 @@ import { sendTrack } from "@/utils/track";
 
 import { DurationType } from "@/types/list";
 import { EventScale, EventStatus, type EventCardItem } from "@/types/event";
-import { FeatureSchema } from "@/types/feature";
-import { monthNumberFormatter } from "@/utils/locale";
+import { formatLocale, monthNumberFormatter } from "@/utils/locale";
 import { keywordGenerator } from "@/utils/meta";
 import SponsorBanner from "@/components/SponsorBanner";
 import dayjs from "dayjs";
@@ -256,7 +255,7 @@ export async function getStaticProps({ locale }: { locale: string }) {
       headMetas: {
         keywords: keywordGenerator({
           page: "home",
-          locale: locale as "zh-Hans" | "en",
+          locale: formatLocale(locale),
         }),
       },
       ...(await serverSideTranslations(locale, ["common"])),

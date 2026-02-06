@@ -1,5 +1,5 @@
 import { FeatureSchema } from "@/types/feature";
-import { z } from "zod";
+import * as z from "zod/v4";
 
 /** Sync with https://schema.org/EventStatusType */
 export const EventStatus = {

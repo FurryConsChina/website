@@ -7,7 +7,8 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { OrganizationsAPI } from "@/api/organizations";
 import { Organization } from "@/types/organization";
-import { currentSupportLocale, OrganizationPageMeta } from "@/utils/meta";
+import { OrganizationPageMeta } from "@/utils/meta";
+import { currentSupportLocale } from "@/utils/locale";
 import { breadcrumbGenerator } from "@/utils/structuredData";
 
 export default function OrganizationPage({ organizations }: { organizations: Organization[] }) {
@@ -18,7 +19,7 @@ export default function OrganizationPage({ organizations }: { organizations: Org
     <div className="bg-white p-6 rounded-xl">
       <section>
         <h1 className="font-bold text-gray-600 text-2xl">{t("organization.active")}</h1>
-        <div className="mt-4 grid md:grid-cols-3 gap-10">
+        <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           {groupByStatusOrganizations["active"].map((o) => (
             <OrganizationItem key={o.id} organization={o} />
           ))}
@@ -26,7 +27,7 @@ export default function OrganizationPage({ organizations }: { organizations: Org
       </section>
       <section className="mt-6">
         <h1 className="font-bold text-gray-600 text-2xl">{t("organization.inactive")}</h1>
-        <div className="mt-4 grid md:grid-cols-3 gap-10">
+        <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           {groupByStatusOrganizations["inactive"].map((o) => (
             <OrganizationItem key={o.id} organization={o} />
           ))}
@@ -52,15 +53,15 @@ function OrganizationItem({ organization }: { organization: Organization }) {
         })
       }
     >
-      <div className="rounded-xl border p-6 cursor-pointer h-full flex flex-row items-center justify-center md:flex-col">
+      <div className="rounded-xl border py-3 px-2 cursor-pointer h-full flex flex-col items-center justify-center">
         {organization.logoUrl && (
-          <div className="relative w-2/4 md:h-3/4 min-h-12 max-h-12 mx-auto">
+          <div className="relative mx-auto">
             <Image
-              className="object-contain h-full min-h-12 max-h-12 mx-auto"
+              className="object-contain h-16 w-16 md:h-20 md:w-20 mx-auto"
               src={organization.logoUrl}
               alt={t("organization.logoAlt", { name: organization.name })}
-              width={124}
-              height={50}
+              // width={124}
+              height={80}
               sizes="(max-width: 750px) 256px, (max-width: 768px) 300px, 300px"
               autoFormat
             />
@@ -68,8 +69,8 @@ function OrganizationItem({ organization }: { organization: Organization }) {
         )}
         <h2
           className={clsx(
-            "w-3/4 tracking-wide text-gray-600 md:text-center text-lg border-l md:border-l-0 ml-4 md:ml-0 pl-4 md:pl-0 font-bold",
-            organization.logoUrl && "md:mt-4",
+            "tracking-wide text-gray-600 text-center text-sm md:text-lg font-bold",
+            organization.logoUrl && "mt-2",
           )}
         >
           {organization.name}

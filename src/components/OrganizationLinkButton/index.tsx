@@ -7,6 +7,7 @@ import { FaQq, FaTwitter, FaWeibo } from "react-icons/fa";
 import { SiBilibili, SiXiaohongshu } from "react-icons/si";
 import { TFunction } from "next-i18next";
 import { FaFacebook } from "react-icons/fa6";
+import { ReactNode } from "react";
 
 function OrganizationLinkButton({
   icon,
@@ -16,12 +17,12 @@ function OrganizationLinkButton({
   bgColorClass,
   label,
 }: {
-  icon?: React.ReactNode;
-  children: React.ReactNode;
+  icon?: ReactNode;
+  children: ReactNode;
   onClick?: () => void;
   href?: string;
   bgColorClass?: string;
-  label?: React.ReactNode;
+  label?: ReactNode;
 }) {
   const className = clsx(
     "flex items-center rounded-xl px-4 py-3 text-white w-full text-left md:hover:-translate-x-2 shadow transition duration-300",
