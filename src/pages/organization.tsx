@@ -7,7 +7,8 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { OrganizationsAPI } from "@/api/organizations";
 import { Organization } from "@/types/organization";
-import { currentSupportLocale, OrganizationPageMeta } from "@/utils/meta";
+import { OrganizationPageMeta } from "@/utils/meta";
+import { currentSupportLocale } from "@/utils/locale";
 import { breadcrumbGenerator } from "@/utils/structuredData";
 
 export default function OrganizationPage({ organizations }: { organizations: Organization[] }) {

@@ -1,5 +1,5 @@
 import { PUBLIC_URL } from "@/utils/env";
-import { currentSupportLocale } from "@/utils/meta";
+import { currentSupportLocale } from "@/utils/locale";
 
 export function getOrganizationDetailUrl({
   organizationSlug,

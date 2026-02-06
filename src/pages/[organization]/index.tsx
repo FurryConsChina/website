@@ -16,18 +16,13 @@ import "dayjs/locale/zh-tw";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { OrganizationsAPI } from "@/api/organizations";
-import { z } from "zod";
+import * as z from "zod/v4";
 import { EventItem } from "@/types/event";
 import { OrganizationSchema, Organization } from "@/types/organization";
 import { FeatureSchema } from "@/types/feature";
-import {
-  currentSupportLocale,
-  keywordGenerator,
-  organizationDetailDescriptionGenerator,
-  OrganizationPageMeta,
-} from "@/utils/meta";
+import { keywordGenerator, organizationDetailDescriptionGenerator, OrganizationPageMeta } from "@/utils/meta";
 import { breadcrumbGenerator } from "@/utils/structuredData";
-import { getDayjsLocale } from "@/utils/locale";
+import { currentSupportLocale, getDayjsLocale } from "@/utils/locale";
 import axios, { AxiosError } from "axios";
 // import {
 //   WebsiteButton,

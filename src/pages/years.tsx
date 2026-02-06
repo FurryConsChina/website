@@ -5,7 +5,8 @@ import { useTranslation } from "next-i18next";
 import { EventsAPI } from "@/api/events";
 import { EventItem } from "@/types/event";
 import { monthNumberFormatter } from "@/utils/locale";
-import { currentSupportLocale, YearPageMeta } from "@/utils/meta";
+import { YearPageMeta } from "@/utils/meta";
+import { currentSupportLocale } from "@/utils/locale";
 import { breadcrumbGenerator } from "@/utils/structuredData";
 
 export default function Years({ events }: { events: EventItem[] }) {

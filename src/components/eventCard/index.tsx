@@ -8,8 +8,7 @@ import { useTranslation } from "next-i18next";
 import Image from "@/components/image";
 import { getEventCoverImgPath } from "@/utils/imageLoader";
 import { sendTrack } from "@/utils/track";
-import { currentSupportLocale } from "@/utils/meta";
-import { getDayjsLocale } from "@/utils/locale";
+import { currentSupportLocale, getDayjsLocale } from "@/utils/locale";
 
 import type { EventCardItem } from "@/types/event";
 import styles from "@/components/eventCard/index.module.css";
