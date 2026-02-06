@@ -157,7 +157,7 @@ jobs:
     environment: Develop
     needs: build
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Download build artifact
         uses: actions/download-artifact@v7
@@ -168,5 +168,5 @@ jobs:
       - name: Send bundle stats to RelativeCI
         uses: relative-ci/agent-action@v3
         with:
-          webpackStatsFile: ./.next/server/webpack-stats.json
+          webpackStatsFile: ./webpack-stats.json
           key: ${{ secrets.RELATIVE_CI_KEY }}
