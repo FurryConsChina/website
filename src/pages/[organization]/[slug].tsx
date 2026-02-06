@@ -1,20 +1,8 @@
-import OrganizationStatus from "@/components/organizationStatus";
-
-import clsx from "clsx";
-import { GetServerSidePropsContext } from "next";
+import { EventsAPI } from "@/api/events";
+import EventSourceButton from "@/components/event/EventSourceButton";
+import { EventDate } from "@/components/eventCard";
 import NextImage from "@/components/image";
-import { useState } from "react";
-import { BsCalendar2DateFill } from "react-icons/bs";
-import { VscLoading } from "react-icons/vsc";
-import { IoLocation } from "react-icons/io5";
-import { RiErrorWarningLine } from "react-icons/ri";
-import { TbArrowsRightLeft } from "react-icons/tb";
-import Link from "next/link";
-import { EventSchema, EventStatus, EventStatusSchema, EventItem } from "@/types/event";
-import { sendTrack } from "@/utils/track";
-import { getEventCoverImgPath, imageUrl } from "@/utils/imageLoader";
-import Script from "next/script";
-import OrganizationLinkButton, {
+import {
   BiliButton,
   EmailButton,
   FacebookButton,
@@ -24,19 +12,28 @@ import OrganizationLinkButton, {
   TwitterButton,
   WebsiteButton,
   WeiboButton,
-  WikifurButton,
 } from "@/components/OrganizationLinkButton";
-import { FaHotel, FaPeoplePulling } from "react-icons/fa6";
-import EventStatusBar from "@/components/EventStatusBar";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useTranslation } from "next-i18next";
-import { z } from "zod";
-import { currentSupportLocale, eventDescriptionGenerator, keywordGenerator } from "@/utils/meta";
-import { EventDate } from "@/components/eventCard";
-import EventSourceButton from "@/components/event/EventSourceButton";
+import OrganizationStatus from "@/components/organizationStatus";
+import { EventItem, EventStatus } from "@/types/event";
+import { getEventCoverImgPath, imageUrl } from "@/utils/imageLoader";
+import { currentSupportLocale, formatLocale } from "@/utils/locale";
+import { eventDescriptionGenerator, keywordGenerator } from "@/utils/meta";
 import { generateEventDetailStructuredData } from "@/utils/structuredData";
+import { sendTrack } from "@/utils/track";
 import { getEventDetailUrl } from "@/utils/url";
-import { EventsAPI } from "@/api/events";
+import clsx from "clsx";
+import { GetServerSidePropsContext } from "next";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Link from "next/link";
+import Script from "next/script";
+import { useState } from "react";
+import { BsCalendar2DateFill } from "react-icons/bs";
+import { FaHotel, FaPeoplePulling } from "react-icons/fa6";
+import { IoLocation } from "react-icons/io5";
+import { RiErrorWarningLine } from "react-icons/ri";
+import { VscLoading } from "react-icons/vsc";
+import * as z from "zod/v4";
 
 const MapLoadingStatus = {
   Idle: "idle",
@@ -349,6 +346,8 @@ export default function EventDetail({ event }: { event: EventItem }) {
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   try {
+    const { locale } = context;
+
     const eventParamsSchema = z.object({
       slug: z
         .string()
@@ -380,27 +379,27 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
           title: `${event?.name}-${event?.organization?.name}`,
           keywords: keywordGenerator({
             page: "event",
-            locale: context.locale as "zh-Hans" | "en",
+            locale: formatLocale(locale),
             event: {
               name: event?.name,
               startDate: event?.startAt,
               city: event.region?.localName || undefined,
             },
           }),
-          des: eventDescriptionGenerator(context.locale as currentSupportLocale, event),
+          des: eventDescriptionGenerator(formatLocale(locale), event),
           url: getEventDetailUrl({
             eventSlug: event.slug,
             organizationSlug: event.organization.slug,
-            locale: context.locale as currentSupportLocale,
+            locale: formatLocale(locale),
             fullUrl: false,
           }),
           cover: imageUrl(getEventCoverImgPath(event)),
         },
         structuredData: generateEventDetailStructuredData({
           event,
-          locale: context.locale as currentSupportLocale,
+          locale: formatLocale(locale),
         }),
-        ...(context.locale ? await serverSideTranslations(context.locale, ["common"]) : {}),
+        ...(locale ? await serverSideTranslations(locale, ["common"]) : {}),
       },
     };
   } catch (error) {

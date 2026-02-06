@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 const { withSentryConfig } = require("@sentry/nextjs");
 const { GitRevisionPlugin } = require("git-revision-webpack-plugin");
-
+const { StatsWriterPlugin } = require("webpack-stats-plugin");
+const withBundleAnalyzer = require("@next/bundle-analyzer")({
+  enabled: process.env.ANALYZE === "true",
+});
 const { i18n } = require("./next-i18next.config");
 
 const gitRevisionPlugin = new GitRevisionPlugin();
@@ -37,14 +40,39 @@ const nextConfig = {
       },
     ];
   },
-  compiler: {
-    define: {
-      VERSION: gitRevisionPlugin.version() || "UNKNOWN",
-      COMMITHASH: gitRevisionPlugin.commithash()?.slice(0, 7) || "UNKNOWN",
-      BRANCH: gitRevisionPlugin.branch() || "UNKNOWN",
-      __SENTRY_DEBUG__: "false",
-    },
+  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+    config.plugins.push(
+      new webpack.DefinePlugin({
+        VERSION: JSON.stringify(gitRevisionPlugin.version()),
+        COMMITHASH: JSON.stringify(gitRevisionPlugin.commithash().slice(0, 7)),
+        BRANCH: JSON.stringify(gitRevisionPlugin.branch()),
+      }),
+    );
+
+    if (!dev && !isServer) {
+      config.plugins.push(
+        new StatsWriterPlugin({
+          filename: "../webpack-stats.json",
+          stats: {
+            assets: true,
+            chunks: true,
+            modules: true,
+          },
+        }),
+      );
+    }
+
+    return config;
   },
+  // turboPack setting.
+  // compiler: {
+  //   define: {
+  //     VERSION: gitRevisionPlugin.version() || "UNKNOWN",
+  //     COMMITHASH: gitRevisionPlugin.commithash()?.slice(0, 7) || "UNKNOWN",
+  //     BRANCH: gitRevisionPlugin.branch() || "UNKNOWN",
+  //     __SENTRY_DEBUG__: "false",
+  //   },
+  // },
   i18n,
 };
 
@@ -64,19 +92,7 @@ const sentryOptions = {
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,
   // Automatically tree-shake Sentry logger statements to reduce bundle size
-  disableLogger: true,
   deleteSourceMapsAfterUpload: true,
-
-  // turboPack not support yet.
-  // reactComponentAnnotation: {
-  //   enabled: true,
-  // },
-
-  // Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)
-  // See the following for more information:
-  // https://docs.sentry.io/product/crons/
-  // https://vercel.com/docs/cron-jobs
-  automaticVercelMonitors: true,
 
   // Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
   // This can increase your server load as well as your hosting bill.
@@ -87,6 +103,13 @@ const sentryOptions = {
   errorHandler: (error) => {
     console.warn("Sentry build error occurred:", error);
   },
+
+  webpack: {
+    reactComponentAnnotation: true,
+    treeshake: {
+      removeDebugLogging: true,
+    },
+  },
 };
 
-module.exports = withSentryConfig(nextConfig, sentryOptions);
+module.exports = withSentryConfig(withBundleAnalyzer(nextConfig), sentryOptions);

@@ -3,12 +3,13 @@
   "version": "2.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "next dev --webpack",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint .",
     "clean": "rm -rf .next && rm -rf out",
-    "analyze": "npx next experimental-analyze"
+    "turbo-analyze": "npx next experimental-analyze",
+    "webpack-analyze": "ANALYZE=true yarn build"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.9",
