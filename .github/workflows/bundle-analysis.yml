@@ -57,6 +57,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: next-build
+          include-hidden-files: true
           path: |
             .next
             public
