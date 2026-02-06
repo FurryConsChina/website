@@ -61,8 +61,7 @@ jobs:
           path: |
             .next
             public
-            next.config.js
-            next-i18next.config.js
+            webpack-stats.json
 
   bundle-analysis:
     runs-on: ubuntu-latest
