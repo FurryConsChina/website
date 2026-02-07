@@ -1,0 +1,63 @@
+name: Reusable Docker Build
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: "GitHub Environment name"
+        required: true
+        type: string
+      image_tags:
+        description: "Comma or newline separated image tags"
+        required: true
+        type: string
+      env_vars:
+        description: "Comma-separated KEY=VALUE pairs for .env"
+        required: true
+        type: string
+    secrets:
+      SENTRY_AUTH_TOKEN:
+        required: true
+      REVALIDATE_TOKEN:
+        required: true
+
+jobs:
+  build-image:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    env:
+      REVALIDATE_TOKEN: ${{ secrets.REVALIDATE_TOKEN }}
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Create Env
+        run: |
+          touch .env
+          echo NODE_ENV="production" >> .env
+          echo REVALIDATE_TOKEN="$REVALIDATE_TOKEN" >> .env
+          echo SENTRY_AUTH_TOKEN="$SENTRY_AUTH_TOKEN" >> .env
+          echo "${{ inputs.env_vars }}" | tr ',' '\n' >> .env
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        timeout-minutes: 10
+        with:
+          context: .
+          push: false
+          tags: ${{ inputs.image_tags }}
+
+      - name: Export image tar
+        run: |
+          first_tag=$(printf "%s" "${{ inputs.image_tags }}" | tr ',' '\n' | head -n 1)
+          docker save "$first_tag" -o image.tar
+
+      - name: Upload image artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: docker-image
+          path: image.tar
