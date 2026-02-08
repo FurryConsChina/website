@@ -28,3 +28,11 @@ export const OrganizationSchema = z.object({
 });
 
 export type Organization = z.infer<typeof OrganizationSchema>;
+
+export type OrganizationListItem = {
+  id: string;
+  slug: string;
+  name: string;
+  status: string;
+  logoUrl: string | null;
+};

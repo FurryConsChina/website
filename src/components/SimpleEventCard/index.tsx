@@ -3,11 +3,11 @@ import Link from "next/link";
 import dayjs from "dayjs";
 import "dayjs/locale/zh-cn";
 import "dayjs/locale/zh-tw";
-import { EventItem } from "@/types/event";
+import { SimpleEventItem } from "@/types/event";
 import { useTranslation } from "next-i18next";
 import { getDayjsLocale } from "@/utils/locale";
 
-function SimpleEventCard({ event }: { event: EventItem }) {
+function SimpleEventCard({ event }: { event: SimpleEventItem }) {
   const { t, i18n } = useTranslation();
   const dateFormat = t("date.monthDay") || "MM月DD日";
   const dayjsLocale = getDayjsLocale(i18n.language);

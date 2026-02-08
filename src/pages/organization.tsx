@@ -6,12 +6,12 @@ import { sendTrack } from "@/utils/track";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { OrganizationsAPI } from "@/api/organizations";
-import { Organization } from "@/types/organization";
+import { OrganizationListItem } from "@/types/organization";
 import { OrganizationPageMeta } from "@/utils/meta";
 import { currentSupportLocale } from "@/utils/locale";
 import { breadcrumbGenerator } from "@/utils/structuredData";
 
-export default function OrganizationPage({ organizations }: { organizations: Organization[] }) {
+export default function OrganizationPage({ organizations }: { organizations: OrganizationListItem[] }) {
   const groupByStatusOrganizations = groupBy(organizations, (o) => o.status);
   const { t } = useTranslation();
 
@@ -37,7 +37,7 @@ export default function OrganizationPage({ organizations }: { organizations: Org
   );
 }
 
-function OrganizationItem({ organization }: { organization: Organization }) {
+function OrganizationItem({ organization }: { organization: OrganizationListItem }) {
   const { t } = useTranslation();
 
   return (
@@ -95,7 +95,13 @@ export async function getStaticProps({ locale }: { locale: string }) {
 
   return {
     props: {
-      organizations: organizations.records,
+      organizations: organizations.records.map((organization) => ({
+        id: organization.id,
+        slug: organization.slug,
+        name: organization.name,
+        status: organization.status,
+        logoUrl: organization.logoUrl,
+      })),
       headMetas: {
         title: OrganizationPageMeta[locale as currentSupportLocale].title,
         des: OrganizationPageMeta[locale as currentSupportLocale].description(organizations.total),

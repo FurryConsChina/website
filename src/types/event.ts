@@ -182,3 +182,14 @@ export type EventCardItem = {
   thumbnail?: string | null;
   media?: { images?: { url: string }[] } | null;
 };
+
+export type SimpleEventItem = {
+  id: string;
+  slug: string;
+  name: string;
+  startAt: string | null;
+  endAt: string | null;
+  scale: string;
+  region: { localName: string | null } | null;
+  organization: { slug: string; name: string } | null;
+};

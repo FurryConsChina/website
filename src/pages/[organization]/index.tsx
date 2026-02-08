@@ -17,7 +17,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { OrganizationsAPI } from "@/api/organizations";
 import * as z from "zod/v4";
-import { EventItem } from "@/types/event";
+import { EventCardItem } from "@/types/event";
 import { OrganizationSchema, Organization } from "@/types/organization";
 import { FeatureSchema } from "@/types/feature";
 import { keywordGenerator, organizationDetailDescriptionGenerator, OrganizationPageMeta } from "@/utils/meta";
@@ -36,7 +36,7 @@ import axios, { AxiosError } from "axios";
 
 dayjs.extend(relativeTime);
 
-export default function OrganizationDetail(props: { events: EventItem[]; organization: Organization }) {
+export default function OrganizationDetail(props: { events: EventCardItem[]; organization: Organization }) {
   const { t, i18n } = useTranslation();
   const { organization, events } = props;
   const dayjsLocale = getDayjsLocale(i18n.language);
@@ -302,15 +302,31 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     const data = await OrganizationsAPI.getOrganizationDetail(reqParamsParseResult.organization);
 
     const validOrganization = data.organization;
-    const validEvents =
+    const validEvents: EventCardItem[] =
       data.events
         ?.map((e) => ({
-          ...e,
+          id: e.id,
+          slug: e.slug,
+          name: e.name,
+          startAt: e.startAt,
+          endAt: e.endAt,
+          scale: e.scale,
+          type: e.type,
+          locationType: e.locationType,
+          address: e.address,
+          region: e.region ? { localName: e.region.localName } : null,
           organization: {
-            name: validOrganization?.name,
-            slug: validOrganization?.slug,
-            logoUrl: validOrganization?.logoUrl,
+            slug: validOrganization?.slug || "",
+            name: validOrganization?.name || "",
           },
+          features: e.features ? { self: e.features.self ?? null } : null,
+          commonFeatures: e.commonFeatures
+            ? e.commonFeatures.map((f) => ({ name: f.name }))
+            : null,
+          thumbnail: e.thumbnail ?? null,
+          media: e.media?.images
+            ? { images: e.media.images.map((img) => ({ url: img.url })) }
+            : null,
         }))
         .sort((a, b) => {
           if (a.startAt && b.startAt) {
