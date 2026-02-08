@@ -1,4 +1,4 @@
-name: Build CN Image
+name: Deploy to CN Production
 
 on:
   release:

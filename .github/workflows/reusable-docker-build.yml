@@ -1,5 +1,8 @@
 name: Reusable Docker Build
 
+permissions:
+  contents: read
+
 on:
   workflow_call:
     inputs:
@@ -36,12 +39,14 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Create Env
+        env:
+          INPUT_ENV_VARS: ${{ inputs.env_vars }}
         run: |
           touch .env
           echo NODE_ENV="production" >> .env
           echo REVALIDATE_TOKEN="$REVALIDATE_TOKEN" >> .env
           echo SENTRY_AUTH_TOKEN="$SENTRY_AUTH_TOKEN" >> .env
-          echo "${{ inputs.env_vars }}" | tr ',' '\n' >> .env
+          printf '%s\n' "$INPUT_ENV_VARS" | tr ',' '\n' >> .env
 
       - name: Build Docker image
         uses: docker/build-push-action@v6
@@ -49,12 +54,21 @@ jobs:
         with:
           context: .
           push: false
+          load: true
           tags: ${{ inputs.image_tags }}
 
       - name: Export image tar
+        env:
+          INPUT_IMAGE_TAGS: ${{ inputs.image_tags }}
         run: |
-          first_tag=$(printf "%s" "${{ inputs.image_tags }}" | tr ',' '\n' | head -n 1)
-          docker save "$first_tag" -o image.tar
+          set -euo pipefail
+          tags=$(printf "%s" "$INPUT_IMAGE_TAGS" | tr ',' '\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | sed '/^$/d')
+          if [ -z "$tags" ]; then
+            echo "No image tags provided"
+            exit 1
+          fi
+          # Save all requested tags into one artifact, so downstream jobs can push any of them.
+          printf "%s\n" "$tags" | xargs docker save -o image.tar
 
       - name: Upload image artifact
         uses: actions/upload-artifact@v6
