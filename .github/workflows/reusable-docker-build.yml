@@ -14,15 +14,6 @@ on:
         description: "Comma or newline separated image tags"
         required: true
         type: string
-      env_vars:
-        description: "Comma-separated KEY=VALUE pairs for .env"
-        required: true
-        type: string
-    secrets:
-      SENTRY_AUTH_TOKEN:
-        required: true
-      REVALIDATE_TOKEN:
-        required: true
 
 jobs:
   build-image:
@@ -31,6 +22,10 @@ jobs:
     env:
       REVALIDATE_TOKEN: ${{ secrets.REVALIDATE_TOKEN }}
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      ENV_ENABLE_TRACK: ${{ vars.ENABLE_TRACK }}
+      ENV_REGION: ${{ vars.NEXT_PUBLIC_REGION }}
+      ENV_WEBSITE_URL: ${{ vars.NEXT_PUBLIC_WEBSITE_URL }}
+      ENV_FEC_API_TOKEN: ${{ vars.FEC_API_TOKEN }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -39,14 +34,16 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Create Env
-        env:
-          INPUT_ENV_VARS: ${{ inputs.env_vars }}
         run: |
+          set -euo pipefail
           touch .env
           echo NODE_ENV="production" >> .env
           echo REVALIDATE_TOKEN="$REVALIDATE_TOKEN" >> .env
           echo SENTRY_AUTH_TOKEN="$SENTRY_AUTH_TOKEN" >> .env
-          printf '%s\n' "$INPUT_ENV_VARS" | tr ',' '\n' >> .env
+          echo NEXT_PUBLIC_ENABLE_TRACK="$ENV_ENABLE_TRACK" >> .env
+          echo NEXT_PUBLIC_REGION="$ENV_REGION" >> .env
+          echo NEXT_PUBLIC_WEBSITE_URL="$ENV_WEBSITE_URL" >> .env
+          echo FEC_API_TOKEN="$ENV_FEC_API_TOKEN" >> .env
 
       - name: Build Docker image
         uses: docker/build-push-action@v6
