@@ -1,0 +1,68 @@
+name: Deploy to CN Production
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-image:
+    uses: ./.github/workflows/reusable-docker-build.yml
+    with:
+      environment: Prod-CN
+      image_tags: |
+        hkccr.ccs.tencentyun.com/furrycons/frontend:latest
+        hkccr.ccs.tencentyun.com/furrycons/frontend:${{ github.sha }}
+      env_vars: |
+        NEXT_PUBLIC_ENABLE_TRACK=${{ vars.ENABLE_TRACK }},
+        NEXT_PUBLIC_REGION=${{ vars.NEXT_PUBLIC_REGION }},
+        NEXT_PUBLIC_WEBSITE_URL=${{ vars.NEXT_PUBLIC_WEBSITE_URL }},
+        FEC_API_TOKEN=${{ vars.FEC_API_TOKEN }}
+    secrets:
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      REVALIDATE_TOKEN: ${{ secrets.REVALIDATE_TOKEN }}
+
+  docker-smoke:
+    uses: ./.github/workflows/reusable-smoke-test.yml
+    needs: build-image
+    with:
+      environment: Prod-CN
+      image_name: hkccr.ccs.tencentyun.com/furrycons/frontend:latest
+      artifact_name: docker-image
+      container_port: "3000"
+      path_to_test: /about
+      timeout_minutes: 15
+
+  push-and-notify:
+    runs-on: ubuntu-latest
+    environment: Prod-CN
+    needs: docker-smoke
+    steps:
+      - name: Download image artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: docker-image
+
+      - name: Load image
+        run: |
+          docker load -i image.tar
+
+      - name: Login to Qcloud Hongkong Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: hkccr.ccs.tencentyun.com
+          username: "${{ vars.QCLOUD_REGISTRY_USERNAME }}"
+          password: "${{ secrets.QCLOUD_REGISTRY_PASSWORD }}"
+
+      - name: Push tags
+        run: |
+          docker push hkccr.ccs.tencentyun.com/furrycons/frontend:latest
+          docker push hkccr.ccs.tencentyun.com/furrycons/frontend:${{ github.sha }}
+
+      - name: Call Webhook
+        run: |
+          curl -X POST ${{ vars.WEBHOOK_URL }} \
+            -H "Content-Type: application/json"

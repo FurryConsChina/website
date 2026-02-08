@@ -1,0 +1,94 @@
+name: Reusable Smoke Test
+
+permissions:
+  contents: read
+  actions: read
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: "GitHub Environment name"
+        required: true
+        type: string
+      image_name:
+        description: "Local image tag to run"
+        required: true
+        type: string
+      artifact_name:
+        description: "Artifact name containing docker image tar"
+        required: false
+        default: docker-image
+        type: string
+      container_port:
+        description: "Container listening port"
+        required: false
+        default: "3000"
+        type: string
+      path_to_test:
+        description: "HTTP path for smoke check"
+        required: false
+        default: /about
+        type: string
+      timeout_minutes:
+        description: "Job timeout in minutes"
+        required: false
+        default: 15
+        type: number
+
+jobs:
+  docker-smoke:
+    name: Docker smoke test
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    timeout-minutes: ${{ inputs.timeout_minutes }}
+    env:
+      IMAGE_NAME: ${{ inputs.image_name }}
+      CONTAINER_PORT: ${{ inputs.container_port }}
+      PATH_TO_TEST: ${{ inputs.path_to_test }}
+    steps:
+      - name: Download image artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: ${{ inputs.artifact_name }}
+
+      - name: Load Docker image
+        run: |
+          set -euo pipefail
+          docker load -i image.tar
+
+      - name: Run smoke test (container -> http)
+        run: |
+          set -euo pipefail
+
+          CID=$(docker run -d -p 0:${CONTAINER_PORT} "${IMAGE_NAME}")
+
+          cleanup() {
+            echo "---- docker ps ----"
+            docker ps -a || true
+            echo "---- docker logs ----"
+            docker logs "${CID}" || true
+            echo "---- removing container ----"
+            docker rm -f "${CID}" || true
+          }
+          trap cleanup EXIT
+
+          HOST_PORT=$(docker inspect \
+            --format='{{(index (index .NetworkSettings.Ports "'"${CONTAINER_PORT}"'/tcp") 0).HostPort}}' \
+            "${CID}")
+
+          echo "Container started: ${CID}"
+          echo "Mapped port: 127.0.0.1:${HOST_PORT} -> ${CONTAINER_PORT}"
+          echo "Testing path: ${PATH_TO_TEST}"
+
+          for i in {1..60}; do
+            if curl -fsS "http://127.0.0.1:${HOST_PORT}${PATH_TO_TEST}" >/dev/null; then
+              echo "smoke ok: ${PATH_TO_TEST}"
+              exit 0
+            fi
+            sleep 1
+            if [ "$i" -eq 60 ]; then
+              echo "smoke failed: ${PATH_TO_TEST}"
+              exit 1
+            fi
+          done

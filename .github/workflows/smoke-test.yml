@@ -2,6 +2,12 @@ name: Smoke Test
 
 on:
   workflow_dispatch:
+    inputs:
+      target_environment:
+        description: Select deployment environment for smoke test
+        required: true
+        type: environment
+        default: Prod-CN
 
 concurrency:
   group: smoke-test-${{ github.event.pull_request.number || github.ref }}
@@ -11,60 +17,27 @@ permissions:
   contents: read
 
 jobs:
+  build-image:
+    uses: ./.github/workflows/reusable-docker-build.yml
+    with:
+      environment: ${{ inputs.target_environment }}
+      image_tags: furrycons:ci
+      env_vars: |
+        NEXT_PUBLIC_ENABLE_TRACK=${{ vars.ENABLE_TRACK }},
+        NEXT_PUBLIC_REGION=${{ vars.NEXT_PUBLIC_REGION }},
+        NEXT_PUBLIC_WEBSITE_URL=${{ vars.NEXT_PUBLIC_WEBSITE_URL }},
+        FEC_API_TOKEN=${{ vars.FEC_API_TOKEN }}
+    secrets:
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      REVALIDATE_TOKEN: ${{ secrets.REVALIDATE_TOKEN }}
+
   docker-smoke:
-    name: Docker smoke test
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-
-    env:
-      IMAGE_NAME: furrycons:ci
-      CONTAINER_PORT: "3000"   # 容器内监听端口（Next 默认 3000）
-      PATH_TO_TEST: "/about" # 冒烟测试路径（可改成 /about 等）
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-
-      - name: Build Docker image
-        run: |
-          set -euo pipefail
-          docker build -t "${IMAGE_NAME}" .
-
-      - name: Run smoke test (container -> http)
-        run: |
-          set -euo pipefail
-
-          # 启动容器：映射到宿主机随机端口，避免端口冲突
-          CID=$(docker run -d -p 0:${CONTAINER_PORT} "${IMAGE_NAME}")
-
-          cleanup() {
-            echo "---- docker ps ----"
-            docker ps -a || true
-            echo "---- docker logs ----"
-            docker logs "${CID}" || true
-            echo "---- removing container ----"
-            docker rm -f "${CID}" || true
-          }
-          trap cleanup EXIT
-
-          # 读取宿主机映射端口
-          HOST_PORT=$(docker inspect \
-            --format='{{(index (index .NetworkSettings.Ports "'"${CONTAINER_PORT}"'/tcp") 0).HostPort}}' \
-            "${CID}")
-
-          echo "Container started: ${CID}"
-          echo "Mapped port: 127.0.0.1:${HOST_PORT} -> ${CONTAINER_PORT}"
-          echo "Testing path: ${PATH_TO_TEST}"
-
-          # 等待服务就绪：最多 60 秒
-          for i in {1..60}; do
-            if curl -fsS "http://127.0.0.1:${HOST_PORT}${PATH_TO_TEST}" >/dev/null; then
-              echo "smoke ok: ${PATH_TO_TEST}"
-              exit 0
-            fi
-            sleep 1
-            if [ "$i" -eq 60 ]; then
-              echo "smoke failed: ${PATH_TO_TEST}"
-              exit 1
-            fi
-          done
+    uses: ./.github/workflows/reusable-smoke-test.yml
+    needs: build-image
+    with:
+      environment: ${{ inputs.target_environment }}
+      image_name: furrycons:ci
+      artifact_name: docker-image
+      container_port: "3000"
+      path_to_test: /about
+      timeout_minutes: 15
