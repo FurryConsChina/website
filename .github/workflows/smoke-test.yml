@@ -1,9 +1,6 @@
 name: Smoke Test
 
 on:
-  push:
-    branches:
-      - fix/action-env
   workflow_dispatch:
     inputs:
       target_environment:
@@ -26,14 +23,6 @@ jobs:
     with:
       environment: ${{ inputs.target_environment }}
       image_tags: furrycons:ci
-      env_vars: |
-        NEXT_PUBLIC_ENABLE_TRACK=${{ vars.ENABLE_TRACK }},
-        NEXT_PUBLIC_REGION=${{ vars.NEXT_PUBLIC_REGION }},
-        NEXT_PUBLIC_WEBSITE_URL=${{ vars.NEXT_PUBLIC_WEBSITE_URL }},
-        FEC_API_TOKEN=${{ vars.FEC_API_TOKEN }}
-    secrets:
-      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-      REVALIDATE_TOKEN: ${{ secrets.REVALIDATE_TOKEN }}
 
   docker-smoke:
     uses: ./.github/workflows/reusable-smoke-test.yml
