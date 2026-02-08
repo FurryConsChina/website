@@ -3,7 +3,7 @@
 <div align="center">
 
 [![Better Stack Badge](https://uptime.betterstack.com/status-badges/v1/monitor/vz4h.svg)](https://uptime.betterstack.com/?utm_source=status_badge)
-[![Build CN Image](https://github.com/FurryConsChina/website/actions/workflows/build-cn-image.yml/badge.svg)](https://github.com/FurryConsChina/website/actions/workflows/build-cn-image.yml)
+[![Deploy to CN Production](https://github.com/FurryConsChina/website/actions/workflows/deploy-prod-cn.yml/badge.svg)](https://github.com/FurryConsChina/website/actions/workflows/deploy-prod-cn.yml)
 [![RelativeCI](https://badges.relative-ci.com/badges/tUU1QJHvaWj6oY0ysuih?branch=main&style=flat)](https://app.relative-ci.com/projects/tUU1QJHvaWj6oY0ysuih)
 
 </div>

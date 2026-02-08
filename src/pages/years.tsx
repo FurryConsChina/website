@@ -3,13 +3,13 @@ import SimpleEventCard from "@/components/SimpleEventCard";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { EventsAPI } from "@/api/events";
-import { EventItem } from "@/types/event";
+import { SimpleEventItem } from "@/types/event";
 import { monthNumberFormatter } from "@/utils/locale";
 import { YearPageMeta } from "@/utils/meta";
 import { currentSupportLocale } from "@/utils/locale";
 import { breadcrumbGenerator } from "@/utils/structuredData";
 
-export default function Years({ events }: { events: EventItem[] }) {
+export default function Years({ events }: { events: SimpleEventItem[] }) {
   const groupByYearEvents = eventGroupByYear(events, "asc");
 
   const { t, i18n } = useTranslation();
@@ -76,10 +76,20 @@ export async function getStaticProps({ locale }: { locale: string }) {
     current: "1",
     pageSize: "999",
   });
+  const slimEvents: SimpleEventItem[] = events.records.map((event) => ({
+    id: event.id,
+    slug: event.slug,
+    name: event.name,
+    startAt: event.startAt,
+    endAt: event.endAt,
+    scale: event.scale,
+    region: event.region ? { localName: event.region.localName } : null,
+    organization: event.organization ? { slug: event.organization.slug, name: event.organization.name } : null,
+  }));
 
   return {
     props: {
-      events: events.records,
+      events: slimEvents,
       headMetas: {
         title: YearPageMeta[locale as currentSupportLocale].title,
         des: YearPageMeta[locale as currentSupportLocale].description(12, events.total || 0),
