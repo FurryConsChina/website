@@ -1,6 +1,9 @@
 name: Smoke Test
 
 on:
+  push:
+    branches:
+      - fix/action-env
   workflow_dispatch:
     inputs:
       target_environment:
