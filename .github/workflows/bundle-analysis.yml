@@ -24,7 +24,7 @@ jobs:
     env:
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
       NEXT_PUBLIC_ENABLE_TRACK: ${{ vars.ENABLE_TRACK }}
-      FEC_API_TOKEN: ${{vars.FEC_API_TOKEN}}
+      FEC_API_TOKEN: ${{secrets.FEC_API_TOKEN}}
     steps:
       - uses: actions/checkout@v6
 
