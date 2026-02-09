@@ -23,11 +23,15 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Debug only: print first 3 chars of FEC_API_TOKEN loaded from .env.
+# Debug only: check whether .env exists and print NEXT_PUBLIC_ENABLE_TRACK.
 RUN set -e; \
-  token="$(sed -n 's/^FEC_API_TOKEN=\"\{0,1\}\(.*\)\"\{0,1\}$/\1/p' .env | head -n1)"; \
-  prefix="$(printf "%s" "$token" | cut -c1-3)"; \
-  echo "FEC_API_TOKEN prefix: ${prefix}"
+  if [ -f .env ]; then \
+    echo ".env exists: yes"; \
+  else \
+    echo ".env exists: no"; \
+  fi; \
+  track="$(sed -n 's/^NEXT_PUBLIC_ENABLE_TRACK=\"\{0,1\}\(.*\)\"\{0,1\}$/\1/p' .env | head -n1 || true)"; \
+  echo "NEXT_PUBLIC_ENABLE_TRACK: ${track}"
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
