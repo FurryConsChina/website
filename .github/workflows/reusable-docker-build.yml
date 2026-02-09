@@ -28,7 +28,7 @@ jobs:
       ENV_FEC_API_TOKEN: ${{ secrets.FEC_API_TOKEN }}
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -44,6 +44,7 @@ jobs:
           echo NEXT_PUBLIC_REGION="$ENV_REGION" >> .env
           echo NEXT_PUBLIC_WEBSITE_URL="$ENV_WEBSITE_URL" >> .env
           echo FEC_API_TOKEN="$ENV_FEC_API_TOKEN" >> .env
+          echo "Created .env file with provided secrets and variables"
 
       - name: Build Docker image
         uses: docker/build-push-action@v6
