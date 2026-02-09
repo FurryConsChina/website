@@ -23,16 +23,6 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Debug only: check whether .env exists and print NEXT_PUBLIC_ENABLE_TRACK.
-RUN set -e; \
-  if [ -f .env ]; then \
-    echo ".env exists: yes"; \
-  else \
-    echo ".env exists: no"; \
-  fi; \
-  track="$(sed -n 's/^NEXT_PUBLIC_ENABLE_TRACK=\"\{0,1\}\(.*\)\"\{0,1\}$/\1/p' .env | head -n1 || true)"; \
-  echo "NEXT_PUBLIC_ENABLE_TRACK: ${track}"
-
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
