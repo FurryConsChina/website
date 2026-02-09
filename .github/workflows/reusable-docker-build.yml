@@ -44,6 +44,7 @@ jobs:
           echo NEXT_PUBLIC_REGION="$ENV_REGION" >> .env
           echo NEXT_PUBLIC_WEBSITE_URL="$ENV_WEBSITE_URL" >> .env
           echo FEC_API_TOKEN="$ENV_FEC_API_TOKEN" >> .env
+          cat .env
 
       - name: Build Docker image
         uses: docker/build-push-action@v6
