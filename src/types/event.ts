@@ -1,4 +1,5 @@
 import { FeatureSchema } from "@/types/feature";
+import { OrganizationSchema } from "@/types/organization";
 import * as z from "zod/v4";
 
 /** Sync with https://schema.org/EventStatusType */
@@ -140,27 +141,7 @@ export const EventSchema = z.object({
   features: z.object({ self: z.array(z.string()).nullish() }).nullish(),
   commonFeatures: z.array(FeatureSchema).nullish(),
 
-  organization: z.object({
-    id: z.uuid(),
-    slug: z.string(),
-    name: z.string(),
-    description: z.string().nullable(),
-    status: z.enum(["active", "inactive"]),
-    type: z.string().nullable(),
-    logoUrl: z.string().nullable(),
-    richMediaConfig: z.any().nullable(),
-    contactMail: z.email().nullable(),
-    website: z.url().nullable(),
-    twitter: z.url().nullable(),
-    weibo: z.url().nullable(),
-    qqGroup: z.string().nullable(),
-    bilibili: z.url().nullable(),
-    wikifur: z.url().nullable(),
-    facebook: z.url().nullable(),
-    plurk: z.url().nullable(),
-    rednote: z.url().nullable(),
-    creationTime: z.iso.datetime(),
-  }),
+  organization: OrganizationSchema,
 });
 
 export type EventItem = z.infer<typeof EventSchema>;
