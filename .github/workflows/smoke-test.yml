@@ -20,6 +20,7 @@ permissions:
 jobs:
   build-image:
     uses: ./.github/workflows/reusable-docker-build.yml
+    secrets: inherit
     with:
       environment: ${{ inputs.target_environment }}
       image_tags: furrycons:ci

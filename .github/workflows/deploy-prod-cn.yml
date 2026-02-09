@@ -11,6 +11,7 @@ permissions:
 jobs:
   build-image:
     uses: ./.github/workflows/reusable-docker-build.yml
+    secrets: inherit
     with:
       environment: Prod-CN
       image_tags: |
