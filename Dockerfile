@@ -23,6 +23,12 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# Debug only: print first 3 chars of FEC_API_TOKEN loaded from .env.
+RUN set -e; \
+  token="$(sed -n 's/^FEC_API_TOKEN=\"\{0,1\}\(.*\)\"\{0,1\}$/\1/p' .env | head -n1)"; \
+  prefix="$(printf "%s" "$token" | cut -c1-3)"; \
+  echo "FEC_API_TOKEN prefix: ${prefix}"
+
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
