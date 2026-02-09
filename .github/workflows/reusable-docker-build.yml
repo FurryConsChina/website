@@ -25,7 +25,7 @@ jobs:
       ENV_ENABLE_TRACK: ${{ vars.ENABLE_TRACK }}
       ENV_REGION: ${{ vars.NEXT_PUBLIC_REGION }}
       ENV_WEBSITE_URL: ${{ vars.NEXT_PUBLIC_WEBSITE_URL }}
-      ENV_FEC_API_TOKEN: ${{ vars.FEC_API_TOKEN }}
+      ENV_FEC_API_TOKEN: ${{ secrets.FEC_API_TOKEN }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
