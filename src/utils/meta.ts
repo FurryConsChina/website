@@ -343,9 +343,9 @@ function cityDetailDescriptionGenerator(
     default:
       return `这里是 ${cityName} 的兽展活动列表，累计收录了 ${eventCount} 场兽展（兽聚）活动。`;
     case "zh-Hant":
-      return `這裡是 ${cityName} 的獸展時間軸，累計收錄了 ${eventCount} 場獸展（獸聚）活動。`;
+      return `這裡是 ${cityName} 的獸展活動列表，累計收錄了 ${eventCount} 場獸展（獸聚）活動。`;
     case "en":
-      return `This is the furry event timeline for ${cityName}, with a total of ${eventCount} recorded furry conventions and gatherings.`;
+      return `This is the furry event list for ${cityName}, with a total of ${eventCount} recorded furry conventions and gatherings.`;
   }
 }
 
