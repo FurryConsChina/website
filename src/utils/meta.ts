@@ -148,6 +148,36 @@ function generateOrganizationKeywords(organization: { name: string }, locale: cu
   }
 }
 
+function generateCityDetailKeywords(city: { name: string }, locale: currentSupportLocale) {
+  switch (locale) {
+    case "zh-Hans":
+    default:
+      return [
+        `${city.name}`,
+        `${city.name}兽展`,
+        `${city.name}兽聚`,
+        `${city.name}兽展时间`,
+        `${city.name}兽展日历`,
+      ];
+    case "zh-Hant":
+      return [
+        `${city.name}`,
+        `${city.name}獸展`,
+        `${city.name}獸聚`,
+        `${city.name}獸展時間`,
+        `${city.name}獸展日曆`,
+      ];
+    case "en":
+      return [
+        `${city.name}`,
+        `${city.name} Furry Convention`,
+        `${city.name} Furry Gathering`,
+        `${city.name} Furry Convention Schedule`,
+        `${city.name} Furry Event Calendar`,
+      ];
+  }
+}
+
 function keywordGenerator({
   page,
   locale,
@@ -232,40 +262,32 @@ function eventDescriptionGenerator(
     case "zh-Hans":
     default:
       return event.startAt && event.endAt
-        ? `欢迎来到兽展日历！兽展日历提供关于“${event?.name}”的详细信息：这是由“${
-            event?.organization?.name
-          }”举办的兽展，将于${formatDate(
-            event?.startAt!,
+        ? `“${event?.name}”是由“${event?.organization?.name}”举办的兽展，展会定于${formatDate(
+            event?.startAt,
             "YYYY年MM月DD日",
             locale,
-          )}至${formatDate(event?.endAt!, "YYYY年MM月DD日", locale)}在“${
-            event?.region?.localName
-          }${event?.address}”举办，喜欢的朋友记得关注开始售票时间～`
-        : `欢迎来到兽展日历！兽展日历提供关于“${event?.name}”的详细信息：这是由“${event?.organization?.name}”举办的兽展，将在“${event?.region?.localName}${event?.address}”举办，喜欢的朋友记得关注开始售票时间～`;
+          )}至${formatDate(event?.endAt, "YYYY年MM月DD日", locale)}在“${event?.region?.localName}${event?.address}”举办`
+        : `“${event?.name}”是由“${event?.organization?.name}”举办的兽展，展会的举办时间还没有公布，预计将在“${event?.region?.localName}${event?.address || ""}”举办`;
     case "zh-Hant":
       return event.startAt && event.endAt
-        ? `歡迎來到獸展日曆！獸展日曆提供關於“${event?.name}”的詳細信息：這是由“${
-            event?.organization?.name
-          }”舉辦的獸展，將於${formatDate(event?.startAt!, "YYYY/MM/DD", locale)}至${formatDate(
-            event?.endAt!,
-            "YYYY/MM/DD",
+        ? `“${event?.name}”是由“${event?.organization?.name}”舉辦的獸展，展會定於${formatDate(
+            event?.startAt,
+            "YYYY年MM月DD日",
             locale,
-          )}在“${
-            event?.region?.localName
-          }${event?.address}”舉辦，喜歡的朋友記得關注開票時間～`
-        : `歡迎來到獸展日曆！獸展日曆提供關於“${event?.name}”的詳細信息：這是由“${event?.organization?.name}”舉辦的獸展，將在“${event?.region?.localName}${event?.address}”舉辦，喜歡的朋友記得關注開票時間～`;
+          )}至${formatDate(event?.endAt, "YYYY年MM月DD日", locale)}在“${event?.region?.localName}${event?.address}”舉辦`
+        : `“${event?.name}”是由“${event?.organization?.name}”舉辦的獸展，展會的舉辦時間還沒有公佈，預計將在“${event?.region?.localName}${event?.address || ""}”舉辦`;
     case "en":
       return event.startAt && event.endAt
-        ? `Details about "${event?.name}": This furry convention is organized by "${
+        ? `"${event?.name}" is a furry convention organized by "${
             event?.organization?.name
-          }" and will be held from ${formatDate(event?.startAt!, "MMMM DD, YYYY", locale)} to ${formatDate(
-            event?.endAt!,
+          }". The event is scheduled to be held from ${formatDate(
+            event?.startAt,
             "MMMM DD, YYYY",
             locale,
-          )} at "${
-            event?.region?.localName
-          }${event?.address}". Stay tuned for ticket sales!`
-        : `Welcome to FurConsCalendar! FCC provides detailed information about "${event?.name}": This furry convention is organized by "${event?.organization?.name}" and will be held at "${event?.region?.localName}${event?.address}". Stay tuned for ticket sales!`;
+          )} to ${formatDate(event?.endAt, "MMMM DD, YYYY", locale)} at "${event?.region?.localName}${event?.address}".`
+        : `"${event?.name}" is a furry convention organized by "${
+            event?.organization?.name
+          }". The event date has not been announced yet and is expected to be held at "${event?.region?.localName}${event?.address || ""}".`;
   }
 }
 
@@ -310,11 +332,33 @@ function organizationDetailDescriptionGenerator(
   }
 }
 
+function cityDetailDescriptionGenerator(
+  locale: currentSupportLocale,
+  cityName: string,
+  eventCount: number,
+) {
+  switch (locale) {
+    case "zh-Hans":
+    default:
+      return `这里是 ${cityName} 的兽展活动列表，累计收录了 ${eventCount} 场兽展（兽聚）活动。`;
+    case "zh-Hant":
+      return `這裡是 ${cityName} 的獸展時間軸，累計收錄了 ${eventCount} 場獸展（獸聚）活動。`;
+    case "en":
+      return `This is the furry event timeline for ${cityName}, with a total of ${eventCount} recorded furry conventions and gatherings.`;
+  }
+}
+
+function cityDetailKeywordGenerator(locale: currentSupportLocale, city: { name: string }) {
+  return generateCityDetailKeywords(city, locale).join(",");
+}
+
 export {
   universalKeywords,
   keywordGenerator,
+  cityDetailKeywordGenerator,
   titleGenerator,
   defaultDescriptionGenerator as descriptionGenerator,
   eventDescriptionGenerator,
+  cityDetailDescriptionGenerator,
   organizationDetailDescriptionGenerator,
 };

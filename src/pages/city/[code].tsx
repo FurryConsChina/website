@@ -12,9 +12,11 @@ import "dayjs/locale/zh-tw";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { groupBy } from "es-toolkit";
 import { useTranslation } from "next-i18next";
-import { getDayjsLocale, monthNumberFormatter } from "@/utils/locale";
+import { currentSupportLocale, getDayjsLocale, monthNumberFormatter } from "@/utils/locale";
 import { EventsAPI } from "@/api/events";
 import dayjs from "dayjs";
+import { breadcrumbGenerator } from "@/utils/structuredData";
+import { cityDetailDescriptionGenerator, cityDetailKeywordGenerator, CityPageMeta } from "@/utils/meta";
 
 export default function CityDetail({ region, events }: { region: Region; events: EventItem[] }) {
   const { t, i18n } = useTranslation();
@@ -179,10 +181,32 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     }),
   );
 
+  const parsedEvents = pickEventSchema.parse(regionEvents?.records);
+
   return {
     props: {
+      headMetas: {
+        title: `${region.name} - ${CityPageMeta[locale as currentSupportLocale].title}`,
+        des: cityDetailDescriptionGenerator(locale as currentSupportLocale, region.name, parsedEvents.length),
+        keywords: cityDetailKeywordGenerator(locale as currentSupportLocale, { name: region.name }),
+        link: `/city/${regionCode}`,
+      },
+      structuredData: {
+        ...breadcrumbGenerator({
+          items: [
+            {
+              name: CityPageMeta[locale as currentSupportLocale].title,
+              item: "/city",
+            },
+            {
+              name: region.name,
+              item: `/city/${regionCode}`,
+            },
+          ],
+        }),
+      },
       region: region,
-      events: pickEventSchema.parse(regionEvents?.records),
+      events: parsedEvents,
       ...(await serverSideTranslations(locale, ["common"])),
     },
   };
