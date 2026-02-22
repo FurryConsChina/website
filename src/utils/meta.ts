@@ -257,7 +257,7 @@ function eventDescriptionGenerator(
   if (!event) {
     return defaultDescriptionGenerator(locale);
   }
-  const venue = `${event?.region?.localName || ""}${event?.address || ""}`;
+  const venue = `${event?.region?.localName || ""}${event?.address || ""}`.trim();
 
   switch (locale) {
     case "zh-Hans":
@@ -267,16 +267,16 @@ function eventDescriptionGenerator(
             event?.startAt,
             "YYYY年MM月DD日",
             locale,
-          )}至${formatDate(event?.endAt, "YYYY年MM月DD日", locale)}在“${venue}”举办`
-        : `“${event?.name}”是由“${event?.organization?.name}”举办的兽展，展会的举办时间还没有公布，预计将在“${venue}”举办`;
+          )}至${formatDate(event?.endAt, "YYYY年MM月DD日", locale)}${venue ? `在“${venue}”举办` : "举办"}`
+        : `“${event?.name}”是由“${event?.organization?.name}”举办的兽展，展会的举办时间还没有公布，${venue ? `预计将在“${venue}”举办` : "举办地点暂未公布"}`;
     case "zh-Hant":
       return event.startAt && event.endAt
         ? `“${event?.name}”是由“${event?.organization?.name}”舉辦的獸展，展會定於${formatDate(
             event?.startAt,
             "YYYY年MM月DD日",
             locale,
-          )}至${formatDate(event?.endAt, "YYYY年MM月DD日", locale)}在“${venue}”舉辦`
-        : `“${event?.name}”是由“${event?.organization?.name}”舉辦的獸展，展會的舉辦時間還沒有公佈，預計將在“${venue}”舉辦`;
+          )}至${formatDate(event?.endAt, "YYYY年MM月DD日", locale)}${venue ? `在“${venue}”舉辦` : "舉辦"}`
+        : `“${event?.name}”是由“${event?.organization?.name}”舉辦的獸展，展會的舉辦時間還沒有公佈，${venue ? `預計將在“${venue}”舉辦` : "舉辦地點暫未公佈"}`;
     case "en":
       return event.startAt && event.endAt
         ? `"${event?.name}" is a furry convention organized by "${
@@ -285,10 +285,10 @@ function eventDescriptionGenerator(
             event?.startAt,
             "MMMM DD, YYYY",
             locale,
-          )} to ${formatDate(event?.endAt, "MMMM DD, YYYY", locale)} at "${venue}".`
+          )} to ${formatDate(event?.endAt, "MMMM DD, YYYY", locale)}${venue ? ` at "${venue}".` : "."}`
         : `"${event?.name}" is a furry convention organized by "${
             event?.organization?.name
-          }". The event date has not been announced yet and is expected to be held at "${venue}".`;
+          }". The event date has not been announced yet${venue ? ` and is expected to be held at "${venue}".` : ", and the venue has not been announced yet."}`;
   }
 }
 
