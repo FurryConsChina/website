@@ -187,7 +187,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     props: {
       headMetas: {
         title: `${region.name} - ${CityPageMeta[locale as currentSupportLocale].title}`,
-        des: cityDetailDescriptionGenerator(locale as currentSupportLocale, region.name, parsedEvents.length),
+        des: cityDetailDescriptionGenerator(locale as currentSupportLocale, region.name, regionEvents.total),
         keywords: cityDetailKeywordGenerator(locale as currentSupportLocale, { name: region.name }),
         link: `/city/${regionCode}`,
       },
