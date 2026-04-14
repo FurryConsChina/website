@@ -15,6 +15,7 @@ import {
 } from "@/components/OrganizationLinkButton";
 import OrganizationStatus from "@/components/organizationStatus";
 import { EventItem, EventStatus } from "@/types/event";
+import { parseCoordinates } from "@/utils/coordinate";
 import { getEventCoverImgPath, imageUrl } from "@/utils/imageLoader";
 import { currentSupportLocale, formatLocale } from "@/utils/locale";
 import { eventDescriptionGenerator, keywordGenerator } from "@/utils/meta";
@@ -44,8 +45,10 @@ const MapLoadingStatus = {
 
 export default function EventDetail({ event }: { event: EventItem }) {
   const { t, i18n } = useTranslation();
+  const { latitude, longitude, isValid: hasMapCoordinates } = parseCoordinates(event.addressLat, event.addressLon);
+
   const [mapLoadingStatus, setMapLoadingStatus] = useState(() => {
-    if (event.addressLat && event.addressLon) {
+    if (hasMapCoordinates) {
       return MapLoadingStatus.Loading;
     }
     return MapLoadingStatus.Idle;
@@ -55,8 +58,9 @@ export default function EventDetail({ event }: { event: EventItem }) {
 
   const initMap = () => {
     if (!window.TMap) throw new Error("TMap is not loaded");
+    if (!hasMapCoordinates) return;
     setMapLoadingStatus(MapLoadingStatus.Loading);
-    const center = new window.TMap.LatLng(event.addressLat, event.addressLon);
+    const center = new window.TMap.LatLng(latitude, longitude);
     //定义map变量，调用 TMap.Map() 构造函数创建地图
 
     try {
@@ -87,7 +91,7 @@ export default function EventDetail({ event }: { event: EventItem }) {
             //点标注数据数组
             id: "demo",
             styleId: "marker",
-            position: new window.TMap.LatLng(event.addressLat, event.addressLon),
+            position: new window.TMap.LatLng(latitude, longitude),
             properties: {
               title: "marker",
             },

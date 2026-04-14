@@ -7,6 +7,7 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
     "clean": "rm -rf .next && rm -rf out",
     "turbo-analyze": "npx next experimental-analyze",
     "webpack-analyze": "ANALYZE=true yarn build"
