@@ -4,7 +4,7 @@ import "dayjs/locale/zh-cn";
 import "dayjs/locale/zh-tw";
 import Link from "next/link";
 import { useEffect, useMemo } from "react";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next/pages";
 import Image from "@/components/image";
 import { getEventCoverImgPath } from "@/utils/imageLoader";
 import { sendTrack } from "@/utils/track";

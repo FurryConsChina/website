@@ -5,7 +5,7 @@ import { FaPaw } from "react-icons/fa";
 import { HiOutlineHome, HiOutlineMail } from "react-icons/hi";
 import { FaQq, FaTwitter, FaWeibo } from "react-icons/fa";
 import { SiBilibili, SiXiaohongshu } from "react-icons/si";
-import { TFunction } from "next-i18next";
+import type { TFunction } from "next-i18next/pages";
 import { FaFacebook } from "react-icons/fa6";
 import { ReactNode } from "react";
 

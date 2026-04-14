@@ -1,4 +1,4 @@
-import { appWithTranslation } from "next-i18next";
+import { appWithTranslation } from "next-i18next/pages";
 
 import { Noto_Sans_SC, Rubik } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";

@@ -1,7 +1,7 @@
 import { eventGroupByMonth, eventGroupByYear } from "@/utils/event";
 import SimpleEventCard from "@/components/SimpleEventCard";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
+import { useTranslation } from "next-i18next/pages";
 import { EventsAPI } from "@/api/events";
 import { SimpleEventItem } from "@/types/event";
 import { monthNumberFormatter } from "@/utils/locale";

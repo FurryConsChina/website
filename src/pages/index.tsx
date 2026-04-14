@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
 import { Field, Label, Switch } from "@headlessui/react";
 import { groupBy } from "es-toolkit/compat";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useTranslation } from "next-i18next/pages";
+import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
 import { EventsAPI } from "@/api/events";
 import EventCard from "@/components/eventCard";
 import { FriendSiteBlock } from "@/components/layout/footer";

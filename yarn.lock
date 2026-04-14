@@ -2607,13 +2607,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/hoist-non-react-statics@npm:^3.3.6":
-  version: 3.3.6
-  resolution: "@types/hoist-non-react-statics@npm:3.3.6"
+"@types/hoist-non-react-statics@npm:^3.3.7":
+  version: 3.3.7
+  resolution: "@types/hoist-non-react-statics@npm:3.3.7"
   dependencies:
-    "@types/react": "npm:*"
     hoist-non-react-statics: "npm:^3.3.0"
-  checksum: 10/f03e43bd081876c49584ffa0eb690d69991f258203efca44dcc30efdda49a50653ff06402917d1edc9cb7e2adebbe9e2d1d0e739bc99c1b5372103b1cc534e47
+  peerDependencies:
+    "@types/react": "*"
+  checksum: 10/13f610572c073970b3f43cc446396974fed786fee6eac2d6fd4b0ca5c985f13e79d4a0de58af4e5b4c68470d808567c3a14108d98edb7d526d4d46c8ec851ed1
   languageName: node
   linkType: hard
 
@@ -2695,15 +2696,6 @@ __metadata:
   peerDependencies:
     "@types/react": ^19.2.0
   checksum: 10/616c4a8aee250ea05fb1e7b98e7e00475dd3a6c1c30d7be18b4b93caba832f4203106b3a496a6b147e5acc2da14575eca47bce234c633bca1f8430ef8ffb234a
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:*":
-  version: 19.2.2
-  resolution: "@types/react@npm:19.2.2"
-  dependencies:
-    csstype: "npm:^3.0.2"
-  checksum: 10/d6adf8fd4bb23a7e04da5700d96b15dc0f59653727a9c6e940c151d7232fa1dbbab98417d5ac830dcfb6cba3f206efbd4cd83647e6f9a688d7363a90e607f6bf
   languageName: node
   linkType: hard
 
@@ -3568,13 +3560,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:^3":
-  version: 3.38.0
-  resolution: "core-js@npm:3.38.0"
-  checksum: 10/95f5c768ee14aaf79e8fece9e58023a5a6367186184c92e825a842f271d3d91c559cfadee9c75712c463f248c61d636ed5a31a1fff1c904d4f5a2ed69b23f0c2
-  languageName: node
-  linkType: hard
-
 "cross-spawn@npm:^7.0.0, cross-spawn@npm:^7.0.3, cross-spawn@npm:^7.0.6":
   version: 7.0.6
   resolution: "cross-spawn@npm:7.0.6"
@@ -3635,7 +3620,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"csstype@npm:^3.0.2, csstype@npm:^3.1.3":
+"csstype@npm:^3.1.3":
   version: 3.1.3
   resolution: "csstype@npm:3.1.3"
   checksum: 10/f593cce41ff5ade23f44e77521e3a1bcc2c64107041e1bf6c3c32adc5187d0d60983292fda326154d20b01079e24931aa5b08e4467cc488b60bb1e7f6d478ade
@@ -4682,9 +4667,9 @@ __metadata:
     eslint-config-next: "npm:16.2.3"
     eslint-config-prettier: "npm:^10.1.8"
     git-revision-webpack-plugin: "npm:^5.0.0"
-    i18next: "npm:^25.10.10"
+    i18next: "npm:^26.0.4"
     next: "npm:16.2.3"
-    next-i18next: "npm:^15.4.3"
+    next-i18next: "npm:^16.0.5"
     postcss: "npm:^8.5.9"
     postcss-flexbugs-fixes: "npm:^5.0.2"
     postcss-nested: "npm:^7.0.2"
@@ -4693,7 +4678,7 @@ __metadata:
     react: "npm:19.2.5"
     react-dom: "npm:19.2.5"
     react-hot-toast: "npm:^2.6.0"
-    react-i18next: "npm:^16.6.6"
+    react-i18next: "npm:^17.0.3"
     react-icons: "npm:^5.6.0"
     tailwindcss: "npm:^3.4.19"
     typescript: "npm:5.9.3"
@@ -5071,16 +5056,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"i18next-fs-backend@npm:^2.6.0":
-  version: 2.6.0
-  resolution: "i18next-fs-backend@npm:2.6.0"
-  checksum: 10/e23b6337326bea870c9e0a3e004241a27dcc56ac803946b859992bc2030e5f8d41cb10fbf3b74424155055387587f8d308b60118e07f75104198865f329013a9
+"i18next-resources-to-backend@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "i18next-resources-to-backend@npm:1.2.1"
+  dependencies:
+    "@babel/runtime": "npm:^7.23.2"
+  checksum: 10/93e3d5ede02f4f9b1515759fe7c4f0b911aec1deceb1836e4b25926ff5c54d27d24e5e42c62a55ad1d911d9f9a0965d48b03fdf0028183215b5cd4f5d9465e5f
   languageName: node
   linkType: hard
 
-"i18next@npm:^25.10.10":
-  version: 25.10.10
-  resolution: "i18next@npm:25.10.10"
+"i18next@npm:^26.0.4":
+  version: 26.0.4
+  resolution: "i18next@npm:26.0.4"
   dependencies:
     "@babel/runtime": "npm:^7.29.2"
   peerDependencies:
@@ -5088,7 +5075,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/ee4f6ba360902a2f0550cfeef234c9e68a67487b575d204e89bdf2f2db647934aa3900a39c64174b9201a8979e455d0bf8f56b57934c34fc8f9aa3b430cb152d
+  checksum: 10/39a8f13851252f97dfd255fae0a72a8aefcab34830def5a2057e631aac5719ba87d3b7e32bef354cd5304f19f78abfafad9dc51eb090c303ebac6ee339cdfb88
   languageName: node
   linkType: hard
 
@@ -6007,21 +5994,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next-i18next@npm:^15.4.3":
-  version: 15.4.3
-  resolution: "next-i18next@npm:15.4.3"
+"next-i18next@npm:^16.0.5":
+  version: 16.0.5
+  resolution: "next-i18next@npm:16.0.5"
   dependencies:
-    "@babel/runtime": "npm:^7.23.2"
-    "@types/hoist-non-react-statics": "npm:^3.3.6"
-    core-js: "npm:^3"
+    "@types/hoist-non-react-statics": "npm:^3.3.7"
     hoist-non-react-statics: "npm:^3.3.2"
-    i18next-fs-backend: "npm:^2.6.0"
+    i18next-resources-to-backend: "npm:^1.2.1"
   peerDependencies:
     i18next: ">= 23.7.13"
-    next: ">= 12.0.0"
-    react: ">= 17.0.2"
-    react-i18next: ">= 13.5.0"
-  checksum: 10/de546f82fc16f3f4367cba224cbf12ca2784a87b0cee8e22b6ec36919b3caf1358080596611d03c4f0b03d8b9a2b82cf06998ec236e478405f45fd30e0c57f94
+    next: ">= 14.1.0"
+    react: ">= 18.0.0"
+    react-i18next: ">= 14.0.0"
+  checksum: 10/abd7f79a16e3b6f9accda5b907711aa8c7375971310172d42f88ac1d6201fa2d843e792ff89ed49eeae9840028e79af939b82e4c39781425aa6eecd5c9051472
   languageName: node
   linkType: hard
 
@@ -7120,15 +7105,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-i18next@npm:^16.6.6":
-  version: 16.6.6
-  resolution: "react-i18next@npm:16.6.6"
+"react-i18next@npm:^17.0.3":
+  version: 17.0.3
+  resolution: "react-i18next@npm:17.0.3"
   dependencies:
     "@babel/runtime": "npm:^7.29.2"
     html-parse-stringify: "npm:^3.0.1"
     use-sync-external-store: "npm:^1.6.0"
   peerDependencies:
-    i18next: ">= 25.10.9"
+    i18next: ">= 26.0.1"
     react: ">= 16.8.0"
     typescript: ^5 || ^6
   peerDependenciesMeta:
@@ -7138,7 +7123,7 @@ __metadata:
       optional: true
     typescript:
       optional: true
-  checksum: 10/5916b8eb0bf2e8d6aef06077640c2ac81603b47aca82c1314c73be3604f0a64337964049d6efc07607f296209f02ffe2ba7a0fa6fbed570f3d5e1b83ee8a4059
+  checksum: 10/746947cd4bd890467ab2ea7664960a482bc042b26ced27bf63c0ea69e6ab4ee80ed8b924c047f07b0af1d5813bf0fe4124f2c3f6552b9a0292c79a0e235124a4
   languageName: node
   linkType: hard
 

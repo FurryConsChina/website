@@ -1,9 +1,9 @@
 import { sendTrack } from "@/utils/track";
 import { GetStaticPropsContext } from "next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
 import Link from "next/link";
 import { useEffect } from "react";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next/pages";
 
 export default function Custom500() {
   const { t } = useTranslation();
