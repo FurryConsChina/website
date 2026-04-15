@@ -7,6 +7,6 @@ export enum DurationType {
 }
 
 export type SelectedFilterType = {
-  onlyAvailable: boolean;
+  includePastEvents: boolean;
   eventScale: (typeof EventScale)[keyof typeof EventScale][];
 };

@@ -29,6 +29,7 @@
     "i18next": "^26.0.4",
     "next": "16.2.3",
     "next-i18next": "^16.0.5",
+    "nuqs": "^2.8.9",
     "postcss": "^8.5.9",
     "postcss-flexbugs-fixes": "^5.0.2",
     "postcss-nested": "^7.0.2",

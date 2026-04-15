@@ -60,7 +60,7 @@ export function filteringEvents<T extends EventListable>(events: T[], selectedFi
   return events.filter((event) => {
     const now = Date.now();
     const endTime = event.endAt ? new Date(new Date(event.endAt).setHours(23, 59, 59, 999)).getTime() : null;
-    if (selectedFilter.onlyAvailable) {
+    if (!selectedFilter.includePastEvents) {
       // for now, if event is cancelled, the data willn't include it at all.
       // if (event.status === EventStatus.EventCancelled) {
       //   return false;
