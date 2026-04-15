@@ -22,7 +22,7 @@ RUN --mount=type=cache,target=/root/.npm \
   if [ -f package-lock.json ]; then \
     npm ci --no-audit --no-fund; \
   elif [ -f yarn.lock ]; then \
-    corepack enable yarn && yarn install --frozen-lockfile --production=false; \
+    corepack enable yarn && yarn install --immutable; \
   elif [ -f pnpm-lock.yaml ]; then \
     corepack enable pnpm && pnpm install --frozen-lockfile; \
   else \
