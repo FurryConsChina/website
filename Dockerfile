@@ -34,9 +34,9 @@ RUN --mount=type=cache,target=/root/.npm \
 # ============================================
 
 FROM node:${NODE_VERSION} AS builder
-+RUN apt-get update \
-+ && apt-get install -y --no-install-recommends git \
-+ && rm -rf /var/lib/apt/lists/*
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends git \
+  && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
