@@ -3,8 +3,8 @@ import Link from "next/link";
 import dayjs from "dayjs";
 import "dayjs/locale/zh-cn";
 import "dayjs/locale/zh-tw";
-import { SimpleEventItem } from "@/types/event";
-import { useTranslation } from "next-i18next";
+import type { SimpleEventItem } from "@/types/event";
+import { useTranslation } from "next-i18next/pages";
 import { getDayjsLocale } from "@/utils/locale";
 
 function SimpleEventCard({ event }: { event: SimpleEventItem }) {

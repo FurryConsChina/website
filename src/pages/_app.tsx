@@ -1,4 +1,5 @@
-import { appWithTranslation } from "next-i18next";
+import { appWithTranslation } from "next-i18next/pages";
+import { NuqsAdapter } from "nuqs/adapters/next/pages";
 
 import { Noto_Sans_SC, Rubik } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
@@ -32,9 +33,11 @@ function App({ Component, pageProps }: AppProps) {
           --font-rubik: ${rubik.style.fontFamily};
         }
       `}</style>
-      <Layout headMetas={pageProps.headMetas} structuredData={pageProps.structuredData}>
-        <Component {...pageProps} />
-      </Layout>
+      <NuqsAdapter>
+        <Layout headMetas={pageProps.headMetas} structuredData={pageProps.structuredData}>
+          <Component {...pageProps} />
+        </Layout>
+      </NuqsAdapter>
       {isEnableTrack && <GoogleAnalytics gaId="G-RBND7XQ43D" />}
     </>
   );

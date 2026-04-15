@@ -1,7 +1,7 @@
-import { Organization } from "@/types/organization";
+import type { Organization } from "@/types/organization";
 import API from "@/api";
 import { ListResponse } from "@/types/api";
-import { EventItem } from "@/types/event";
+import type { EventItem } from "@/types/event";
 
 export class OrganizationsAPI {
   static async getOrganizationList(params: { current: string; pageSize: string; sortBy?: string }) {

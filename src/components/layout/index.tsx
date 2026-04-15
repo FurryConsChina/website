@@ -8,7 +8,7 @@ import AnnouncementSlider from "@/components/announcementSlider";
 import { useRouter } from "next/router";
 import { Toaster } from "react-hot-toast";
 import Sidebar from "@/components/Sidebar";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next/pages";
 import { IS_CN_REGION, PUBLIC_URL } from "@/utils/env";
 
 const getCanonicalUrl = (locale: currentSupportLocale | undefined, path: string) => {

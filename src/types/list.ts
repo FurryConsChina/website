@@ -1,4 +1,4 @@
-import { EventScale } from "./event";
+import { EventScale } from "@/constants/event";
 
 export enum DurationType {
   Passed = "passed", //already done.
@@ -7,6 +7,6 @@ export enum DurationType {
 }
 
 export type SelectedFilterType = {
-  onlyAvailable: boolean;
+  includePastEvents: boolean;
   eventScale: (typeof EventScale)[keyof typeof EventScale][];
 };

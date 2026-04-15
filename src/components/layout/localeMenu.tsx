@@ -2,7 +2,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { FaLanguage } from "react-icons/fa6";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next/pages";
 
 export default function LocaleMenu() {
   const { t } = useTranslation();

@@ -1,4 +1,5 @@
-import { EventItem, EventSchema } from "@/types/event";
+import { EventSchema } from "@/types/event";
+import type { EventItem } from "@/types/event";
 import { ListResponse } from "@/types/api";
 import API from "@/api";
 

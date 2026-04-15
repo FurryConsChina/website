@@ -5,7 +5,7 @@ export const isEnableTrack = process.env.NEXT_PUBLIC_ENABLE_TRACK === "true";
 
 export default function Document() {
   return (
-    <Html>
+    <Html data-scroll-behavior="smooth">
       <Head></Head>
 
       <body>

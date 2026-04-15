@@ -1,4 +1,5 @@
 import { EventsAPI } from "@/api/events";
+import EventMapCard from "@/components/event/EventMapCard";
 import EventSourceButton from "@/components/event/EventSourceButton";
 import { EventDate } from "@/components/eventCard";
 import NextImage from "@/components/image";
@@ -14,7 +15,8 @@ import {
   WeiboButton,
 } from "@/components/OrganizationLinkButton";
 import OrganizationStatus from "@/components/organizationStatus";
-import { EventItem, EventStatus } from "@/types/event";
+import { EventStatus } from "@/constants/event";
+import type { EventItem } from "@/types/event";
 import { getEventCoverImgPath, imageUrl } from "@/utils/imageLoader";
 import { currentSupportLocale, formatLocale } from "@/utils/locale";
 import { eventDescriptionGenerator, keywordGenerator } from "@/utils/meta";
@@ -23,95 +25,24 @@ import { sendTrack } from "@/utils/track";
 import { getEventDetailUrl } from "@/utils/url";
 import clsx from "clsx";
 import { GetServerSidePropsContext } from "next";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useTranslation } from "next-i18next/pages";
+import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
 import Link from "next/link";
-import Script from "next/script";
-import { useState } from "react";
 import { BsCalendar2DateFill } from "react-icons/bs";
 import { FaHotel, FaPeoplePulling } from "react-icons/fa6";
 import { IoLocation } from "react-icons/io5";
 import { RiErrorWarningLine } from "react-icons/ri";
-import { VscLoading } from "react-icons/vsc";
 import * as z from "zod/v4";
-
-const MapLoadingStatus = {
-  Idle: "idle",
-  Loading: "loading",
-  Finished: "finished",
-  Error: "error",
-};
 
 export default function EventDetail({ event }: { event: EventItem }) {
   const { t, i18n } = useTranslation();
-  const [mapLoadingStatus, setMapLoadingStatus] = useState(() => {
-    if (event.addressLat && event.addressLon) {
-      return MapLoadingStatus.Loading;
-    }
-    return MapLoadingStatus.Idle;
-  });
 
   const finalEventCoverImage = getEventCoverImgPath(event);
-
-  const initMap = () => {
-    if (!window.TMap) throw new Error("TMap is not loaded");
-    setMapLoadingStatus(MapLoadingStatus.Loading);
-    const center = new window.TMap.LatLng(event.addressLat, event.addressLon);
-    //定义map变量，调用 TMap.Map() 构造函数创建地图
-
-    try {
-      const map = new window.TMap.Map(document.getElementById("event-map-container"), {
-        center: center, //设置地图中心点坐标
-        zoom: 17.2, //设置地图缩放级别
-        pitch: 43.5, //设置俯仰角
-        rotation: 45, //设置地图旋转角度
-      });
-
-      map.on("tilesloaded", function () {
-        setMapLoadingStatus(MapLoadingStatus.Finished);
-      });
-
-      new window.TMap.MultiMarker({
-        id: "marker-layer", //图层id
-        map: map,
-        styles: {
-          //点标注的相关样式
-          marker: new window.TMap.MarkerStyle({
-            width: 25,
-            height: 35,
-            anchor: { x: 16, y: 32 },
-          }),
-        },
-        geometries: [
-          {
-            //点标注数据数组
-            id: "demo",
-            styleId: "marker",
-            position: new window.TMap.LatLng(event.addressLat, event.addressLon),
-            properties: {
-              title: "marker",
-            },
-          },
-        ],
-      });
-    } catch (error) {
-      console.error(error);
-      setMapLoadingStatus(MapLoadingStatus.Error);
-    }
-  };
 
   const showDescriptionContainer = !!(event.detail || event.media?.images?.length);
 
   return (
     <>
-      {mapLoadingStatus !== MapLoadingStatus.Idle && (
-        <Script
-          src="https://map.qq.com/api/gljs?v=1.exp&key=PXEBZ-QLM6C-RZX2K-AV2XX-SBBW5-VGFC4"
-          strategy="lazyOnload"
-          onReady={initMap}
-        />
-      )}
-
       <div className={clsx("flex border bg-white rounded-xl min-h-[500px] overflow-hidden", "lg:flex-row flex-col")}>
         <div className={clsx("event-detail__left", "lg:w-7/12 w-full h-[500px]")}>
           <div className={clsx("relative text-center h-full")}>
@@ -192,39 +123,11 @@ export default function EventDetail({ event }: { event: EventItem }) {
         </div>
       </div>
 
-      {mapLoadingStatus !== MapLoadingStatus.Idle && (
-        <div className="my-4 bg-white rounded-xl overflow-hidden elative">
-          <h3 className="text-xl text-gray-600 m-4">{t("event.map")}</h3>
-
-          <div id="event-map-container" className="h-[450px] overflow-hidden rounded-2xl m-4 relative">
-            <div
-              className={clsx(
-                "absolute w-full bg-gray-100/70 top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 flex justify-center overflow-hidden transition duration-300",
-                mapLoadingStatus === MapLoadingStatus.Loading && "h-full",
-                mapLoadingStatus !== MapLoadingStatus.Loading && "h-0",
-              )}
-            >
-              <div className="flex items-center z-10">
-                <span className="animate-spin mr-2">
-                  <VscLoading className="text-base" />
-                </span>
-                <label className="text-gray-600">{t("event.mapLoading")}</label>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center mt-2 mb-4 px-4">
-            <a
-              target="_blank"
-              rel="noreferrer"
-              href={`https://uri.amap.com/marker?position=${event.addressLon},${event.addressLat}`}
-              className="px-2 py-2 border border-gray-300 text-sm rounded text-gray-700 hover:text-gray-900 hover:border-gray-400 transition duration-300"
-            >
-              {t("event.gotoGaoDe")}
-            </a>
-          </div>
-        </div>
-      )}
+      <EventMapCard
+        key={`${event.addressLat ?? ""}:${event.addressLon ?? ""}`}
+        latitudeText={event.addressLat}
+        longitudeText={event.addressLon}
+      />
 
       <div className="flex my-4 lg:items-start flex-col-reverse md:flex-row">
         {showDescriptionContainer && (

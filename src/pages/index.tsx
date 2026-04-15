@@ -1,28 +1,46 @@
 import { useMemo, useState } from "react";
 import { Field, Label, Switch } from "@headlessui/react";
 import { groupBy } from "es-toolkit/compat";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { createLoader, parseAsBoolean, useQueryState } from "nuqs";
+import { useTranslation } from "next-i18next/pages";
+import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
+import type { GetServerSidePropsContext } from "next";
 import { EventsAPI } from "@/api/events";
 import EventCard from "@/components/eventCard";
 import { FriendSiteBlock } from "@/components/layout/footer";
+import { EventScale, EventStatus } from "@/constants/event";
 import { filteringEvents, groupByCustomDurationEvent, sortEvents } from "@/utils/event";
 import { sendTrack } from "@/utils/track";
 
 import { DurationType } from "@/types/list";
-import { EventScale, EventStatus, type EventCardItem } from "@/types/event";
+import type { EventCardItem } from "@/types/event";
 import { formatLocale, monthNumberFormatter } from "@/utils/locale";
 import { keywordGenerator } from "@/utils/meta";
-import SponsorBanner from "@/components/SponsorBanner";
 import dayjs from "dayjs";
+
+export const searchParams = {
+  includePastEvents: parseAsBoolean.withDefault(false),
+};
+
+export const loadSearchParams = createLoader(searchParams);
 
 export default function Home(props: { events: EventCardItem[] }) {
   const { t } = useTranslation();
-  const [selectedFilter, setFilter] = useState({
-    onlyAvailable: true,
-    eventScale: ["all"],
-  });
-
+  const [includePastEvents, setIncludePastEvents] = useQueryState(
+    "includePastEvents",
+    parseAsBoolean.withDefault(false).withOptions({
+      shallow: false,
+      history: "push",
+    }),
+  );
+  const [eventScale, setEventScale] = useState<(typeof EventScale)[keyof typeof EventScale][]>(["all"]);
+  const selectedFilter = useMemo(
+    () => ({
+      includePastEvents,
+      eventScale,
+    }),
+    [eventScale, includePastEvents],
+  );
   const filteredEvents = filteringEvents(props.events, selectedFilter);
   const groupByCustomDurationEvents = groupByCustomDurationEvent(filteredEvents);
 
@@ -30,7 +48,17 @@ export default function Home(props: { events: EventCardItem[] }) {
     <>
       <div>
         {/* <SponsorBanner /> */}
-        <Filter selectedFilter={selectedFilter} onChange={(filter) => setFilter(filter)} />
+        <Filter
+          selectedFilter={selectedFilter}
+          onChange={(filter) => {
+            if (filter.includePastEvents !== includePastEvents) {
+              void setIncludePastEvents(filter.includePastEvents);
+            }
+            if (filter.eventScale[0] !== eventScale[0]) {
+              setEventScale(filter.eventScale);
+            }
+          }}
+        />
 
         {filteredEvents.length === 0 && (
           <div className="bg-white border rounded-xl p-6 mt-6 text-center h-96 flex justify-center flex-col">
@@ -155,9 +183,12 @@ function Filter({
   onChange,
   selectedFilter,
 }: {
-  onChange: (filter: { onlyAvailable: boolean; eventScale: (typeof EventScale)[keyof typeof EventScale][] }) => void;
+  onChange: (filter: {
+    includePastEvents: boolean;
+    eventScale: (typeof EventScale)[keyof typeof EventScale][];
+  }) => void;
   selectedFilter: {
-    onlyAvailable: boolean;
+    includePastEvents: boolean;
     eventScale: (typeof EventScale)[keyof typeof EventScale][];
   };
 }) {
@@ -183,16 +214,16 @@ function Filter({
         <div className="flex items-center max-sm:mb-4 max-sm:justify-between">
           <Label className="mr-4 text-gray-600">{t("event.filter.onlyAvailable")}</Label>
           <Switch
-            checked={selectedFilter.onlyAvailable}
-            onChange={(v) => handleFilter("onlyAvailable", v)}
+            checked={!selectedFilter.includePastEvents}
+            onChange={(v) => handleFilter("includePastEvents", !v)}
             className={`${
-              selectedFilter.onlyAvailable ? "bg-red-400" : "bg-gray-200"
+              !selectedFilter.includePastEvents ? "bg-red-400" : "bg-gray-200"
             } relative inline-flex h-6 w-11 items-center rounded-full`}
           >
             <span className="sr-only">{t("event.filter.onlyAvailable")}</span>
             <span
               className={`${
-                selectedFilter.onlyAvailable ? "translate-x-6" : "translate-x-1"
+                !selectedFilter.includePastEvents ? "translate-x-6" : "translate-x-1"
               } inline-block h-4 w-4 transform rounded-full bg-white transition`}
             />
           </Switch>
@@ -217,11 +248,14 @@ function Filter({
   );
 }
 
-export async function getStaticProps({ locale }: { locale: string }) {
+export async function getServerSideProps({ locale = "zh-Hans", query }: GetServerSidePropsContext) {
+  const { includePastEvents } = loadSearchParams(query);
   const events = await EventsAPI.getEventList({
     current: "1",
     pageSize: "999",
-    eventStartAt: dayjs().startOf("year").toISOString(),
+    eventStartAt: includePastEvents
+      ? dayjs().startOf("year").toISOString()
+      : dayjs().subtract(1, "month").startOf("month").toISOString(),
     eventStatus: [
       EventStatus.EventScheduled,
       EventStatus.EventPostponed,
@@ -260,6 +294,5 @@ export async function getStaticProps({ locale }: { locale: string }) {
       },
       ...(await serverSideTranslations(locale, ["common"])),
     },
-    revalidate: 500,
   };
 }

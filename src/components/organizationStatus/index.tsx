@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { GrStatusGoodSmall } from "react-icons/gr";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next/pages";
 import type { TFunction } from "i18next";
 
 export default function OrganizationStatus(props: { status: string }) {

@@ -1,14 +1,15 @@
 import { RegionAPI } from "@/api/region";
-import { Region, RegionType } from "@/types/region";
+import { RegionType } from "@/constants/region";
+import type { Region } from "@/types/region";
 import { CityPageMeta } from "@/utils/meta";
 import { currentSupportLocale } from "@/utils/locale";
 import { breadcrumbGenerator } from "@/utils/structuredData";
 import { sendTrack } from "@/utils/track";
 import { groupBy } from "es-toolkit";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
 import Link from "next/link";
 import { FaLink } from "react-icons/fa6";
-import { useTranslation } from "next-i18next";
+import { useTranslation } from "next-i18next/pages";
 
 export default function City(props: { regionGroups: Record<string, Region[]> }) {
   const { regionGroups } = props;
