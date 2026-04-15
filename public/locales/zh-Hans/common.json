@@ -59,6 +59,8 @@
   "event.goToSource": "前往信源",
   "event.map": "展会地图",
   "event.mapLoading": "正在加载地图",
+  "event.mapLoadFailed": "地图加载失败，请稍后重试",
+  "event.retryLoadMap": "尝试重新加载地图",
   "event.gotoGaoDe": "去高德地图查看",
   "event.gotoOrganization": "看看展商详情",
   "event.dateFormat": "YYYY年MM月DD日",

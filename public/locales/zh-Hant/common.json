@@ -59,6 +59,8 @@
   "event.goToSource": "查看原始資訊",
   "event.map": "活動地圖",
   "event.mapLoading": "地圖載入中",
+  "event.mapLoadFailed": "地圖載入失敗，請稍後再試",
+  "event.retryLoadMap": "重新載入地圖",
   "event.gotoGaoDe": "用高德地圖查看",
   "event.gotoOrganization": "查看主辦單位",
   "event.dateFormat": "YYYY年MM月DD日",
