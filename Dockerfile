@@ -34,7 +34,9 @@ RUN --mount=type=cache,target=/root/.npm \
 # ============================================
 
 FROM node:${NODE_VERSION} AS builder
-RUN apk add --no-cache git
++RUN apt-get update \
++ && apt-get install -y --no-install-recommends git \
++ && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
@@ -99,8 +101,8 @@ RUN chown node:node .next
 COPY --from=builder --chown=node:node /app/.next/standalone ./
 COPY --from=builder --chown=node:node /app/.next/static ./.next/static
 #No idea why next-i18n want this
-COPY --from=builder --chown=nextjs:nodejs /app/next.config.js ./next.config.js
-COPY --from=builder --chown=nextjs:nodejs /app/next-i18next.config.js ./next-i18next.config.js
+COPY --from=builder --chown=node:node /app/next.config.js ./next.config.js
+COPY --from=builder --chown=node:node /app/next-i18next.config.js ./next-i18next.config.js
 
 # If you want to persist the fetch cache generated during the build so that
 # cached responses are available immediately on startup, uncomment this line:
