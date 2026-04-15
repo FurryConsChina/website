@@ -3,7 +3,7 @@ import SimpleEventCard from "@/components/SimpleEventCard";
 import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
 import { useTranslation } from "next-i18next/pages";
 import { EventsAPI } from "@/api/events";
-import { SimpleEventItem } from "@/types/event";
+import type { SimpleEventItem } from "@/types/event";
 import { monthNumberFormatter } from "@/utils/locale";
 import { YearPageMeta } from "@/utils/meta";
 import { currentSupportLocale } from "@/utils/locale";

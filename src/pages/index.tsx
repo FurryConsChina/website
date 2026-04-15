@@ -8,11 +8,12 @@ import type { GetServerSidePropsContext } from "next";
 import { EventsAPI } from "@/api/events";
 import EventCard from "@/components/eventCard";
 import { FriendSiteBlock } from "@/components/layout/footer";
+import { EventScale, EventStatus } from "@/constants/event";
 import { filteringEvents, groupByCustomDurationEvent, sortEvents } from "@/utils/event";
 import { sendTrack } from "@/utils/track";
 
 import { DurationType } from "@/types/list";
-import { EventScale, EventStatus, type EventCardItem } from "@/types/event";
+import type { EventCardItem } from "@/types/event";
 import { formatLocale, monthNumberFormatter } from "@/utils/locale";
 import { keywordGenerator } from "@/utils/meta";
 import dayjs from "dayjs";

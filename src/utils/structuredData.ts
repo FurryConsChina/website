@@ -1,4 +1,5 @@
-import { EventStatus, EventStatusSchema, EventItem } from "@/types/event";
+import { EventStatus, EventStatusSchema } from "@/constants/event";
+import type { EventItem } from "@/types/event";
 import { PUBLIC_URL } from "@/utils/env";
 import { getEventCoverImgPath, imageUrl } from "@/utils/imageLoader";
 import { currentSupportLocale } from "@/utils/locale";

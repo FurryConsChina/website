@@ -1,6 +1,6 @@
 import { RegionAPI } from "@/api/region";
-import { EventItem } from "@/types/event";
-import { Region } from "@/types/region";
+import type { EventItem } from "@/types/event";
+import type { Region } from "@/types/region";
 import { sendTrack } from "@/utils/track";
 import { GetServerSidePropsContext } from "next";
 import Link from "next/link";

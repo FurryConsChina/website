@@ -15,7 +15,8 @@ import {
   WeiboButton,
 } from "@/components/OrganizationLinkButton";
 import OrganizationStatus from "@/components/organizationStatus";
-import { EventItem, EventStatus } from "@/types/event";
+import { EventStatus } from "@/constants/event";
+import type { EventItem } from "@/types/event";
 import { getEventCoverImgPath, imageUrl } from "@/utils/imageLoader";
 import { currentSupportLocale, formatLocale } from "@/utils/locale";
 import { eventDescriptionGenerator, keywordGenerator } from "@/utils/meta";

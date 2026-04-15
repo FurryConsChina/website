@@ -17,8 +17,8 @@ import { serverSideTranslations } from "next-i18next/pages/serverSideTranslation
 import { useTranslation } from "next-i18next/pages";
 import { OrganizationsAPI } from "@/api/organizations";
 import * as z from "zod/v4";
-import { EventCardItem } from "@/types/event";
-import { OrganizationSchema, Organization } from "@/types/organization";
+import type { EventCardItem } from "@/types/event";
+import type { Organization } from "@/types/organization";
 import { FeatureSchema } from "@/types/feature";
 import { keywordGenerator, organizationDetailDescriptionGenerator, OrganizationPageMeta } from "@/utils/meta";
 import { breadcrumbGenerator } from "@/utils/structuredData";

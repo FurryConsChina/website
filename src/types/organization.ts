@@ -1,9 +1,5 @@
+import { OrganizationStatus } from "@/constants/organization";
 import * as z from "zod/v4";
-
-export const OrganizationStatus = {
-  Active: "active",
-  Inactive: "inactive",
-};
 
 export const OrganizationSchema = z.object({
   id: z.uuid(),

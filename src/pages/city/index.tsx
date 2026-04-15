@@ -1,5 +1,6 @@
 import { RegionAPI } from "@/api/region";
-import { Region, RegionType } from "@/types/region";
+import { RegionType } from "@/constants/region";
+import type { Region } from "@/types/region";
 import { CityPageMeta } from "@/utils/meta";
 import { currentSupportLocale } from "@/utils/locale";
 import { breadcrumbGenerator } from "@/utils/structuredData";
