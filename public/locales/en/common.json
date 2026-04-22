@@ -64,6 +64,7 @@
   "event.hostSwitchGroupAria": "Switch host organization",
   "event.prevHostOrganization": "Previous organizer",
   "event.nextHostOrganization": "Next organizer",
+  "event.hostOrganizationCounter": "Organizer {{index}}/{{total}}",
   "event.dateFormat": "MMMM DD, YYYY",
   "organization.active": "Active Organizers",
   "organization.inactive": "Inactive Organizers",

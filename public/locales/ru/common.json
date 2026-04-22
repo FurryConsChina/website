@@ -64,6 +64,7 @@
   "event.hostSwitchGroupAria": "Переключить организатора",
   "event.prevHostOrganization": "Предыдущий организатор",
   "event.nextHostOrganization": "Следующий организатор",
+  "event.hostOrganizationCounter": "Организатор {{index}}/{{total}}",
   "event.dateFormat": "MMMM DD, YYYY",
   "organization.active": "Активные организаторы",
   "organization.inactive": "Неактивные организаторы",

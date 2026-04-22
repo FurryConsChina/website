@@ -31,6 +31,15 @@ export default function EventOrganizationCard(props: EventOrganizationCardProps)
   const showOrgSwitcher = orgList.length > 1;
 
   const organization = orgList[activeIndex] ?? orgList[0]!;
+  const organizationProfileHref = `/${organization.slug}`;
+  const trackOrganizationProfileClick = () => {
+    sendTrack({
+      eventName: "click-event-portal",
+      eventValue: {
+        link: organizationProfileHref,
+      },
+    });
+  };
 
   const goToPrev = () => {
     setActiveIndex((i) => (i - 1 + orgList.length) % orgList.length);
@@ -51,7 +60,9 @@ export default function EventOrganizationCard(props: EventOrganizationCardProps)
       <div className="p-4">
         {showOrgSwitcher && (
           <div className="flex justify-between items-center mb-1">
-            <span className="text-lg font-bold text-gray-600">主办方 {activeIndex + 1}/{orgList.length}</span>
+            <span className="text-lg font-bold text-gray-600">
+              {t("event.hostOrganizationCounter", { index: activeIndex + 1, total: orgList.length })}
+            </span>
             <div
               className="inline-flex p-1.5 gap-1 items-stretch rounded-xl bg-slate-100/95"
               role="group"
@@ -81,7 +92,7 @@ export default function EventOrganizationCard(props: EventOrganizationCardProps)
             <div className="border rounded flex justify-center items-center p-2 w-[100px] h-[100px]">
               <NextImage
                 className="object-contain"
-                alt={`${organization.name}'s logo`}
+                alt={t("organization.logoAlt", { name: organization.name })}
                 width={200}
                 height={200}
                 src={organization.logoUrl}
@@ -91,7 +102,11 @@ export default function EventOrganizationCard(props: EventOrganizationCardProps)
           )}
           <div className="ml-4 flex flex-col justify-between">
             <div>
-              <Link className="text-2xl font-bold text-gray-600" target="_blank" href={`/${organization.slug}`}>
+              <Link
+                className="text-2xl font-bold text-gray-600"
+                href={organizationProfileHref}
+                onClick={trackOrganizationProfileClick}
+              >
                 {organization.name}
               </Link>
               <div className="flex items-center text-gray-500 mb-4">
@@ -101,16 +116,9 @@ export default function EventOrganizationCard(props: EventOrganizationCardProps)
               </div>
             </div>
 
-            <Link href={`/${organization.slug}`}>
+            <Link href={organizationProfileHref} onClick={trackOrganizationProfileClick}>
               <button
-                onClick={() =>
-                  sendTrack({
-                    eventName: "click-event-portal",
-                    eventValue: {
-                      link: `/${organization.slug}`,
-                    },
-                  })
-                }
+                type="button"
                 className="border rounded px-2 py-1 text-sm text-gray-500 hover:border-slate-400 hover:drop-shadow transition duration-200"
               >
                 {t("event.gotoOrganization")}
