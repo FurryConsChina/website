@@ -82,6 +82,7 @@ export const EventSchema = z.object({
   commonFeatures: z.array(FeatureSchema).nullish(),
 
   organization: OrganizationSchema,
+  organizations: z.array(OrganizationSchema),
 });
 
 export type EventItem = z.infer<typeof EventSchema>;

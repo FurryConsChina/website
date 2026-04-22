@@ -1,33 +1,20 @@
 import { EventsAPI } from "@/api/events";
 import EventMapCard from "@/components/event/EventMapCard";
+import EventOrganizationCard from "@/components/event/EventOrganizationCard";
 import EventSourceButton from "@/components/event/EventSourceButton";
 import { EventDate } from "@/components/eventCard";
 import NextImage from "@/components/image";
-import {
-  BiliButton,
-  EmailButton,
-  FacebookButton,
-  PlurkButton,
-  QQGroupButton,
-  RednoteButton,
-  TwitterButton,
-  WebsiteButton,
-  WeiboButton,
-} from "@/components/OrganizationLinkButton";
-import OrganizationStatus from "@/components/organizationStatus";
 import { EventStatus } from "@/constants/event";
 import type { EventItem } from "@/types/event";
 import { getEventCoverImgPath, imageUrl } from "@/utils/imageLoader";
 import { currentSupportLocale, formatLocale } from "@/utils/locale";
 import { eventDescriptionGenerator, keywordGenerator } from "@/utils/meta";
 import { generateEventDetailStructuredData } from "@/utils/structuredData";
-import { sendTrack } from "@/utils/track";
 import { getEventDetailUrl } from "@/utils/url";
 import clsx from "clsx";
 import { GetServerSidePropsContext } from "next";
 import { useTranslation } from "next-i18next/pages";
 import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
-import Link from "next/link";
 import { BsCalendar2DateFill } from "react-icons/bs";
 import { FaHotel, FaPeoplePulling } from "react-icons/fa6";
 import { IoLocation } from "react-icons/io5";
@@ -84,7 +71,11 @@ export default function EventDetail({ event }: { event: EventItem }) {
               {event.name}
             </h2>
             <h2 className="text-gray-600 text-sm flex">
-              {t("event.hostBy", { hostName: event.organization?.name })}
+              {t("event.hostBy", {
+                hostName: event.organizations.length
+                  ? event.organization.name + "、" + event.organizations.map((organization) => organization.name).join("、")
+                  : event.organization?.name,
+              })}
               {/* <EventStatusBar className="ml-2" pageviews="0" fav="2" /> */}
             </h2>
 
@@ -162,86 +153,7 @@ export default function EventDetail({ event }: { event: EventItem }) {
           </div>
         )}
 
-        <div
-          id="event-detail__right"
-          className={clsx(
-            "bg-white rounded-xl mb-4 lg:mb-0",
-            !showDescriptionContainer && "w-full",
-            showDescriptionContainer && "md:w-4/12",
-          )}
-        >
-          <div className="p-4">
-            <div className="flex">
-              {event.organization?.logoUrl && (
-                <div className="border rounded flex justify-center items-center p-2 w-[100px] h-[100px]">
-                  <NextImage
-                    className="object-contain"
-                    alt={`${event.organization?.name}'s logo`}
-                    width={200}
-                    height={200}
-                    src={event.organization.logoUrl}
-                    autoFormat
-                  />
-                </div>
-              )}
-              <div className="ml-4 flex flex-col justify-between">
-                <div>
-                  <Link
-                    className="text-2xl font-bold text-gray-600"
-                    target="_blank"
-                    href={`/${event.organization?.slug}`}
-                  >
-                    {event.organization?.name}
-                  </Link>
-                  <div className="flex items-center text-gray-500 mb-4">
-                    <span className="text-sm">
-                      <OrganizationStatus status={event.organization?.status || ""} />
-                    </span>
-                  </div>
-                </div>
-
-                <Link href={`/${event.organization?.slug}`}>
-                  <button
-                    onClick={() =>
-                      sendTrack({
-                        eventName: "click-event-portal",
-                        eventValue: {
-                          link: `/${event.organization?.slug}`,
-                        },
-                      })
-                    }
-                    className="border rounded px-2 py-1 text-sm text-gray-500 hover:border-slate-400 hover:drop-shadow transition duration-200"
-                  >
-                    {t("event.gotoOrganization")}
-                  </button>
-                </Link>
-              </div>
-            </div>
-
-            <div
-              className={clsx(
-                "items-center text-gray-500 grid gap-4 mt-4",
-                !showDescriptionContainer && "lg:grid-cols-2",
-              )}
-            >
-              {event.organization?.website && <WebsiteButton t={t} href={event.organization.website} />}
-              {event.organization?.qqGroup && <QQGroupButton t={t} text={event.organization.qqGroup} />}
-              {event.organization?.bilibili && <BiliButton t={t} href={event.organization.bilibili} />}
-
-              {event.organization?.weibo && <WeiboButton t={t} href={event.organization.weibo} />}
-
-              {event.organization?.twitter && <TwitterButton t={t} href={event.organization.twitter} />}
-
-              {event.organization?.contactMail && <EmailButton t={t} mail={event.organization.contactMail} />}
-
-              {event.organization?.plurk && <PlurkButton t={t} href={event.organization.plurk} />}
-
-              {event.organization?.facebook && <FacebookButton t={t} href={event.organization.facebook} />}
-
-              {event.organization?.rednote && <RednoteButton t={t} href={event.organization.rednote} />}
-            </div>
-          </div>
-        </div>
+        <EventOrganizationCard key={event.id} event={event} showDescriptionContainer={showDescriptionContainer} />
       </div>
     </>
   );
