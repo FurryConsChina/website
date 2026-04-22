@@ -73,7 +73,10 @@ export default function EventDetail({ event }: { event: EventItem }) {
             <h2 className="text-gray-600 text-sm flex">
               {t("event.hostBy", {
                 hostName: event.organizations.length
-                  ? event.organization.name + "、" + event.organizations.map((organization) => organization.name).join("、")
+                  ? [
+                      event.organization?.name ?? "",
+                      ...event.organizations.map((organization) => organization.name),
+                    ].filter(Boolean).join("、")
                   : event.organization?.name,
               })}
               {/* <EventStatusBar className="ml-2" pageviews="0" fav="2" /> */}
