@@ -117,7 +117,7 @@ function DurationSection({ durationType, events }: { durationType: string; event
 
   if (durationType === DurationType.Now) {
     return (
-      <div className="rounded-xl bg-gray-100/80 p-2 md:p-6 my-4">
+      <div className="rounded-xl bg-gray-100/80 p-2 my-4">
         <h3 className="text-lg md:text-xl text-red-400 font-bold mb-2 md:mb-6">
           {t("homepage.group.status.now")}
           <span className="text-sm text-gray-500 font-bold ml-1">{t("homepage.total", { total: events.length })}</span>
@@ -139,7 +139,7 @@ function DurationSection({ durationType, events }: { durationType: string; event
   return (
     <>
       {sortedMonths.map((month) => (
-        <div key={month} className="rounded-xl bg-gray-100/80 p-2 md:p-6 my-4">
+        <div key={month} className="rounded-xl bg-gray-100/80 p-2 my-4">
           <h3 className="text-lg md:text-xl text-red-400 font-bold mb-2 md:mb-6">
             {month !== "unknown"
               ? parseInt(month.split("-")[0]) === new Date().getFullYear()
