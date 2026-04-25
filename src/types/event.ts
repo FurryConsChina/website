@@ -99,6 +99,7 @@ export type EventCardItem = {
   address: string | null;
   region: { localName: string | null } | null;
   organization: { slug: string; name: string };
+  organizations: { slug: string; name: string }[];
   features?: { self?: string[] | null } | null;
   commonFeatures?: { name: string }[] | null;
   thumbnail?: string | null;

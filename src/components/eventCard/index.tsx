@@ -117,7 +117,9 @@ export default function EventCard({
                 "md:truncate md:group-hover:text-clip md:group-hover:whitespace-normal",
               )}
             >
-              {[event.region?.localName, event.organization.name].filter(Boolean).join(" ")}
+              {[event.region?.localName, [event.organization.name, ...event.organizations.map((o) => o.name)].join("·")]
+                .filter(Boolean)
+                .join(" ")}
             </h4>
 
             <h5 aria-label="The name of the cons" className={clsx("text-xs md:text-sm text-slate-500")}>

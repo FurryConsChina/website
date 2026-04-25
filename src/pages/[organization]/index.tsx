@@ -19,11 +19,10 @@ import { OrganizationsAPI } from "@/api/organizations";
 import * as z from "zod/v4";
 import type { EventCardItem } from "@/types/event";
 import type { Organization } from "@/types/organization";
-import { FeatureSchema } from "@/types/feature";
 import { keywordGenerator, organizationDetailDescriptionGenerator, OrganizationPageMeta } from "@/utils/meta";
 import { breadcrumbGenerator } from "@/utils/structuredData";
 import { currentSupportLocale, getDayjsLocale } from "@/utils/locale";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 // import {
 //   WebsiteButton,
 //   QQGroupButton,
@@ -268,7 +267,7 @@ export default function OrganizationDetail(props: { events: EventCardItem[]; org
       </div>
 
       {!!events.length && (
-        <section className="mt-8 p-6 bg-gray-100/80 rounded-xl shadow">
+        <section className="mt-8 rounded-xl">
           <h2 className="text-xl text-slate-600 mb-4">{t("organization.passedEvent")}</h2>
           <div className="grid gird-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-8">
             {events.map((e) => (
@@ -315,18 +314,12 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
           locationType: e.locationType,
           address: e.address,
           region: e.region ? { localName: e.region.localName } : null,
-          organization: {
-            slug: validOrganization?.slug || "",
-            name: validOrganization?.name || "",
-          },
+          organization: { slug: e.organization.slug, name: e.organization.name },
+          organizations: e.organizations.map((o) => ({ slug: o.slug, name: o.name })),
           features: e.features ? { self: e.features.self ?? null } : null,
-          commonFeatures: e.commonFeatures
-            ? e.commonFeatures.map((f) => ({ name: f.name }))
-            : null,
+          commonFeatures: e.commonFeatures ? e.commonFeatures.map((f) => ({ name: f.name })) : null,
           thumbnail: e.thumbnail ?? null,
-          media: e.media?.images
-            ? { images: e.media.images.map((img) => ({ url: img.url })) }
-            : null,
+          media: e.media?.images ? { images: e.media.images.map((img) => ({ url: img.url })) } : null,
         }))
         .sort((a, b) => {
           if (a.startAt && b.startAt) {
@@ -334,7 +327,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
           }
           return 0;
         }) || [];
-    const slug = context?.params?.organization;
 
     if (!data) {
       return {

@@ -281,6 +281,10 @@ export async function getServerSideProps({ locale = "zh-Hans", query }: GetServe
           slug: event.organization.slug,
           name: event.organization.name,
         },
+        organizations: event.organizations.map((organization) => ({
+          slug: organization.slug,
+          name: organization.name,
+        })),
         features: event.features ? { self: event.features.self ?? null } : null,
         commonFeatures: event.commonFeatures ? event.commonFeatures.map((feature) => ({ name: feature.name })) : null,
         thumbnail: event.thumbnail,
