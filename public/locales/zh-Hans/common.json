@@ -91,6 +91,8 @@
   "organization.des": "展方简介",
   "organization.defaultDes": "这个主办方很懒，什么介绍也没写过。",
   "organization.passedEvent": "历届展会",
+  "pageview.label": "热度",
+  "pageview.aria": "本页累计浏览 {{count}} 次",
   "years.title": "总结",
   "years.des": "兽展日历共在 {{totalYear}} 年里收录到 {{totalAmount}} 场兽展/兽聚。 其中：",
   "years.unknown": "暂未定档",

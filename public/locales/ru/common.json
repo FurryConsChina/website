@@ -89,6 +89,8 @@
   "organization.des": "Об организаторе",
   "organization.defaultDes": "Организатор ленив и не написал описание",
   "organization.passedEvent": "Прошедшие фурконы",
+  "pageview.label": "Интерес",
+  "pageview.aria": "{{count}} просмотров страницы",
   "years.title": "Итоги",
   "years.des": "За {{totalYear}} лет в календаре фурри-мероприятий собрано {{totalAmount}} фурконов/встреч. Среди них:",
   "years.unknown": "Дата уточняется",

@@ -3,6 +3,7 @@ import OrganizationStatus from "@/components/organizationStatus";
 import styles from "@/styles/Organization.module.css";
 import clsx from "clsx";
 import Image from "@/components/image";
+import PageviewTag from "@/components/PageviewHeatTag";
 import { GetServerSidePropsContext } from "next/types";
 import { useMemo } from "react";
 import toast from "react-hot-toast";
@@ -16,12 +17,14 @@ import "dayjs/locale/zh-tw";
 import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
 import { useTranslation } from "next-i18next/pages";
 import { OrganizationsAPI } from "@/api/organizations";
+import { InfraAPI } from "@/api/infra";
 import * as z from "zod/v4";
 import type { EventCardItem } from "@/types/event";
 import type { Organization } from "@/types/organization";
 import { keywordGenerator, organizationDetailDescriptionGenerator, OrganizationPageMeta } from "@/utils/meta";
+import { getOrganizationDetailUrl } from "@/utils/url";
 import { breadcrumbGenerator } from "@/utils/structuredData";
-import { currentSupportLocale, getDayjsLocale } from "@/utils/locale";
+import { formatLocale, getDayjsLocale } from "@/utils/locale";
 import axios from "axios";
 // import {
 //   WebsiteButton,
@@ -35,9 +38,13 @@ import axios from "axios";
 
 dayjs.extend(relativeTime);
 
-export default function OrganizationDetail(props: { events: EventCardItem[]; organization: Organization }) {
+export default function OrganizationDetail(props: {
+  events: EventCardItem[];
+  organization: Organization;
+  pageviewCount: number | null;
+}) {
   const { t, i18n } = useTranslation();
-  const { organization, events } = props;
+  const { organization, events, pageviewCount } = props;
   const dayjsLocale = getDayjsLocale(i18n.language);
 
   const formattedFirstEventTime = useMemo(() => {
@@ -88,10 +95,13 @@ export default function OrganizationDetail(props: { events: EventCardItem[]; org
             </div>
           )}
           <div className="mt-4 md:mt-0 md:ml-4 ">
-            <h2 className="text-2xl font-bold mb-2">{organization.name}</h2>
+            <div className="flex flex-wrap items-center gap-2 mb-2">
+              <h2 className="text-2xl font-bold">{organization.name}</h2>
+            </div>
 
-            <div className="flex items-center mb-2 text-gray-500">
+            <div className="flex items-center gap-2 mb-2 text-gray-500">
               <OrganizationStatus status={organization.status} />
+              <PageviewTag count={pageviewCount} />
             </div>
 
             <div className={clsx("mb-2 text-gray-500", styles["intro-bar"])}>
@@ -298,7 +308,23 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   });
 
   try {
-    const data = await OrganizationsAPI.getOrganizationDetail(reqParamsParseResult.organization);
+    const locale = formatLocale(context.locale);
+    const pageviewPath = getOrganizationDetailUrl({
+      organizationSlug: reqParamsParseResult.organization,
+      locale,
+      fullUrl: false,
+    });
+
+    const [data, pv] = await Promise.all([
+      OrganizationsAPI.getOrganizationDetail(reqParamsParseResult.organization),
+      InfraAPI.getPageview(pageviewPath),
+    ]);
+
+    if (!data) {
+      return {
+        notFound: true,
+      };
+    }
 
     const validOrganization = data.organization;
     const validEvents: EventCardItem[] =
@@ -328,18 +354,11 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
           return 0;
         }) || [];
 
-    if (!data) {
-      return {
-        notFound: true,
-      };
-    }
-
-    const locale = (context.locale as currentSupportLocale) || "zh-Hans";
-
     return {
       props: {
         organization: validOrganization,
         events: validEvents,
+        pageviewCount: pv?.pageCount?.pageviews ?? null,
         headMetas: {
           title: `${validOrganization?.name}`,
           des: organizationDetailDescriptionGenerator(

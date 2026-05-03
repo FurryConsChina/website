@@ -89,6 +89,8 @@
   "organization.des": "Organizer introduction",
   "organization.defaultDes": "This organizer is lazy and hasn't written any introduction.",
   "organization.passedEvent": "Past conventions",
+  "pageview.label": "Views",
+  "pageview.aria": "{{count}} page views",
   "years.title": "Overview",
   "years.des": "FCC has documented {{totalAmount}} furry cons across {{totalYear}} years:",
   "years.unknown": "Not yet scheduled",

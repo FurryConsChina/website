@@ -91,6 +91,8 @@
   "organization.des": "主辦單位簡介",
   "organization.defaultDes": "這個主辦單位尚未提供簡介。",
   "organization.passedEvent": "歷年活動",
+  "pageview.label": "熱度",
+  "pageview.aria": "本頁累計瀏覽 {{count}} 次",
   "years.title": "年度統計",
   "years.des": "獸展日曆共收錄 {{totalYear}} 個年度的 {{totalAmount}} 場展會／獸聚。其中：",
   "years.unknown": "日期未定",
