@@ -1,9 +1,11 @@
+import { InfraAPI } from "@/api/infra";
 import { EventsAPI } from "@/api/events";
 import EventMapCard from "@/components/event/EventMapCard";
 import EventOrganizationCard from "@/components/event/EventOrganizationCard";
 import EventSourceButton from "@/components/event/EventSourceButton";
 import { EventDate } from "@/components/eventCard";
 import NextImage from "@/components/image";
+import PageviewTag from "@/components/PageviewHeatTag";
 import { EventStatus } from "@/constants/event";
 import type { EventItem } from "@/types/event";
 import { getEventCoverImgPath, imageUrl } from "@/utils/imageLoader";
@@ -20,8 +22,9 @@ import { FaHotel, FaPeoplePulling } from "react-icons/fa6";
 import { IoLocation } from "react-icons/io5";
 import { RiErrorWarningLine } from "react-icons/ri";
 import * as z from "zod/v4";
+import axios from "axios";
 
-export default function EventDetail({ event }: { event: EventItem }) {
+export default function EventDetail({ event, pageviewCount }: { event: EventItem; pageviewCount: number | null }) {
   const { t, i18n } = useTranslation();
 
   const finalEventCoverImage = getEventCoverImgPath(event);
@@ -67,19 +70,20 @@ export default function EventDetail({ event }: { event: EventItem }) {
               </p>
             )}
 
-            <h2 aria-label={t("event.aria.name")} className="font-bold text-3xl text-gray-700">
-              {event.name}
-            </h2>
-            <h2 className="text-gray-600 text-sm flex">
+            <div className="flex flex-wrap items-baseline gap-2 gap-y-1">
+              <h2 aria-label={t("event.aria.name")} className="font-bold text-3xl text-gray-700">
+                {event.name}
+              </h2>
+            </div>
+            <h2 className="text-gray-600 text-sm flex items-center gap-2">
               {t("event.hostBy", {
                 hostName: event.organizations.length
-                  ? [
-                      event.organization?.name ?? "",
-                      ...event.organizations.map((organization) => organization.name),
-                    ].filter(Boolean).join("、")
+                  ? [event.organization?.name ?? "", ...event.organizations.map((organization) => organization.name)]
+                      .filter(Boolean)
+                      .join("、")
                   : event.organization?.name,
               })}
-              {/* <EventStatusBar className="ml-2" pageviews="0" fav="2" /> */}
+              <PageviewTag count={pageviewCount} />
             </h2>
 
             <p aria-label={t("event.aria.location")} className="flex items-center text-gray-500 mt-4">
@@ -164,7 +168,8 @@ export default function EventDetail({ event }: { event: EventItem }) {
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   try {
-    const { locale } = context;
+    const { locale: localeParam } = context;
+    const appLocale = formatLocale(localeParam);
 
     const eventParamsSchema = z.object({
       slug: z
@@ -182,7 +187,17 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       organization: context.params?.organization,
     });
 
-    const event = await EventsAPI.getEventDetail(reqParamsParseResult.slug, reqParamsParseResult.organization);
+    const pageviewPath = getEventDetailUrl({
+      eventSlug: reqParamsParseResult.slug,
+      organizationSlug: reqParamsParseResult.organization,
+      locale: appLocale,
+      fullUrl: false,
+    });
+
+    const [event, pv] = await Promise.all([
+      EventsAPI.getEventDetail(reqParamsParseResult.slug, reqParamsParseResult.organization),
+      InfraAPI.getPageview(pageviewPath).catch((): null => null),
+    ]);
 
     if (!event) {
       return {
@@ -193,37 +208,42 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     return {
       props: {
         event: event,
+        pageviewCount: pv?.pageCount?.pageviews ?? null,
         headMetas: {
           title: `${event?.name}-${event?.organization?.name}`,
           keywords: keywordGenerator({
             page: "event",
-            locale: formatLocale(locale),
+            locale: appLocale,
             event: {
               name: event?.name,
               startDate: event?.startAt,
               city: event.region?.localName || undefined,
             },
           }),
-          des: eventDescriptionGenerator(formatLocale(locale), event),
+          des: eventDescriptionGenerator(appLocale, event),
           url: getEventDetailUrl({
             eventSlug: event.slug,
             organizationSlug: event.organization.slug,
-            locale: formatLocale(locale),
+            locale: appLocale,
             fullUrl: false,
           }),
           cover: imageUrl(getEventCoverImgPath(event)),
         },
         structuredData: generateEventDetailStructuredData({
           event,
-          locale: formatLocale(locale),
+          locale: appLocale,
         }),
-        ...(locale ? await serverSideTranslations(locale, ["common"]) : {}),
+        ...(localeParam ? await serverSideTranslations(localeParam, ["common"]) : {}),
       },
     };
   } catch (error) {
-    console.error(error);
-    return {
-      notFound: true,
-    };
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 404) {
+        return {
+          notFound: true,
+        };
+      }
+    }
+    throw error;
   }
 }
