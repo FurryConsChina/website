@@ -317,7 +317,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
     const [data, pv] = await Promise.all([
       OrganizationsAPI.getOrganizationDetail(reqParamsParseResult.organization),
-      InfraAPI.getPageview(pageviewPath),
+      InfraAPI.getPageview(pageviewPath).catch((): null => null),
     ]);
 
     if (!data) {

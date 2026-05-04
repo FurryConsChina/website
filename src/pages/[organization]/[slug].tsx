@@ -196,7 +196,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
     const [event, pv] = await Promise.all([
       EventsAPI.getEventDetail(reqParamsParseResult.slug, reqParamsParseResult.organization),
-      InfraAPI.getPageview(pageviewPath),
+      InfraAPI.getPageview(pageviewPath).catch((): null => null),
     ]);
 
     if (!event) {
