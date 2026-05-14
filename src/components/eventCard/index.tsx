@@ -76,11 +76,11 @@ export default function EventCard({
           })
         }
         className={clsx(
-          "bg-white rounded-xl h-[150px] md:h-[384px] relative group md:outline md:outline-[5px] outline-white transition-all duration-300 drop-shadow-sm hover:shadow-2xl hover:-translate-y-2 overflow-hidden",
+          "bg-white rounded-xl min-h-[150px] md:h-[384px] relative group md:outline md:outline-[5px] outline-white transition-all duration-300 drop-shadow-sm hover:shadow-2xl hover:-translate-y-2 overflow-hidden",
           "hover:outline-red-400 hover:scale-105",
         )}
       >
-        <div className={clsx("flex md:flex-col justify-between md:justify-end h-full rounded-xl relative")}>
+        <div className={clsx("flex md:flex-col justify-between md:justify-end md:h-full rounded-xl relative")}>
           <EventCover
             imageUrl={finalEventCoverImage}
             eventName={event.name}
