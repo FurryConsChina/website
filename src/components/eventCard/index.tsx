@@ -80,7 +80,7 @@ export default function EventCard({
           "hover:outline-red-400 hover:scale-105",
         )}
       >
-        <div className={clsx("flex md:flex-col justify-between md:justify-end md:h-full rounded-xl relative")}>
+        <div className={clsx("flex md:flex-col justify-between md:justify-end min-h-[150px] md:h-full rounded-xl relative")}>
           <EventCover
             imageUrl={finalEventCoverImage}
             eventName={event.name}
@@ -192,17 +192,17 @@ function EventCover({
   return (
     <div
       className={clsx(
-        "relative md:absolute top-0 left-0 w-[40%] flex-grow-0 flex items-center justify-center",
+        "relative self-stretch overflow-hidden md:absolute top-0 left-0 w-[40%] flex-grow-0 flex items-center justify-center",
         "md:w-full md:h-3/5",
         "md:group-hover:scale-125 transition-all duration-300",
       )}
     >
-      <div className="relative flex items-center justify-center z-10 h-full md:w-full">
+      <div className="absolute inset-0 flex items-center justify-center z-10">
         <Image
           src={imageUrl}
           alt={t("event.coverAlt", { name: eventName })}
-          containerClassName="relative md:absolute h-full"
-          className={clsx("object-contain h-full")}
+          containerClassName="relative h-full"
+          className={clsx("object-contain h-full w-full")}
           sizes={sizes}
           autoFormat
           priority={instancesCount <= 3}
