@@ -33,8 +33,8 @@ export default function EventDetail({ event, pageviewCount }: { event: EventItem
 
   return (
     <>
-      <div className={clsx("flex border bg-white rounded-xl min-h-[500px] overflow-hidden", "lg:flex-row flex-col")}>
-        <div className={clsx("event-detail__left", "lg:w-7/12 w-full h-[500px]")}>
+      <div className={clsx("relative z-20 flex border bg-white rounded-xl min-h-[500px]", "lg:flex-row flex-col")}>
+        <div className={clsx("event-detail__left", "lg:w-7/12 w-full h-[500px] overflow-hidden rounded-t-xl lg:rounded-l-xl lg:rounded-tr-none")}>
           <div className={clsx("relative text-center h-full")}>
             <NextImage
               containerClassName="relative z-20"

@@ -115,7 +115,7 @@ export default function EventMapCard({ latitudeText, longitudeText }: EventMapCa
         onError={() => setMapLoadingStatus(MapLoadingStatus.Error)}
       />
 
-      <div className="my-4 bg-white rounded-xl overflow-hidden relative">
+      <div className="relative z-0 my-4 bg-white rounded-xl overflow-hidden">
         <h3 className="text-xl text-gray-600 m-4">{t("event.map")}</h3>
 
         <div ref={mapContainerRef} className="h-[450px] overflow-hidden rounded-2xl m-4 relative">
