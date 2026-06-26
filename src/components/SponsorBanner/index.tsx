@@ -14,7 +14,7 @@ export default function SponsorBanner() {
           sendTrack({
             eventName: "sponsor_banner_click",
             eventValue: {
-              sponsor_name: "furrychina_2026_dec_shanghai_con",
+              sponsor_name: "furrychina_2026_aug_shanghai_con",
             },
           });
         }}
