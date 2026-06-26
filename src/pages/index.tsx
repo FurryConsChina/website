@@ -17,6 +17,7 @@ import type { EventCardItem } from "@/types/event";
 import { formatLocale, monthNumberFormatter } from "@/utils/locale";
 import { keywordGenerator } from "@/utils/meta";
 import dayjs from "dayjs";
+import SponsorBanner from "@/components/SponsorBanner";
 
 export const searchParams = {
   includePastEvents: parseAsBoolean.withDefault(false),
@@ -47,7 +48,7 @@ export default function Home(props: { events: EventCardItem[] }) {
   return (
     <>
       <div>
-        {/* <SponsorBanner /> */}
+        <SponsorBanner />
         <Filter
           selectedFilter={selectedFilter}
           onChange={(filter) => {
