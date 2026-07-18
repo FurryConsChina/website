@@ -25,10 +25,11 @@ jobs:
       ENV_ENABLE_TRACK: ${{ vars.ENABLE_TRACK }}
       ENV_REGION: ${{ vars.NEXT_PUBLIC_REGION }}
       ENV_WEBSITE_URL: ${{ vars.NEXT_PUBLIC_WEBSITE_URL }}
+      ENV_FEC_API_URL: ${{ vars.FEC_API_URL }}
       ENV_FEC_API_TOKEN: ${{ secrets.FEC_API_TOKEN }}
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
@@ -43,6 +44,7 @@ jobs:
           echo NEXT_PUBLIC_ENABLE_TRACK="$ENV_ENABLE_TRACK" >> .env
           echo NEXT_PUBLIC_REGION="$ENV_REGION" >> .env
           echo NEXT_PUBLIC_WEBSITE_URL="$ENV_WEBSITE_URL" >> .env
+          echo FEC_API_URL="$ENV_FEC_API_URL" >> .env
           echo FEC_API_TOKEN="$ENV_FEC_API_TOKEN" >> .env
           echo "Created .env file with provided secrets and variables"
 

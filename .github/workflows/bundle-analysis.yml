@@ -24,12 +24,13 @@ jobs:
     env:
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
       NEXT_PUBLIC_ENABLE_TRACK: ${{ vars.ENABLE_TRACK }}
+      FEC_API_URL: ${{ vars.FEC_API_URL }}
       FEC_API_TOKEN: ${{secrets.FEC_API_TOKEN}}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Install Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
       - run: "corepack enable"
@@ -38,7 +39,7 @@ jobs:
         uses: bahmutov/npm-install@v1
 
       - name: Restore next build
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         id: restore-build-cache
         env:
           cache-name: cache-next-build
@@ -54,7 +55,7 @@ jobs:
         run: ./node_modules/.bin/next build --webpack
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: next-build
           include-hidden-files: true
@@ -68,16 +69,16 @@ jobs:
     environment: Develop
     needs: build
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Install Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
       - run: "corepack enable"
 
       - name: Download build artifact
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: next-build
           path: .
@@ -88,13 +89,13 @@ jobs:
         run: npx -p nextjs-bundle-analysis report
 
       - name: Upload bundle
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: bundle
           path: .next/analyze/__bundle_analysis.json
 
       - name: Download base branch bundle stats
-        uses: dawidd6/action-download-artifact@v14
+        uses: dawidd6/action-download-artifact@v21
         if: success() && github.event.number
         with:
           workflow: bundle-analysis.yml
@@ -156,10 +157,10 @@ jobs:
     environment: Develop
     needs: build
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Download build artifact
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: next-build
           path: .
