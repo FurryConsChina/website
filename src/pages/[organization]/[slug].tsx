@@ -167,6 +167,8 @@ export default function EventDetail({ event, pageviewCount }: { event: EventItem
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
+  context.res.setHeader("Cache-Control", "public, s-maxage=300, stale-while-revalidate=300");
+
   try {
     const { locale: localeParam } = context;
     const appLocale = formatLocale(localeParam);
