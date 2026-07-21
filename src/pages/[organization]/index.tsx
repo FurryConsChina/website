@@ -296,6 +296,8 @@ export default function OrganizationDetail(props: {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
+  context.res.setHeader("Cache-Control", "public, s-maxage=300, stale-while-revalidate=300");
+
   const orgParamsSchema = z.object({
     organization: z
       .string()

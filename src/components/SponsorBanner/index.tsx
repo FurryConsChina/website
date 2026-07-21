@@ -1,44 +1,152 @@
-import Image from "@/components/image";
+import { Children, useCallback, useEffect, useRef, useState } from "react";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import Autoplay from "embla-carousel-autoplay";
+import useEmblaCarousel from "embla-carousel-react";
 import clsx from "clsx";
 
-import styles from "./index.module.css";
+import Image from "@/components/image";
 import { sendTrack } from "@/utils/track";
 
-export default function SponsorBanner() {
-  return (
-    <div className="relative rounded-xl h-auto md:h-[300px] mb-6 group w-full">
-      <a
-        href="https://www.furrychina.com/?utm_source=fcc"
-        target="_blank"
-        onClick={() => {
-          sendTrack({
-            eventName: "sponsor_banner_click",
-            eventValue: {
-              sponsor_name: "furrychina_2026_aug_shanghai_con",
-            },
-          });
-        }}
-      >
-        <Image
-          autoFormat
-          quality={100}
-          className={clsx("rounded-xl md:h-[300px] h-auto w-full object-fill md:object-cover", styles.sponsorBanner)}
-          containerClassName="w-full"
-          src="organizations/furrychina/2026-aug-shanghai-con/home-banner.png"
-          alt="Sponsor Banner"
-        />
-        <span className="absolute top-2 right-2 bg-[#914639] text-white text-xs md:text-sm px-1 rounded md:top-4 md:right-4">
-          推荐
-        </span>
-        <div className="absolute bottom-0 right-0 pr-2 pb-2 rounded-xl flex items-end flex-col md:pr-4 md:pb-4">
-          <h3 className="text-base font-bold md:text-3xl text-white drop-shadow-md bg-[#914639] mb-2 text-right px-1 rounded">
-            极兽聚2026
-          </h3>
-          <p className="text-white text-sm md:text-lg bg-[#914639] px-1 rounded">
-            2026年8月2日 上海世贸展馆
-          </p>
-        </div>
-      </a>
+import styles from "./index.module.css";
+
+const sponsorSlides = [
+  <a
+    key="furrychina_2026_aug_shanghai_con"
+    className="relative block h-auto md:h-[300px]"
+    href="https://www.furrychina.com/?utm_source=fcc"
+    target="_blank"
+    rel="noreferrer"
+    onClick={() => {
+      sendTrack({
+        eventName: "sponsor_banner_click",
+        eventValue: {
+          sponsor_name: "furrychina_2026_aug_shanghai_con",
+        },
+      });
+    }}
+  >
+    <Image
+      autoFormat
+      priority
+      quality={100}
+      className={clsx("h-auto w-full object-fill md:h-[300px] md:object-cover", styles.sponsorBanner)}
+      containerClassName="block w-full"
+      src="organizations/furrychina/2026-aug-shanghai-con/home-banner.png"
+      alt="极兽聚2026"
+    />
+    <span className="absolute right-2 top-2 rounded bg-[#914639] px-1 text-xs text-white md:right-4 md:top-4 md:text-sm">
+      推荐
+    </span>
+    <div className="absolute bottom-0 right-0 flex flex-col items-end rounded-xl pb-2 pr-2 md:pb-4 md:pr-4">
+      <h3 className="mb-2 rounded bg-[#914639] px-1 text-right text-base font-bold text-white drop-shadow-md md:text-3xl">
+        极兽聚2026
+      </h3>
+      <p className="rounded bg-[#914639] px-1 text-sm text-white md:text-lg">2026年8月2日 上海世贸展馆</p>
     </div>
+  </a>,
+  <a
+    key="lifurry_2026_aug_shanghai_con"
+    className="relative block h-auto md:h-[300px]"
+    href="https://market.ciyuanxiang.com/?utm_source=fcc"
+    target="_blank"
+    rel="noreferrer"
+    onClick={() => {
+      sendTrack({
+        eventName: "sponsor_banner_click",
+        eventValue: {
+          sponsor_name: "lifurry_2026_aug_shanghai_con",
+        },
+      });
+    }}
+  >
+    <Image
+      autoFormat
+      priority
+      quality={100}
+      className={clsx("h-auto w-full object-fill md:h-[300px] md:object-cover", styles.sponsorBanner)}
+      containerClassName="block w-full"
+      src="organizations/lifurry/2026-oct-shanghai-con/20260721-162046.jpg"
+      alt="理想城2026"
+    />
+    <span className="absolute right-2 top-2 rounded bg-[#4b2122] px-1 text-xs text-white md:right-4 md:top-4 md:text-sm">
+      推荐
+    </span>
+  </a>,
+];
+
+export default function SponsorBanner() {
+  const autoplay = useRef(Autoplay({ delay: 5000, stopOnInteraction: false, stopOnMouseEnter: true }));
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [autoplay.current]);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [slideCount, setSlideCount] = useState(0);
+
+  const syncCarouselState = useCallback(() => {
+    if (!emblaApi) {
+      return;
+    }
+
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+    setSlideCount(emblaApi.scrollSnapList().length);
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) {
+      return;
+    }
+
+    syncCarouselState();
+    emblaApi.on("select", syncCarouselState).on("reInit", syncCarouselState);
+
+    return () => {
+      emblaApi.off("select", syncCarouselState).off("reInit", syncCarouselState);
+    };
+  }, [emblaApi, syncCarouselState]);
+
+  return (
+    <section aria-label="推荐活动" className="relative mb-6 w-full overflow-hidden rounded-xl group">
+      <div ref={emblaRef} className="overflow-hidden">
+        <div className="flex">
+          {Children.map(sponsorSlides, (slide) => (
+            <div className={styles.slide}>{slide}</div>
+          ))}
+        </div>
+      </div>
+
+      {slideCount > 1 && (
+        <>
+          <button
+            type="button"
+            aria-label="上一张推荐活动"
+            className="absolute left-2 top-1/2 hidden -translate-y-1/2 rounded-full bg-black/40 p-2 text-white transition-colors hover:bg-black/60 focus-visible:block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white group-hover:block md:left-4"
+            onClick={() => emblaApi?.scrollPrev()}
+          >
+            <IoIosArrowBack aria-hidden className="size-5 md:size-6" />
+          </button>
+          <button
+            type="button"
+            aria-label="下一张推荐活动"
+            className="absolute right-2 top-1/2 hidden -translate-y-1/2 rounded-full bg-black/40 p-2 text-white transition-colors hover:bg-black/60 focus-visible:block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white group-hover:block md:right-4"
+            onClick={() => emblaApi?.scrollNext()}
+          >
+            <IoIosArrowForward aria-hidden className="size-5 md:size-6" />
+          </button>
+          <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 gap-2 md:bottom-4">
+            {Array.from({ length: slideCount }, (_, index) => (
+              <button
+                type="button"
+                key={index}
+                aria-label={`切换到第 ${index + 1} 张推荐活动`}
+                aria-current={index === selectedIndex ? "true" : undefined}
+                className={clsx(
+                  "size-2.5 rounded-full border border-white shadow transition-colors",
+                  index === selectedIndex ? "bg-white" : "bg-black/30 hover:bg-white/70",
+                )}
+                onClick={() => emblaApi?.scrollTo(index)}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </section>
   );
 }

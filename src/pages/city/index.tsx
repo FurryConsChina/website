@@ -6,6 +6,7 @@ import { currentSupportLocale } from "@/utils/locale";
 import { breadcrumbGenerator } from "@/utils/structuredData";
 import { sendTrack } from "@/utils/track";
 import { groupBy } from "es-toolkit";
+import type { GetServerSidePropsContext } from "next";
 import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
 import Link from "next/link";
 import { FaLink } from "react-icons/fa6";
@@ -81,7 +82,9 @@ export default function City(props: { regionGroups: Record<string, Region[]> }) 
   );
 }
 
-export async function getServerSideProps({ locale }: { locale: string }) {
+export async function getServerSideProps({ locale, res }: { locale: string; res: GetServerSidePropsContext["res"] }) {
+  res.setHeader("Cache-Control", "public, s-maxage=300, stale-while-revalidate=300");
+
   const regions = await RegionAPI.getRegionList({
     current: 1,
     pageSize: 100,

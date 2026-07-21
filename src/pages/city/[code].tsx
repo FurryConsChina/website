@@ -149,7 +149,8 @@ function MonthSection({ events }: { events: EventItem[] }) {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const { locale = "zh-Hans", params } = context;
+  const { locale = "zh-Hans", params, res } = context;
+  res.setHeader("Cache-Control", "public, s-maxage=300, stale-while-revalidate=300");
 
   const regionCode = z
     .string()

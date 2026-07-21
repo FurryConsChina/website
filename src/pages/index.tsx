@@ -249,7 +249,9 @@ function Filter({
   );
 }
 
-export async function getServerSideProps({ locale = "zh-Hans", query }: GetServerSidePropsContext) {
+export async function getServerSideProps({ locale = "zh-Hans", query, res }: GetServerSidePropsContext) {
+  res.setHeader("Cache-Control", "public, s-maxage=300, stale-while-revalidate=300");
+
   const { includePastEvents } = loadSearchParams(query);
   const events = await EventsAPI.getEventList({
     current: "1",
