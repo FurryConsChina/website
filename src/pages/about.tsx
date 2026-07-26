@@ -79,16 +79,47 @@ export default function About() {
 
       <div className="mt-6">
         <div className="flex justify-center">
-          <h2 className="text-lg text-white mb-4 bg-geraldine rounded-full w-fit px-4">数据许可</h2>
+          <h2 className="text-lg text-white mb-4 bg-geraldine rounded-full w-fit px-4">开放平台</h2>
         </div>
         <div className="bg-white rounded-xl shadow-sm p-4 text-slate-500">
-          <p className="text-base">您可以联系我们获取接口使用授权，从而构建相关应用，但您需要遵守以下规定：</p>
-          <ul className="list-disc list-inside">
-            <li>不能使用我们的数据构建和兽展日历高度相似的应用。</li>
-            <li>在明确处注明数据来源为 兽展日历。</li>
-            <li>不得用于商业用途。</li>
-            <li>不得与第三方共享数据和接口密钥。</li>
-          </ul>
+          <p className="text-base">
+            您可以在我们的{" "}
+            <a
+              href="https://dashboard.furrycons.cn/"
+              target="_blank"
+              rel="noreferrer"
+              className="text-red-400 underline"
+            >
+              工作台
+            </a>{" "}
+            注册申请 API 密钥，从而调用我们的 API 接口。只要您遵守{" "}
+            <a
+              href="https://creativecommons.org/licenses/by-sa/4.0/"
+              target="_blank"
+              rel="noreferrer"
+              className="text-red-400 underline"
+            >
+              CC BY-SA 4.0
+            </a>{" "}
+            许可协议，您就可以自由地使用、修改和分发本站数据。更多关于接口的使用说明，请参阅我们的{" "}
+            <a
+              href="https://docs.furrycons.cn/docs/intro"
+              target="_blank"
+              rel="noreferrer"
+              className="text-red-400 underline"
+            >
+              开放文档
+            </a>
+            ，如您对接口调用有任何疑问，欢迎加入 【兽展日历开放平台QQ群】：
+            <a
+              href="https://qm.qq.com/q/Q59CdSxP0S"
+              target="_blank"
+              rel="noreferrer"
+              className="text-red-400 underline"
+            >
+              戳我
+            </a>
+          </p>
         </div>
       </div>
 
