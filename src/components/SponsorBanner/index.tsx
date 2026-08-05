@@ -11,40 +11,6 @@ import styles from "./index.module.css";
 
 const sponsorSlides = [
   <a
-    key="furrychina_2026_aug_shanghai_con"
-    className="relative block h-auto md:h-[300px]"
-    href="https://www.furrychina.com/?utm_source=fcc"
-    target="_blank"
-    rel="noreferrer"
-    onClick={() => {
-      sendTrack({
-        eventName: "sponsor_banner_click",
-        eventValue: {
-          sponsor_name: "furrychina_2026_aug_shanghai_con",
-        },
-      });
-    }}
-  >
-    <Image
-      autoFormat
-      priority
-      quality={100}
-      className={clsx("h-auto w-full object-fill md:h-[300px] md:object-cover", styles.sponsorBanner)}
-      containerClassName="block w-full"
-      src="organizations/furrychina/2026-aug-shanghai-con/home-banner.png"
-      alt="极兽聚2026"
-    />
-    <span className="absolute right-2 top-2 rounded bg-[#914639] px-1 text-xs text-white md:right-4 md:top-4 md:text-sm">
-      推荐
-    </span>
-    <div className="absolute bottom-0 right-0 flex flex-col items-end rounded-xl pb-2 pr-2 md:pb-4 md:pr-4">
-      <h3 className="mb-2 rounded bg-[#914639] px-1 text-right text-base font-bold text-white drop-shadow-md md:text-3xl">
-        极兽聚2026
-      </h3>
-      <p className="rounded bg-[#914639] px-1 text-sm text-white md:text-lg">2026年8月2日 上海世贸展馆</p>
-    </div>
-  </a>,
-  <a
     key="lifurry_2026_aug_shanghai_con"
     className="relative block h-auto md:h-[300px]"
     href="https://market.ciyuanxiang.com/?utm_source=fcc"
