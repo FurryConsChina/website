@@ -34,9 +34,31 @@ const sponsorSlides = [
       src="organizations/lifurry/2026-oct-shanghai-con/20260721-162046.jpg"
       alt="理想城2026"
     />
-    <span className="absolute right-2 top-2 rounded bg-[#4b2122] px-1 text-xs text-white md:right-4 md:top-4 md:text-sm">
-      推荐
-    </span>
+  </a>,
+  <a
+    key="furrygala_2026_sep_qingdao_con"
+    className="relative block h-auto md:h-[300px]"
+    href="https://www.furrygala.com.cn/ticket_center.php?utm_source=fcc"
+    target="_blank"
+    rel="noreferrer"
+    onClick={() => {
+      sendTrack({
+        eventName: "sponsor_banner_click",
+        eventValue: {
+          sponsor_name: "furrygala_2026_sep_qingdao_con",
+        },
+      });
+    }}
+  >
+    <Image
+      autoFormat
+      priority
+      quality={100}
+      className={clsx("h-auto w-full object-fill md:h-[300px] md:object-cover", styles.sponsorBanner)}
+      containerClassName="block w-full"
+      src="organizations/furrygala/2026-sep-qingdao-con/banner.png"
+      alt="FurryGala 2026"
+    />
   </a>,
 ];
 
