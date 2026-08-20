@@ -60,6 +60,32 @@ const sponsorSlides = [
       alt="FurryGala 2026"
     />
   </a>,
+  <a
+  key="hi-furry_2026_oct_foshan_con"
+  className="relative block h-auto md:h-[300px]"
+  href="https://hi-furry.cn/?utm_source=fcc"
+  target="_blank"
+  rel="noreferrer"
+  onClick={() => {
+    sendTrack({
+      eventName: "sponsor_banner_click",
+      eventValue: {
+        sponsor_name: "hi-furry_2026_oct_foshan_con",
+      },
+    });
+  }}
+>
+  <Image
+    autoFormat
+    priority
+    quality={100}
+    className={clsx("h-auto w-full object-fill md:h-[300px] md:object-cover", styles.sponsorBanner)}
+    containerClassName="block w-full"
+    src="organizations/hi-furry/2026-oct-foshan-con/banner.png"
+    alt="Hi-Furry 2026"
+  />
+</a>
+  
 ];
 
 export default function SponsorBanner() {
