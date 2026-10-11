@@ -48,7 +48,7 @@ export default function Home(props: { events: EventCardItem[] }) {
   return (
     <>
       <div>
-        <SponsorBanner />
+        {/* <SponsorBanner /> */}
         <Filter
           selectedFilter={selectedFilter}
           onChange={(filter) => {
