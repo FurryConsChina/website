@@ -247,8 +247,8 @@ function eventDescriptionGenerator(
   locale: currentSupportLocale,
   event: {
     name?: string;
-    organization?: { name: string };
-    address?: string | null;
+    organization?: { name: string } | null;
+    place?: { address: string | null } | null;
     region?: { localName?: string | null } | null;
     startAt?: string | null;
     endAt?: string | null;
@@ -257,7 +257,7 @@ function eventDescriptionGenerator(
   if (!event) {
     return defaultDescriptionGenerator(locale);
   }
-  const venue = `${event?.region?.localName || ""}${event?.address || ""}`.trim();
+  const venue = `${event?.region?.localName || ""}${event?.place?.address || ""}`.trim();
 
   switch (locale) {
     case "zh-Hans":

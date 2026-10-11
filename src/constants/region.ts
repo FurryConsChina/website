@@ -1,6 +1,6 @@
 export enum RegionType {
   COUNTRY = "country",
-  STATE = "state",
+  STATE = "administrative_area",
   CITY = "city",
   DISTRICT = "district",
 }

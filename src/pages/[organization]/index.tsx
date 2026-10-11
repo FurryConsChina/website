@@ -21,6 +21,9 @@ import { InfraAPI } from "@/api/infra";
 import * as z from "zod/v4";
 import type { EventCardItem } from "@/types/event";
 import type { Organization } from "@/types/organization";
+import { OrganizationLinkType } from "@/constants/organization";
+import { getEventOrganizations } from "@/utils/event";
+import { getOrganizationLink } from "@/utils/organization";
 import { keywordGenerator, organizationDetailDescriptionGenerator, OrganizationPageMeta } from "@/utils/meta";
 import { getOrganizationDetailUrl } from "@/utils/url";
 import { breadcrumbGenerator } from "@/utils/structuredData";
@@ -47,6 +50,16 @@ export default function OrganizationDetail(props: {
   const { organization, events, pageviewCount } = props;
   const dayjsLocale = getDayjsLocale(i18n.language);
 
+  const website = getOrganizationLink(organization, OrganizationLinkType.Website);
+  const bilibili = getOrganizationLink(organization, OrganizationLinkType.Bilibili);
+  const weibo = getOrganizationLink(organization, OrganizationLinkType.Weibo);
+  const twitter = getOrganizationLink(organization, OrganizationLinkType.Twitter);
+  const wikifur = getOrganizationLink(organization, OrganizationLinkType.Wikifur);
+  const qqGroup = getOrganizationLink(organization, OrganizationLinkType.QQGroup);
+  const plurk = getOrganizationLink(organization, OrganizationLinkType.Plurk);
+  const facebook = getOrganizationLink(organization, OrganizationLinkType.Facebook);
+  const rednote = getOrganizationLink(organization, OrganizationLinkType.Rednote);
+
   const formattedFirstEventTime = useMemo(() => {
     const theBeginningEvent = events[events.length - 1];
     if (theBeginningEvent && theBeginningEvent.startAt) {
@@ -63,8 +76,8 @@ export default function OrganizationDetail(props: {
   }, [events]);
 
   const formattedCreationTime = useMemo(() => {
-    if (organization.creationTime) {
-      const date = new Date(organization.creationTime);
+    if (organization.foundedOn) {
+      const date = new Date(organization.foundedOn);
 
       return {
         year: date.getUTCFullYear(),
@@ -75,7 +88,7 @@ export default function OrganizationDetail(props: {
     } else {
       return null;
     }
-  }, [organization.creationTime, dayjsLocale]);
+  }, [organization.foundedOn, dayjsLocale]);
 
   return (
     <div>
@@ -140,9 +153,9 @@ export default function OrganizationDetail(props: {
                 // styles.links
               )}
             >
-              {organization.website && (
+              {website && (
                 <a
-                  href={organization.website}
+                  href={website}
                   target="_blank"
                   rel="noreferrer"
                   className="bg-blue-300 hover:bg-blue-400 transition rounded-xl px-4 py-1 text-white"
@@ -151,9 +164,9 @@ export default function OrganizationDetail(props: {
                 </a>
               )}
 
-              {organization?.bilibili && (
+              {bilibili && (
                 <a
-                  href={organization?.bilibili}
+                  href={bilibili}
                   target="_blank"
                   rel="noreferrer"
                   className="flex items-center justify-center bg-sky-400 hover:bg-sky-500 transition rounded-xl px-4 py-1 text-white text-center"
@@ -162,9 +175,9 @@ export default function OrganizationDetail(props: {
                   {t("organization.bilibili")}
                 </a>
               )}
-              {organization?.weibo && (
+              {weibo && (
                 <a
-                  href={organization?.weibo}
+                  href={weibo}
                   target="_blank"
                   rel="noreferrer"
                   className="flex items-center justify-center bg-red-500 hover:bg-red-600 transition rounded-xl px-4 py-1 text-white text-center"
@@ -174,9 +187,9 @@ export default function OrganizationDetail(props: {
                 </a>
               )}
 
-              {organization?.twitter && (
+              {twitter && (
                 <a
-                  href={organization?.twitter}
+                  href={twitter}
                   target="_blank"
                   rel="noreferrer"
                   className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 transition rounded-xl px-4 py-1 text-white text-center"
@@ -186,9 +199,9 @@ export default function OrganizationDetail(props: {
                 </a>
               )}
 
-              {organization?.wikifur && (
+              {wikifur && (
                 <a
-                  href={organization?.wikifur}
+                  href={wikifur}
                   target="_blank"
                   rel="noreferrer"
                   className="flex items-center justify-center bg-blue-800 hover:bg-blue-900 transition rounded-xl px-4 py-1 text-white text-center"
@@ -198,17 +211,15 @@ export default function OrganizationDetail(props: {
                 </a>
               )}
 
-              {organization?.qqGroup && (
+              {qqGroup && (
                 <button
                   onClick={() => {
-                    navigator.clipboard
-                      .writeText(organization?.qqGroup || "")
-                      .then(() => toast.success(t("organization.qqCopySuccess")));
+                    navigator.clipboard.writeText(qqGroup).then(() => toast.success(t("organization.qqCopySuccess")));
                   }}
                   className="flex items-center justify-center bg-red-300 hover:bg-red-400 transition rounded-xl px-4 py-1 text-white text-center"
                 >
                   <FaQq className="mr-2" />
-                  {t("organization.qq", { qq: organization?.qqGroup })}
+                  {t("organization.qq", { qq: qqGroup })}
                 </button>
               )}
 
@@ -232,9 +243,9 @@ export default function OrganizationDetail(props: {
                 </div>
               )}
 
-              {organization?.plurk && (
+              {plurk && (
                 <a
-                  href={organization?.plurk}
+                  href={plurk}
                   target="_blank"
                   rel="noreferrer"
                   className="flex items-center justify-center bg-red-500 hover:bg-red-600 transition rounded-xl px-4 py-1 text-white text-center"
@@ -244,9 +255,9 @@ export default function OrganizationDetail(props: {
                 </a>
               )}
 
-              {organization?.facebook && (
+              {facebook && (
                 <a
-                  href={organization?.facebook}
+                  href={facebook}
                   target="_blank"
                   rel="noreferrer"
                   className="flex items-center justify-center bg-blue-800 hover:bg-blue-900 transition rounded-xl px-4 py-1 text-white text-center"
@@ -256,9 +267,9 @@ export default function OrganizationDetail(props: {
                 </a>
               )}
 
-              {organization?.rednote && (
+              {rednote && (
                 <a
-                  href={organization?.rednote}
+                  href={rednote}
                   target="_blank"
                   rel="noreferrer"
                   className="flex items-center justify-center bg-red-600 hover:bg-red-700 transition rounded-xl px-4 py-1 text-white text-center"
@@ -331,24 +342,26 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     const validOrganization = data.organization;
     const validEvents: EventCardItem[] =
       data.events
-        ?.map((e) => ({
-          id: e.id,
-          slug: e.slug,
-          name: e.name,
-          startAt: e.startAt,
-          endAt: e.endAt,
-          scale: e.scale,
-          type: e.type,
-          locationType: e.locationType,
-          address: e.address,
-          region: e.region ? { localName: e.region.localName } : null,
-          organization: { slug: e.organization.slug, name: e.organization.name },
-          organizations: e.organizations.map((o) => ({ slug: o.slug, name: o.name })),
-          features: e.features ? { self: e.features.self ?? null } : null,
-          commonFeatures: e.commonFeatures ? e.commonFeatures.map((f) => ({ name: f.name })) : null,
-          thumbnail: e.thumbnail ?? null,
-          media: e.media?.images ? { images: e.media.images.map((img) => ({ url: img.url })) } : null,
-        }))
+        ?.map((e) => {
+          const { primary, others } = getEventOrganizations(e);
+          return {
+            id: e.id,
+            slug: e.slug,
+            name: e.name,
+            startAt: e.startAt,
+            endAt: e.endAt,
+            scale: e.scale,
+            type: e.type,
+            locationType: e.locationType,
+            address: e.place?.address ?? null,
+            region: e.region ? { localName: e.region.localName } : null,
+            organization: primary ? { slug: primary.slug, name: primary.name } : null,
+            organizations: others.map((o) => ({ slug: o.slug, name: o.name })),
+            features: e.features.map((f) => ({ name: f.name })),
+            thumbnail: e.thumbnail ?? null,
+            media: e.media?.images ? { images: e.media.images.map((img) => ({ url: img.url })) } : null,
+          };
+        })
         .sort((a, b) => {
           if (a.startAt && b.startAt) {
             return dayjs(a.startAt).isBefore(b.startAt) ? 1 : -1;
@@ -360,7 +373,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       props: {
         organization: validOrganization,
         events: validEvents,
-        pageviewCount: pv?.pageCount?.pageviews ?? null,
+        pageviewCount: pv,
         headMetas: {
           title: `${validOrganization?.name}`,
           des: organizationDetailDescriptionGenerator(

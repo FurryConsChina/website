@@ -1,6 +1,6 @@
 import { RegionAPI } from "@/api/region";
 import { RegionType } from "@/constants/region";
-import type { Region } from "@/types/region";
+import type { RegionListItem } from "@/types/region";
 import { CityPageMeta } from "@/utils/meta";
 import { currentSupportLocale } from "@/utils/locale";
 import { breadcrumbGenerator } from "@/utils/structuredData";
@@ -12,15 +12,15 @@ import Link from "next/link";
 import { FaLink } from "react-icons/fa6";
 import { useTranslation } from "next-i18next/pages";
 
-export default function City(props: { regionGroups: Record<string, Region[]> }) {
+export default function City(props: { regionGroups: Record<string, RegionListItem[]> }) {
   const { regionGroups } = props;
   const { t } = useTranslation();
 
   const groupKeys = Object.keys(regionGroups).sort((a, b) => {
-    const aIsParentGroup = regionGroups[a][0].parent?.sortOrder;
-    const bIsParentGroup = regionGroups[b][0].parent?.sortOrder;
-    if (aIsParentGroup && !bIsParentGroup) return -1;
-    if (!aIsParentGroup && bIsParentGroup) return 1;
+    const aHasParent = !!regionGroups[a][0].parent;
+    const bHasParent = !!regionGroups[b][0].parent;
+    if (aHasParent && !bHasParent) return -1;
+    if (!aHasParent && bHasParent) return 1;
     return 0;
   });
 
@@ -34,7 +34,7 @@ export default function City(props: { regionGroups: Record<string, Region[]> }) 
             }
 
             const firstRegion = regionGroups[groupKey][0];
-            if (firstRegion.parent?.code === groupKey) {
+            if (firstRegion.parent?.slug === groupKey) {
               return firstRegion.parent.name;
             }
             if (groupKey === "special") return t("city.group.special");
@@ -51,11 +51,11 @@ export default function City(props: { regionGroups: Record<string, Region[]> }) 
               </h3>
               <ul className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-4">
                 {regionGroups[groupKey]
-                  .sort((a, b) => b.sortOrder - a.sortOrder)
+                  .sort((a, b) => b.displayOrder - a.displayOrder)
                   .map((region) => (
                     <li key={region.id} className="group">
                       <Link
-                        href={`/city/${region.code}`}
+                        href={`/city/${region.slug}`}
                         onClick={() =>
                           sendTrack({
                             eventName: "click-city-jump-link",
@@ -91,22 +91,18 @@ export async function getServerSideProps({ locale, res }: { locale: string; res:
     withEvents: true,
   });
 
-  const regionWithoutCountry = regions.records.filter((item) => item.type !== RegionType.COUNTRY);
+  const regionWithoutCountry = regions.records.filter((item) => item.kind !== RegionType.COUNTRY);
 
   const regionGroups = groupBy(regionWithoutCountry, (item) => {
-    if (["xianggang", "aomen"].includes(item.code)) {
+    if (["xianggang", "aomen"].includes(item.slug)) {
       return "special";
     }
 
-    // 如果有父级地区，使用父级的code作为分组key
-    if (item.parent?.code) {
-      return item.parent.code;
+    // 如果有父级地区，使用父级的 slug 作为分组 key
+    if (item.parent?.slug) {
+      return item.parent.slug;
     }
-    // 如果没有父级但有国家代码，使用国家代码
-    if (item.countryCode) {
-      return item.countryCode;
-    }
-    // 如果都没有，归类到"other"组
+    // 如果没有父级，归类到"other"组
     return "other";
   });
 

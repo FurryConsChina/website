@@ -1,6 +1,5 @@
 import { RegionAPI } from "@/api/region";
-import type { EventItem } from "@/types/event";
-import type { Region } from "@/types/region";
+import type { RegionListItem } from "@/types/region";
 import { sendTrack } from "@/utils/track";
 import { GetServerSidePropsContext } from "next";
 import Link from "next/link";
@@ -18,7 +17,17 @@ import dayjs from "dayjs";
 import { breadcrumbGenerator } from "@/utils/structuredData";
 import { cityDetailDescriptionGenerator, cityDetailKeywordGenerator, CityPageMeta } from "@/utils/meta";
 
-export default function CityDetail({ region, events }: { region: Region; events: EventItem[] }) {
+type CityEventItem = {
+  id: string;
+  slug: string;
+  name: string;
+  startAt: string | null;
+  endAt: string | null;
+  thumbnail: string | null;
+  organization: { name: string; slug: string } | null;
+};
+
+export default function CityDetail({ region, events }: { region: RegionListItem; events: CityEventItem[] }) {
   const { t, i18n } = useTranslation();
   // 按年份分组
   const groupEventsByYear = groupBy(events, (event) => {
@@ -51,7 +60,7 @@ export default function CityDetail({ region, events }: { region: Region; events:
       }
       return acc;
     },
-    {} as Record<string, Record<string, EventItem[]>>,
+    {} as Record<string, Record<string, CityEventItem[]>>,
   );
 
   // 排序年份（最新的在前）
@@ -102,7 +111,7 @@ export default function CityDetail({ region, events }: { region: Region; events:
   );
 }
 
-function MonthSection({ events }: { events: EventItem[] }) {
+function MonthSection({ events }: { events: CityEventItem[] }) {
   const { t, i18n } = useTranslation();
   const dateFormat = t("date.monthDay") || "MM月DD日";
   const dayjsLocale = getDayjsLocale(i18n.language);
@@ -167,22 +176,44 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     }),
   ]);
 
+  if (!region) {
+    return {
+      notFound: true,
+    };
+  }
+
   const pickEventSchema = z.array(
     z.object({
       id: z.string(),
       slug: z.string(),
-      thumbnail: z.string().optional(),
-      organization: z.object({
-        name: z.string(),
-        slug: z.string(),
-      }),
+      thumbnail: z.string().nullable(),
+      organizers: z.array(
+        z.object({
+          isPrimary: z.boolean(),
+          organization: z.object({
+            name: z.string(),
+            slug: z.string(),
+          }),
+        }),
+      ),
       name: z.string(),
-      startAt: z.string(),
-      endAt: z.string(),
+      startAt: z.string().nullable(),
+      endAt: z.string().nullable(),
     }),
   );
 
-  const parsedEvents = pickEventSchema.parse(regionEvents?.records);
+  const parsedEvents: CityEventItem[] = pickEventSchema.parse(regionEvents.records).map((event) => {
+    const primary = event.organizers.find((organizer) => organizer.isPrimary)?.organization ?? null;
+    return {
+      id: event.id,
+      slug: event.slug,
+      name: event.name,
+      startAt: event.startAt,
+      endAt: event.endAt,
+      thumbnail: event.thumbnail,
+      organization: primary,
+    };
+  });
 
   return {
     props: {

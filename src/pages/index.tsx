@@ -9,7 +9,7 @@ import { EventsAPI } from "@/api/events";
 import EventCard from "@/components/eventCard";
 import { FriendSiteBlock } from "@/components/layout/footer";
 import { EventScale, EventStatus } from "@/constants/event";
-import { filteringEvents, groupByCustomDurationEvent, sortEvents } from "@/utils/event";
+import { filteringEvents, getEventOrganizations, groupByCustomDurationEvent, sortEvents } from "@/utils/event";
 import { sendTrack } from "@/utils/track";
 
 import { DurationType } from "@/types/list";
@@ -48,7 +48,7 @@ export default function Home(props: { events: EventCardItem[] }) {
   return (
     <>
       <div>
-        <SponsorBanner />
+        {/* <SponsorBanner /> */}
         <Filter
           selectedFilter={selectedFilter}
           onChange={(filter) => {
@@ -269,30 +269,29 @@ export async function getServerSideProps({ locale = "zh-Hans", query, res }: Get
 
   return {
     props: {
-      events: events.records.map((event) => ({
-        id: event.id,
-        slug: event.slug,
-        name: event.name,
-        startAt: event.startAt,
-        endAt: event.endAt,
-        scale: event.scale,
-        type: event.type,
-        locationType: event.locationType,
-        address: event.address,
-        region: event.region ? { localName: event.region.localName ?? null } : null,
-        organization: {
-          slug: event.organization.slug,
-          name: event.organization.name,
-        },
-        organizations: event.organizations.map((organization) => ({
-          slug: organization.slug,
-          name: organization.name,
-        })),
-        features: event.features ? { self: event.features.self ?? null } : null,
-        commonFeatures: event.commonFeatures ? event.commonFeatures.map((feature) => ({ name: feature.name })) : null,
-        thumbnail: event.thumbnail,
-        media: event.media?.images ? { images: event.media.images.map((image) => ({ url: image.url })) } : null,
-      })),
+      events: events.records.map((event) => {
+        const { primary, others } = getEventOrganizations(event);
+        return {
+          id: event.id,
+          slug: event.slug,
+          name: event.name,
+          startAt: event.startAt,
+          endAt: event.endAt,
+          scale: event.scale,
+          type: event.type,
+          locationType: event.locationType,
+          address: event.place?.address ?? null,
+          region: event.region ? { localName: event.region.localName ?? null } : null,
+          organization: primary ? { slug: primary.slug, name: primary.name } : null,
+          organizations: others.map((organization) => ({
+            slug: organization.slug,
+            name: organization.name,
+          })),
+          features: event.features.map((feature) => ({ name: feature.name })),
+          thumbnail: event.thumbnail,
+          media: event.media?.images ? { images: event.media.images.map((image) => ({ url: image.url })) } : null,
+        };
+      }),
       headMetas: {
         keywords: keywordGenerator({
           page: "home",

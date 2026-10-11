@@ -8,6 +8,7 @@ import NextImage from "@/components/image";
 import PageviewTag from "@/components/PageviewHeatTag";
 import { EventStatus } from "@/constants/event";
 import type { EventItem } from "@/types/event";
+import { getEventOrganizations } from "@/utils/event";
 import { getEventCoverImgPath, imageUrl } from "@/utils/imageLoader";
 import { currentSupportLocale, formatLocale } from "@/utils/locale";
 import { eventDescriptionGenerator, keywordGenerator } from "@/utils/meta";
@@ -28,6 +29,8 @@ export default function EventDetail({ event, pageviewCount }: { event: EventItem
   const { t, i18n } = useTranslation();
 
   const finalEventCoverImage = getEventCoverImgPath(event);
+  const { primary: primaryOrganization, others: coOrganizations } = getEventOrganizations(event);
+  const hostOrganizations = primaryOrganization ? [primaryOrganization, ...coOrganizations] : coOrganizations;
 
   const showDescriptionContainer = !!(event.detail || event.media?.images?.length);
 
@@ -77,11 +80,7 @@ export default function EventDetail({ event, pageviewCount }: { event: EventItem
             </div>
             <h2 className="text-gray-600 text-sm flex items-center gap-2">
               {t("event.hostBy", {
-                hostName: event.organizations.length
-                  ? [event.organization?.name ?? "", ...event.organizations.map((organization) => organization.name)]
-                      .filter(Boolean)
-                      .join("、")
-                  : event.organization?.name,
+                hostName: hostOrganizations.map((organization) => organization.name).join("、"),
               })}
               <PageviewTag count={pageviewCount} />
             </h2>
@@ -89,7 +88,7 @@ export default function EventDetail({ event, pageviewCount }: { event: EventItem
             <p aria-label={t("event.aria.location")} className="flex items-center text-gray-500 mt-4">
               <IoLocation className="text-gray-500 inline-block mr-2" />
               {`${event.region?.localName || t("event.unknown")} · ${
-                event.address ? event.address : t("event.unknown")
+                event.place?.address ? event.place.address : t("event.unknown")
               }`}
             </p>
 
@@ -122,9 +121,9 @@ export default function EventDetail({ event, pageviewCount }: { event: EventItem
       </div>
 
       <EventMapCard
-        key={`${event.addressLat ?? ""}:${event.addressLon ?? ""}`}
-        latitudeText={event.addressLat}
-        longitudeText={event.addressLon}
+        key={`${event.place?.latitude ?? ""}:${event.place?.longitude ?? ""}`}
+        latitude={event.place?.latitude}
+        longitude={event.place?.longitude}
       />
 
       <div className="flex my-4 lg:items-start flex-col-reverse md:flex-row">
@@ -207,12 +206,14 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       };
     }
 
+    const { primary: primaryOrganization } = getEventOrganizations(event);
+
     return {
       props: {
         event: event,
-        pageviewCount: pv?.pageCount?.pageviews ?? null,
+        pageviewCount: pv,
         headMetas: {
-          title: `${event?.name}-${event?.organization?.name}`,
+          title: `${event.name}-${primaryOrganization?.name ?? ""}`,
           keywords: keywordGenerator({
             page: "event",
             locale: appLocale,
@@ -222,10 +223,10 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
               city: event.region?.localName || undefined,
             },
           }),
-          des: eventDescriptionGenerator(appLocale, event),
+          des: eventDescriptionGenerator(appLocale, { ...event, organization: primaryOrganization }),
           url: getEventDetailUrl({
             eventSlug: event.slug,
-            organizationSlug: event.organization.slug,
+            organizationSlug: primaryOrganization?.slug ?? reqParamsParseResult.organization,
             locale: appLocale,
             fullUrl: false,
           }),

@@ -1,6 +1,13 @@
 import { OrganizationStatus } from "@/constants/organization";
 import * as z from "zod/v4";
 
+export const OrganizationLinkSchema = z.object({
+  type: z.string(),
+  label: z.string().nullable(),
+  value: z.string(),
+  sortOrder: z.number(),
+});
+
 export const OrganizationSchema = z.object({
   id: z.uuid(),
   slug: z.string(),
@@ -9,18 +16,9 @@ export const OrganizationSchema = z.object({
   status: z.enum(OrganizationStatus),
   type: z.string().nullable(),
   logoUrl: z.string().nullable(),
-  richMediaConfig: z.any().nullable(),
   contactMail: z.email().nullable(),
-  website: z.url().nullable(),
-  twitter: z.url().nullable(),
-  weibo: z.url().nullable(),
-  qqGroup: z.string().nullable(),
-  bilibili: z.url().nullable(),
-  wikifur: z.url().nullable(),
-  facebook: z.url().nullable(),
-  plurk: z.url().nullable(),
-  rednote: z.url().nullable(),
-  creationTime: z.iso.datetime().nullable(),
+  foundedOn: z.iso.datetime().nullable(),
+  links: z.array(OrganizationLinkSchema),
 });
 
 export type Organization = z.infer<typeof OrganizationSchema>;

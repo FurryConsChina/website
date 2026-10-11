@@ -40,28 +40,21 @@ export default function EventCard({
   const tags = useMemo(() => {
     const result = new Set<string>();
     if (!event) return [];
-    if (event.features?.self) {
-      event.features.self.forEach((f) => {
-        result.add(f);
-      });
-    }
-    if (event.commonFeatures) {
-      event.commonFeatures.forEach((f) => {
-        result.add(f.name);
-      });
-    }
+    event.features?.forEach((f) => {
+      result.add(f.name);
+    });
 
     return Array.from(result);
   }, [event]);
 
   return (
     <Link
-      href={`/${event.organization.slug}/${event.slug}`}
+      href={`/${event.organization?.slug}/${event.slug}`}
       onClick={() =>
         sendTrack({
           eventName: "click-event-card",
           eventValue: {
-            href: `/${event.organization.slug}/${event.slug}`,
+            href: `/${event.organization?.slug}/${event.slug}`,
           },
         })
       }
@@ -71,7 +64,7 @@ export default function EventCard({
           sendTrack({
             eventName: "hover-event-card",
             eventValue: {
-              href: `/${event.organization.slug}/${event.slug}`,
+              href: `/${event.organization?.slug}/${event.slug}`,
             },
           })
         }
@@ -117,7 +110,7 @@ export default function EventCard({
                 "md:truncate md:group-hover:text-clip md:group-hover:whitespace-normal",
               )}
             >
-              {[event.region?.localName, [event.organization.name, ...event.organizations.map((o) => o.name)].join("·")]
+              {[event.region?.localName, [event.organization?.name, ...event.organizations.map((o) => o.name)].filter(Boolean).join("·")]
                 .filter(Boolean)
                 .join(" ")}
             </h4>
