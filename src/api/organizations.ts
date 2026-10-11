@@ -5,7 +5,7 @@ import type { EventItem } from "@/types/event";
 
 export class OrganizationsAPI {
   static async getOrganizationList(params: { current: string; pageSize: string; sortBy?: string }) {
-    const response = await API.get<ListResponse<Organization>>("internal/website/organization", { params });
+    const response = await API.get<ListResponse<Organization>>("website/organization", { params });
 
     return response.data;
   }
@@ -14,7 +14,7 @@ export class OrganizationsAPI {
     const response = await API.get<{
       organization: Organization;
       events: EventItem[];
-    }>("internal/website/organization/detail", {
+    }>("website/organization/detail", {
       params: { slug },
     });
 

@@ -4,7 +4,7 @@ import { useTranslation } from "next-i18next/pages";
 import toast from "react-hot-toast";
 import { IoChevronDown } from "react-icons/io5";
 
-type EventSource = { url: string; name: string | null; description: string | null };
+type EventSource = { url: string; name?: string | null; description?: string | null };
 
 function getUrl(value: string) {
   try {

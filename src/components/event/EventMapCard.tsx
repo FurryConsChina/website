@@ -16,13 +16,13 @@ const MapLoadingStatus = {
 type MapLoadingStatusType = (typeof MapLoadingStatus)[keyof typeof MapLoadingStatus];
 
 type EventMapCardProps = {
-  latitudeText?: string | null;
-  longitudeText?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
 };
 
-export default function EventMapCard({ latitudeText, longitudeText }: EventMapCardProps) {
+export default function EventMapCard(props: EventMapCardProps) {
   const { t } = useTranslation();
-  const { latitude, longitude, isValid } = parseCoordinates(latitudeText, longitudeText);
+  const { latitude, longitude, isValid } = parseCoordinates(props.latitude, props.longitude);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const hasInitializedRef = useRef(false);
   const [scriptReloadKey, setScriptReloadKey] = useState(0);

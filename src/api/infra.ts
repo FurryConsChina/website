@@ -1,28 +1,21 @@
 import API from "@/api";
 
-type PageviewMetrics = {
-  pageviews: number;
-  visitors: number;
-  visits: number;
-  bounces: number;
-  totaltime: number;
-};
-
-type PageviewReport = PageviewMetrics & {
-  comparison: PageviewMetrics;
-};
-
 type GetPageviewResponse = {
   success: boolean;
-  pageCount?: PageviewReport;
+  pageCount?: {
+    pageviews?: number | { value?: number } | null;
+  } | null;
 };
 
 export class InfraAPI {
-  static async getPageview(path: string) {
-    const response = await API.get<GetPageviewResponse>("internal/infra/pageview", {
+  static async getPageview(path: string): Promise<number | null> {
+    const response = await API.get<GetPageviewResponse>("cms/infra/pageview", {
       params: { path },
     });
 
-    return response.data;
+    const pageviews = response.data.pageCount?.pageviews;
+    const count = typeof pageviews === "number" ? pageviews : pageviews?.value;
+
+    return typeof count === "number" && Number.isFinite(count) ? count : null;
   }
 }

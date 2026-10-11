@@ -11,7 +11,10 @@ import {
   WeiboButton,
 } from "@/components/OrganizationLinkButton";
 import OrganizationStatus from "@/components/organizationStatus";
+import { OrganizationLinkType } from "@/constants/organization";
 import type { EventItem } from "@/types/event";
+import { getEventOrganizations } from "@/utils/event";
+import { getOrganizationLink } from "@/utils/organization";
 import { sendTrack } from "@/utils/track";
 import clsx from "clsx";
 import { useTranslation } from "next-i18next/pages";
@@ -26,12 +29,24 @@ type EventOrganizationCardProps = {
 
 export default function EventOrganizationCard(props: EventOrganizationCardProps) {
   const { t } = useTranslation();
-  const orgList = [props.event.organization, ...props.event.organizations];
+  const { primary, others } = getEventOrganizations(props.event);
+  const orgList = primary ? [primary, ...others] : others;
   const [activeIndex, setActiveIndex] = useState(0);
   const showOrgSwitcher = orgList.length > 1;
 
-  const organization = orgList[activeIndex] ?? orgList[0]!;
+  const organization = orgList[activeIndex] ?? orgList[0];
+
+  if (!organization) return null;
+
   const organizationProfileHref = `/${organization.slug}`;
+  const website = getOrganizationLink(organization, OrganizationLinkType.Website);
+  const qqGroup = getOrganizationLink(organization, OrganizationLinkType.QQGroup);
+  const bilibili = getOrganizationLink(organization, OrganizationLinkType.Bilibili);
+  const weibo = getOrganizationLink(organization, OrganizationLinkType.Weibo);
+  const twitter = getOrganizationLink(organization, OrganizationLinkType.Twitter);
+  const plurk = getOrganizationLink(organization, OrganizationLinkType.Plurk);
+  const facebook = getOrganizationLink(organization, OrganizationLinkType.Facebook);
+  const rednote = getOrganizationLink(organization, OrganizationLinkType.Rednote);
   const trackOrganizationProfileClick = () => {
     sendTrack({
       eventName: "click-event-portal",
@@ -133,21 +148,21 @@ export default function EventOrganizationCard(props: EventOrganizationCardProps)
             !props.showDescriptionContainer && "lg:grid-cols-2",
           )}
         >
-          {organization.website && <WebsiteButton t={t} href={organization.website} />}
-          {organization.qqGroup && <QQGroupButton t={t} text={organization.qqGroup} />}
-          {organization.bilibili && <BiliButton t={t} href={organization.bilibili} />}
+          {website && <WebsiteButton t={t} href={website} />}
+          {qqGroup && <QQGroupButton t={t} text={qqGroup} />}
+          {bilibili && <BiliButton t={t} href={bilibili} />}
 
-          {organization.weibo && <WeiboButton t={t} href={organization.weibo} />}
+          {weibo && <WeiboButton t={t} href={weibo} />}
 
-          {organization.twitter && <TwitterButton t={t} href={organization.twitter} />}
+          {twitter && <TwitterButton t={t} href={twitter} />}
 
           {organization.contactMail && <EmailButton t={t} mail={organization.contactMail} />}
 
-          {organization.plurk && <PlurkButton t={t} href={organization.plurk} />}
+          {plurk && <PlurkButton t={t} href={plurk} />}
 
-          {organization.facebook && <FacebookButton t={t} href={organization.facebook} />}
+          {facebook && <FacebookButton t={t} href={facebook} />}
 
-          {organization.rednote && <RednoteButton t={t} href={organization.rednote} />}
+          {rednote && <RednoteButton t={t} href={rednote} />}
         </div>
       </div>
     </div>

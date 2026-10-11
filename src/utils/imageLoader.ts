@@ -11,7 +11,7 @@ export const getEventCoverImgPath = (event: {
 };
 
 export const imageUrl = (src: string) => {
-  return `https://${GLOBAL_AUTO_CDN_IMAGE_URL}/${src}`;
+  return src.startsWith("http") ? src : `https://${GLOBAL_AUTO_CDN_IMAGE_URL}/${src}`;
 };
 
 const imageLoader = ({

@@ -1,4 +1,4 @@
-import { eventGroupByMonth, eventGroupByYear } from "@/utils/event";
+import { eventGroupByMonth, eventGroupByYear, getEventOrganizations } from "@/utils/event";
 import SimpleEventCard from "@/components/SimpleEventCard";
 import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
 import { useTranslation } from "next-i18next/pages";
@@ -76,16 +76,19 @@ export async function getStaticProps({ locale }: { locale: string }) {
     current: "1",
     pageSize: "999",
   });
-  const slimEvents: SimpleEventItem[] = events.records.map((event) => ({
-    id: event.id,
-    slug: event.slug,
-    name: event.name,
-    startAt: event.startAt,
-    endAt: event.endAt,
-    scale: event.scale,
-    region: event.region ? { localName: event.region.localName } : null,
-    organization: event.organization ? { slug: event.organization.slug, name: event.organization.name } : null,
-  }));
+  const slimEvents: SimpleEventItem[] = events.records.map((event) => {
+    const { primary } = getEventOrganizations(event);
+    return {
+      id: event.id,
+      slug: event.slug,
+      name: event.name,
+      startAt: event.startAt,
+      endAt: event.endAt,
+      scale: event.scale,
+      region: event.region ? { localName: event.region.localName } : null,
+      organization: primary ? { slug: primary.slug, name: primary.name } : null,
+    };
+  });
 
   return {
     props: {

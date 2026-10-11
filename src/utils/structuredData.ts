@@ -1,6 +1,7 @@
 import { EventStatus, EventStatusSchema } from "@/constants/event";
 import type { EventItem } from "@/types/event";
 import { PUBLIC_URL } from "@/utils/env";
+import { getEventOrganizations } from "@/utils/event";
 import { getEventCoverImgPath, imageUrl } from "@/utils/imageLoader";
 import { currentSupportLocale } from "@/utils/locale";
 import { getOrganizationDetailUrl } from "@/utils/url";
@@ -13,6 +14,17 @@ export function generateEventDetailStructuredData({
   locale: currentSupportLocale;
 }) {
   const organizerLabel = locale === "en" ? "Organizers" : "展商";
+  const { primary: primaryOrganization } = getEventOrganizations(event);
+  // getServerSideProps 的返回值必须可 JSON 序列化，undefined 会报错，可空字段统一回退为 null。
+  const organizationUrl = primaryOrganization
+    ? getOrganizationDetailUrl({
+        organizationSlug: primaryOrganization.slug,
+        locale,
+        fullUrl: true,
+      })
+    : null;
+  const organizationName = primaryOrganization?.name ?? null;
+  const placeAddress = event?.place?.address ?? null;
 
   return {
     breadcrumb: {
@@ -23,21 +35,13 @@ export function generateEventDetailStructuredData({
           "@type": "ListItem",
           position: 1,
           name: organizerLabel,
-          item: getOrganizationDetailUrl({
-            organizationSlug: event.organization.slug,
-            locale,
-            fullUrl: true,
-          }),
+          item: organizationUrl,
         },
         {
           "@type": "ListItem",
           position: 2,
-          name: event?.organization?.name,
-          item: getOrganizationDetailUrl({
-            organizationSlug: event.organization.slug,
-            locale,
-            fullUrl: true,
-          }),
+          name: organizationName,
+          item: organizationUrl,
         },
         {
           "@type": "ListItem",
@@ -56,18 +60,18 @@ export function generateEventDetailStructuredData({
       eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
       location: {
         "@type": "Place",
-        name: event?.address,
+        name: placeAddress,
         address: {
           "@type": "PostalAddress",
-          streetAddress: event?.address,
-          addressLocality: event.region?.localName,
+          streetAddress: placeAddress,
+          addressLocality: event.region?.localName ?? null,
           // postalCode: "19019",
           // addressRegion: event?.city,
           addressCountry: "CN",
         },
       },
       image: [imageUrl(getEventCoverImgPath(event))],
-      description: event?.detail,
+      description: event?.detail ?? null,
       // offers: {
       //   "@type": "Offer",
       //   url: "https://www.example.com/event_offer/12345_201803180430",
@@ -82,12 +86,8 @@ export function generateEventDetailStructuredData({
       // },
       organizer: {
         "@type": "Organization",
-        name: event?.organization?.name,
-        url: getOrganizationDetailUrl({
-          organizationSlug: event.organization.slug,
-          locale,
-          fullUrl: true,
-        }),
+        name: organizationName,
+        url: organizationUrl,
       },
     },
     imageObject: [...(event?.thumbnail ? [{ url: event.thumbnail }] : []), ...(event?.media?.images || [])].map(
@@ -95,12 +95,12 @@ export function generateEventDetailStructuredData({
         "@context": "https://schema.org/",
         "@type": "ImageObject",
         contentUrl: imageUrl(image.url),
-        creditText: event?.organization?.name,
+        creditText: organizationName,
         creator: {
           "@type": "Organization",
-          name: event?.organization?.name,
+          name: organizationName,
         },
-        copyrightNotice: event?.organization?.name,
+        copyrightNotice: organizationName,
         license: "https://creativecommons.org/licenses/by-nc/4.0/",
         acquireLicensePage: "https://docs.furrycons.cn/blog/about",
       }),
