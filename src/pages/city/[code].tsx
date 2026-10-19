@@ -1,6 +1,7 @@
 import { RegionAPI } from "@/api/region";
 import type { RegionListItem } from "@/types/region";
 import { sendTrack } from "@/utils/track";
+import { getEventDetailUrl } from "@/utils/url";
 import { GetServerSidePropsContext } from "next";
 import Link from "next/link";
 import * as z from "zod/v4";
@@ -19,7 +20,7 @@ import { cityDetailDescriptionGenerator, cityDetailKeywordGenerator, CityPageMet
 
 type CityEventItem = {
   id: string;
-  slug: string;
+  urlKey: string;
   name: string;
   startAt: string | null;
   endAt: string | null;
@@ -121,12 +122,12 @@ function MonthSection({ events }: { events: CityEventItem[] }) {
       {events.map((event) => (
         <Link
           key={event.id}
-          href={`/${event.organization?.slug}/${event.slug}`}
+          href={getEventDetailUrl({ urlKey: event.urlKey })}
           onClick={() =>
             sendTrack({
               eventName: "click-mini-event-card",
               eventValue: {
-                href: `/${event.organization?.slug}/${event.slug}`,
+                href: getEventDetailUrl({ urlKey: event.urlKey }),
                 from: "city list",
               },
             })
@@ -185,7 +186,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const pickEventSchema = z.array(
     z.object({
       id: z.string(),
-      slug: z.string(),
+      urlKey: z.string(),
       thumbnail: z.string().nullable(),
       organizers: z.array(
         z.object({
@@ -206,7 +207,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     const primary = event.organizers.find((organizer) => organizer.isPrimary)?.organization ?? null;
     return {
       id: event.id,
-      slug: event.slug,
+      urlKey: event.urlKey,
       name: event.name,
       startAt: event.startAt,
       endAt: event.endAt,

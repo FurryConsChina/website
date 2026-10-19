@@ -79,7 +79,7 @@ export type EventItem = z.infer<typeof EventSchema>;
 
 export type EventCardItem = {
   id: string;
-  slug: string;
+  urlKey: string;
   name: string;
   startAt: string | null;
   endAt: string | null;
@@ -97,7 +97,7 @@ export type EventCardItem = {
 
 export type SimpleEventItem = {
   id: string;
-  slug: string;
+  urlKey: string;
   name: string;
   startAt: string | null;
   endAt: string | null;

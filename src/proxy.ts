@@ -30,11 +30,12 @@ const redirectData: Record<string, { destination: string; permanent: boolean }> 
 export default function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const locale = request.nextUrl.locale;
+  const localePrefix = locale && locale !== "zh-Hans" ? `/${locale}` : "";
 
   const exactMatch = redirectData[pathname];
   if (exactMatch) {
     return NextResponse.redirect(
-      new URL(locale === "en" ? "/en" + exactMatch.destination : exactMatch.destination, request.url),
+      new URL(`${localePrefix}${exactMatch.destination}`, request.url),
       exactMatch.permanent ? 308 : 307,
     );
   }
@@ -51,7 +52,7 @@ export default function proxy(request: NextRequest) {
       const slug = pathSegments.slice(1).join("/");
       if (slug) {
         const destination = `${redirectEntry.destination}/${slug}`;
-        return NextResponse.redirect(new URL(locale === "en" ? "/en" + destination : destination, request.url), 308);
+        return NextResponse.redirect(new URL(`${localePrefix}${destination}`, request.url), 308);
       }
     }
   }

@@ -1,4 +1,5 @@
 import { sendTrack } from "@/utils/track";
+import { getEventDetailUrl } from "@/utils/url";
 import Link from "next/link";
 import dayjs from "dayjs";
 import "dayjs/locale/zh-cn";
@@ -9,18 +10,19 @@ import { getDayjsLocale } from "@/utils/locale";
 
 function SimpleEventCard({ event }: { event: SimpleEventItem }) {
   const { t, i18n } = useTranslation();
+  const eventUrl = getEventDetailUrl({ urlKey: event.urlKey });
   const dateFormat = t("date.monthDay") || "MM月DD日";
   const dayjsLocale = getDayjsLocale(i18n.language);
 
   return (
     <Link
       key={event.id}
-      href={`/${event.organization?.slug}/${event.slug}`}
+      href={eventUrl}
       onClick={() =>
         sendTrack({
           eventName: "click-mini-event-card",
           eventValue: {
-            href: `/${event.organization?.slug}/${event.slug}`,
+            href: eventUrl,
             from: "year list",
           },
         })
