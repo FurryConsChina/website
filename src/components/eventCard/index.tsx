@@ -8,6 +8,7 @@ import { useTranslation } from "next-i18next/pages";
 import Image from "@/components/image";
 import { getEventCoverImgPath } from "@/utils/imageLoader";
 import { sendTrack } from "@/utils/track";
+import { getEventDetailUrl } from "@/utils/url";
 import { currentSupportLocale, getDayjsLocale } from "@/utils/locale";
 
 import type { EventCardItem } from "@/types/event";
@@ -27,6 +28,7 @@ export default function EventCard({
   fallbackHeight?: number;
 }) {
   const { t, i18n } = useTranslation();
+  const eventUrl = getEventDetailUrl({ urlKey: event.urlKey });
   const finalEventCoverImage = getEventCoverImgPath(event);
   const isDefaultCover = finalEventCoverImage.includes("fec-event-default-cover");
 
@@ -49,12 +51,12 @@ export default function EventCard({
 
   return (
     <Link
-      href={`/${event.organization?.slug}/${event.slug}`}
+      href={eventUrl}
       onClick={() =>
         sendTrack({
           eventName: "click-event-card",
           eventValue: {
-            href: `/${event.organization?.slug}/${event.slug}`,
+            href: eventUrl,
           },
         })
       }
@@ -64,7 +66,7 @@ export default function EventCard({
           sendTrack({
             eventName: "hover-event-card",
             eventValue: {
-              href: `/${event.organization?.slug}/${event.slug}`,
+              href: eventUrl,
             },
           })
         }

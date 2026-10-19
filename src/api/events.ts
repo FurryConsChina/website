@@ -4,10 +4,13 @@ import { ListResponse } from "@/types/api";
 import API from "@/api";
 
 export class EventsAPI {
-  static async getEventDetail(slug: string, organization: string): Promise<EventItem> {
-    const response = await API.get("website/event/detail", {
-      params: { slug, organization },
-    });
+  static async getEventDetail(
+    params:
+      | { "url-key": string; "full-slug"?: never; slug?: never; organization?: never }
+      | { "full-slug": string; "url-key"?: never; slug?: never; organization?: never }
+      | { slug: string; organization: string; "url-key"?: never; "full-slug"?: never },
+  ): Promise<EventItem> {
+    const response = await API.get("website/event/detail", { params });
 
     const validEvent = EventSchema.parse(response.data);
 

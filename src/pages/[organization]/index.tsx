@@ -346,7 +346,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
           const { primary, others } = getEventOrganizations(e);
           return {
             id: e.id,
-            slug: e.slug,
+            urlKey: e.urlKey,
             name: e.name,
             startAt: e.startAt,
             endAt: e.endAt,

@@ -24,17 +24,15 @@ export function getOrganizationDetailUrl({
 }
 
 export function getEventDetailUrl({
-  eventSlug,
-  organizationSlug,
-  locale,
+  urlKey,
+  locale = "zh-Hans",
   fullUrl = false,
 }: {
-  eventSlug: string;
-  organizationSlug: string;
-  locale: currentSupportLocale;
+  urlKey: string;
+  locale?: currentSupportLocale;
   fullUrl?: boolean;
 }) {
-  let path = `/${organizationSlug}/${eventSlug}`;
+  let path = `/event/${urlKey}`;
 
   if (locale !== "zh-Hans") {
     path = `/${locale}${path}`;

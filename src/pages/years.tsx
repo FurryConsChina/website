@@ -80,7 +80,7 @@ export async function getStaticProps({ locale }: { locale: string }) {
     const { primary } = getEventOrganizations(event);
     return {
       id: event.id,
-      slug: event.slug,
+      urlKey: event.urlKey,
       name: event.name,
       startAt: event.startAt,
       endAt: event.endAt,
