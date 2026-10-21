@@ -359,7 +359,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
             organizations: others.map((o) => ({ slug: o.slug, name: o.name })),
             features: e.features.map((f) => ({ name: f.name })),
             thumbnail: e.thumbnail ?? null,
-            media: e.media?.images ? { images: e.media.images.map((img) => ({ url: img.url })) } : null,
+            media: null,
           };
         })
         .sort((a, b) => {
