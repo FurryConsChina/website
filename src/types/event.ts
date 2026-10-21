@@ -18,6 +18,105 @@ export const EventOrganizerSchema = z.object({
 
 export type EventOrganizer = z.infer<typeof EventOrganizerSchema>;
 
+const PlaceSchema = z.object({
+  id: z.string(),
+  regionId: z.string(),
+  name: z.string(),
+  kind: z.string(),
+  subtype: z.string().nullable(),
+  address: z.string().nullable(),
+  latitude: z.number().nullable(),
+  longitude: z.number().nullable(),
+  timezone: z.string().nullable(),
+  coordinateSource: z.string().nullable(),
+  sourceCoordinateSystem: z.string().nullable(),
+  sourcePlaceId: z.string().nullable(),
+});
+
+const EventBenefitSchema = z.object({
+  id: z.string(),
+  eventId: z.string(),
+  name: z.string(),
+  description: z.string().nullable(),
+  category: z.string().nullable(),
+  sortOrder: z.number(),
+});
+
+const OfferSchema = z.object({
+  id: z.string(),
+  eventId: z.string(),
+  name: z.string(),
+  description: z.string().nullable(),
+  availability: z.enum(["upcoming", "onSale", "soldOut", "ended"]),
+  // 后端 PG decimal 以字符串读取，避免浮点精度丢失。
+  price: z.string().nullable(),
+  priceNote: z.string().nullable(),
+  saleStartAt: z.iso.datetime().nullable(),
+  saleEndAt: z.iso.datetime().nullable(),
+  admissionDates: z.array(z.string()).nullable(),
+  sortOrder: z.number(),
+  currency: z.string(),
+  benefitLinks: z.array(
+    z.object({
+      offerId: z.string(),
+      benefitId: z.string(),
+      quantity: z.number().nullable(),
+      note: z.string().nullable(),
+      createdAt: z.iso.datetime(),
+      updatedAt: z.iso.datetime(),
+      benefit: EventBenefitSchema,
+    }),
+  ),
+});
+
+const ProfileLinkSchema = z.object({
+  id: z.string(),
+  profileId: z.string(),
+  type: z.string(),
+  label: z.string().nullable(),
+  value: z.string(),
+  sortOrder: z.number(),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
+});
+
+const ProfileSchema = z.object({
+  id: z.string(),
+  slug: z.string(),
+  name: z.string(),
+  kind: z.enum(["individual", "group", "brand", "media"]),
+  status: z.enum(["active", "inactive"]),
+  description: z.string().nullable(),
+  avatarUrl: z.string().nullable(),
+  contactMail: z.string().nullable(),
+  links: z.array(ProfileLinkSchema),
+});
+
+const EventParticipantSchema = z.object({
+  id: z.string(),
+  eventId: z.string(),
+  profileId: z.string().nullable(),
+  organizationId: z.string().nullable(),
+  role: z.enum(["guest", "exhibitor", "sponsor", "media"]),
+  description: z.string().nullable(),
+  booth: z.string().nullable(),
+  tier: z.string().nullable(),
+  isFeatured: z.boolean(),
+  sortOrder: z.number(),
+  appearanceDates: z.array(z.string()).nullable(),
+  profile: ProfileSchema.nullable(),
+  organization: OrganizationSchema.nullable(),
+});
+
+// 后端写入侧只约束 overrideOrganizationContact，JSONB 列里可能还有历史遗留的其他键。
+const EventExtraSchema = z.looseObject({
+  overrideOrganizationContact: z
+    .object({
+      qqGroups: z.array(z.object({ label: z.string().optional(), value: z.string() })).optional(),
+    })
+    .optional(),
+});
+
 export const EventSchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -52,6 +151,7 @@ export const EventSchema = z.object({
   locationNotes: z.string().nullable(),
   thumbnail: z.string().nullable(),
   detail: z.string().nullish(),
+  extra: EventExtraSchema.nullable(),
   media: z
     .object({
       images: z.array(MediaItemSchema).optional(),
@@ -60,19 +160,12 @@ export const EventSchema = z.object({
     })
     .nullish(),
   region: RegionSchema.nullable(),
-  place: z
-    .object({
-      id: z.string(),
-      name: z.string(),
-      kind: z.string(),
-      subtype: z.string().nullable(),
-      address: z.string().nullable(),
-      latitude: z.number().nullable(),
-      longitude: z.number().nullable(),
-    })
-    .nullable(),
+  place: PlaceSchema.nullable(),
   organizers: z.array(EventOrganizerSchema),
   features: z.array(FeatureSchema),
+  offers: z.array(OfferSchema),
+  benefits: z.array(EventBenefitSchema),
+  participants: z.array(EventParticipantSchema),
 });
 
 export type EventItem = z.infer<typeof EventSchema>;
