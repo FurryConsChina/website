@@ -7,10 +7,16 @@ type GetPageviewResponse = {
   } | null;
 };
 
+type GetPageviewParams = {
+  targetType: "event" | "organization" | "profile";
+  targetId: string;
+  path: string;
+};
+
 export class InfraAPI {
-  static async getPageview(path: string): Promise<number | null> {
+  static async getPageview({ targetType, targetId, path }: GetPageviewParams): Promise<number | null> {
     const response = await API.get<GetPageviewResponse>("cms/infra/pageview", {
-      params: { path },
+      params: { targetType, targetId, path },
     });
 
     const pageviews = response.data.pageCount?.pageviews;

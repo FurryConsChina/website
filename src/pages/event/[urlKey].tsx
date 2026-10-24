@@ -196,10 +196,13 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       locale: appLocale,
     });
 
-    const [event, pv] = await Promise.all([
-      EventsAPI.getEventDetail({ "url-key": identifier.data }),
-      InfraAPI.getPageview(pageviewPath).catch((): null => null),
-    ]);
+    const event = await EventsAPI.getEventDetail({ "url-key": identifier.data });
+    // 访问量按实体读取历史本底，需要先取得活动 ID。
+    const pv = await InfraAPI.getPageview({
+      targetType: "event",
+      targetId: event.id,
+      path: pageviewPath,
+    }).catch((): null => null);
 
     const { primary: primaryOrganization } = getEventOrganizations(event);
 

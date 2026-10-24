@@ -328,16 +328,20 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       fullUrl: false,
     });
 
-    const [data, pv] = await Promise.all([
-      OrganizationsAPI.getOrganizationDetail(reqParamsParseResult.organization),
-      InfraAPI.getPageview(pageviewPath).catch((): null => null),
-    ]);
+    const data = await OrganizationsAPI.getOrganizationDetail(reqParamsParseResult.organization);
 
     if (!data) {
       return {
         notFound: true,
       };
     }
+
+    // 访问量按实体读取历史本底，需要先取得组织 ID。
+    const pv = await InfraAPI.getPageview({
+      targetType: "organization",
+      targetId: data.organization.id,
+      path: pageviewPath,
+    }).catch((): null => null);
 
     const validOrganization = data.organization;
     const validEvents: EventCardItem[] =
