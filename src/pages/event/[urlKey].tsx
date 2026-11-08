@@ -90,11 +90,16 @@ export default function EventDetail({ event, pageviewCount }: { event: EventItem
               <PageviewTag count={pageviewCount} />
             </h2>
 
-            <p aria-label={t("event.aria.location")} className="flex items-center text-gray-500 mt-4">
-              <IoLocation className="text-gray-500 inline-block mr-2" />
-              {`${event.location.region?.localName || t("event.unknown")} · ${
-                event.location.place?.address ? event.location.place.address : t("event.unknown")
-              }`}
+            <p aria-label={t("event.aria.location")} className="flex items-start text-gray-500 mt-4">
+              <IoLocation className="text-gray-500 shrink-0 mt-1 mr-2" />
+              <span className="min-w-0 break-words">
+                {`${event.location.region?.localName || t("event.unknown")} · ${
+                  event.location.place?.name || t("event.unknown")
+                }`}
+                {event.location.place?.address && event.location.place.address !== event.location.place.name && (
+                  <span className="block text-sm">{event.location.place.address}</span>
+                )}
+              </span>
             </p>
 
             <p aria-label={t("event.aria.time")} className="flex items-center text-gray-500">

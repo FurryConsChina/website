@@ -60,7 +60,7 @@ export function generateEventDetailStructuredData({
       eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
       location: {
         "@type": "Place",
-        name: placeAddress,
+        name: event.location.place?.name ?? null,
         address: {
           "@type": "PostalAddress",
           streetAddress: placeAddress,

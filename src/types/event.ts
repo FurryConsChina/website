@@ -156,7 +156,7 @@ export type EventCardItem = {
   scale: string;
   type: string | null;
   locationType: string | null;
-  address: string | null;
+  placeName: string | null;
   region: { localName: string | null } | null;
   organization: { slug: string; name: string } | null;
   organizations: { slug: string; name: string }[];

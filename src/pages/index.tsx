@@ -258,12 +258,7 @@ export async function getServerSideProps({ locale = "zh-Hans", query, res }: Get
     eventStartAt: includePastEvents
       ? dayjs().startOf("year").toISOString()
       : dayjs().subtract(1, "month").startOf("month").toISOString(),
-    eventStatus: [
-      EventStatus.EventScheduled,
-      EventStatus.EventPostponed,
-      EventStatus.EventRescheduled,
-      EventStatus.EventMovedOnline,
-    ],
+    eventStatus: [EventStatus.EventScheduled, EventStatus.EventRescheduled, EventStatus.EventMovedOnline],
   });
 
   return {
@@ -279,7 +274,7 @@ export async function getServerSideProps({ locale = "zh-Hans", query, res }: Get
           scale: event.scale,
           type: event.type,
           locationType: event.locationType,
-          address: event.place?.address ?? null,
+          placeName: event.place?.name ?? null,
           region: event.region ? { localName: event.region.localName ?? null } : null,
           organization: primary ? { slug: primary.slug, name: primary.name } : null,
           organizations: others.map((organization) => ({

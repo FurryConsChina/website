@@ -357,7 +357,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
             scale: e.scale,
             type: e.type,
             locationType: e.locationType,
-            address: e.place?.address ?? null,
+            placeName: e.place?.name ?? null,
             region: e.region ? { localName: e.region.localName } : null,
             organization: primary ? { slug: primary.slug, name: primary.name } : null,
             organizations: others.map((o) => ({ slug: o.slug, name: o.name })),
