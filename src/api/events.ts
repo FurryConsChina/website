@@ -5,7 +5,7 @@ import API from "@/api";
 
 export class EventsAPI {
   static async getEventDetail(urlKey: string): Promise<EventItem> {
-    const response = await API.get(`website/event/url-key/${encodeURIComponent(urlKey)}`);
+    const response = await API.get(`website/event/url-key/${urlKey}`);
 
     return EventSchema.parse(response.data);
   }
