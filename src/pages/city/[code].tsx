@@ -9,7 +9,7 @@ import Image from "@/components/image";
 import { getEventCoverImgPath } from "@/utils/imageLoader";
 import "dayjs/locale/zh-cn";
 import "dayjs/locale/zh-tw";
-import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
+import { getLayoutProps } from "@/utils/layoutProps";
 import { groupBy } from "es-toolkit";
 import { useTranslation } from "next-i18next/pages";
 import { currentSupportLocale, getDayjsLocale, monthNumberFormatter } from "@/utils/locale";
@@ -240,7 +240,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       },
       region: region,
       events: parsedEvents,
-      ...(await serverSideTranslations(locale, ["common"])),
+      ...(await getLayoutProps(locale)),
     },
   };
 }

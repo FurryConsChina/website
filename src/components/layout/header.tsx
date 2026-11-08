@@ -64,7 +64,7 @@ const NavLinks = [
   { name: "header.nav.years", link: "/years" },
 ];
 
-export default function Header() {
+export default function Header({ slogan }: { slogan?: string | null }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const bodyRef = useRef<HTMLBodyElement | null>(null);
@@ -92,7 +92,7 @@ export default function Header() {
           "px-2 py-2 md:p-0",
         )}
       >
-        <HeaderLeft />
+        <HeaderLeft slogan={slogan} />
         <HeaderNav isMenuOpen={isMenuOpen} switchMenu={handleMenuClick} />
         <HeaderRight />
       </div>
@@ -101,7 +101,7 @@ export default function Header() {
   );
 }
 
-function HeaderLeft() {
+function HeaderLeft({ slogan }: { slogan?: string | null }) {
   const { t } = useTranslation();
 
   return (
@@ -147,7 +147,7 @@ function HeaderLeft() {
               />
             </span>
           </h1>
-          <span className="text-xs md:text-base text-gray-700 font-bold">{t("header.slogan")}</span>
+          {slogan ? <span className="text-xs md:text-base text-gray-700 font-bold">{slogan}</span> : null}
         </div>
       </div>
     </Link>

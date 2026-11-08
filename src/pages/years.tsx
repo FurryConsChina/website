@@ -1,6 +1,6 @@
 import { eventGroupByMonth, eventGroupByYear, getEventOrganizations } from "@/utils/event";
 import SimpleEventCard from "@/components/SimpleEventCard";
-import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
+import { getLayoutProps } from "@/utils/layoutProps";
 import { useTranslation } from "next-i18next/pages";
 import { EventsAPI } from "@/api/events";
 import type { SimpleEventItem } from "@/types/event";
@@ -108,7 +108,7 @@ export async function getStaticProps({ locale }: { locale: string }) {
           ],
         }),
       },
-      ...(await serverSideTranslations(locale, ["common"])),
+      ...(await getLayoutProps(locale)),
     },
     revalidate: 500,
   };

@@ -3,7 +3,7 @@ import { groupBy } from "es-toolkit/compat";
 import Image from "@/components/image";
 import Link from "next/link";
 import { sendTrack } from "@/utils/track";
-import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
+import { getLayoutProps } from "@/utils/layoutProps";
 import { useTranslation } from "next-i18next/pages";
 import { OrganizationsAPI } from "@/api/organizations";
 import { OrganizationListItem } from "@/types/organization";
@@ -117,7 +117,7 @@ export async function getStaticProps({ locale }: { locale: string }) {
           ],
         }),
       },
-      ...(await serverSideTranslations(locale, ["common"])),
+      ...(await getLayoutProps(locale)),
     },
     revalidate: 500,
   };

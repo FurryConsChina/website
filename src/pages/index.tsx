@@ -3,7 +3,7 @@ import { Field, Label, Switch } from "@headlessui/react";
 import { groupBy } from "es-toolkit/compat";
 import { createLoader, parseAsBoolean, useQueryState } from "nuqs";
 import { useTranslation } from "next-i18next/pages";
-import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
+import { getLayoutProps } from "@/utils/layoutProps";
 import type { GetServerSidePropsContext } from "next";
 import { EventsAPI } from "@/api/events";
 import EventCard from "@/components/eventCard";
@@ -297,7 +297,7 @@ export async function getServerSideProps({ locale = "zh-Hans", query, res }: Get
           locale: formatLocale(locale),
         }),
       },
-      ...(await serverSideTranslations(locale, ["common"])),
+      ...(await getLayoutProps(locale)),
     },
   };
 }

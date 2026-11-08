@@ -17,7 +17,7 @@ import { getEventDetailUrl } from "@/utils/url";
 import clsx from "clsx";
 import { GetServerSidePropsContext } from "next";
 import { useTranslation } from "next-i18next/pages";
-import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
+import { getLayoutProps } from "@/utils/layoutProps";
 import { BsCalendar2DateFill } from "react-icons/bs";
 import { FaHotel, FaPeoplePulling } from "react-icons/fa6";
 import { IoLocation } from "react-icons/io5";
@@ -227,7 +227,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
           event,
           locale: appLocale,
         }),
-        ...(localeParam ? await serverSideTranslations(localeParam, ["common"]) : {}),
+        ...(await getLayoutProps(localeParam)),
       },
     };
   } catch (error) {

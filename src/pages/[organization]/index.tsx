@@ -14,7 +14,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/zh-cn";
 import "dayjs/locale/zh-tw";
-import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
+import { getLayoutProps } from "@/utils/layoutProps";
 import { useTranslation } from "next-i18next/pages";
 import { OrganizationsAPI } from "@/api/organizations";
 import { InfraAPI } from "@/api/infra";
@@ -407,7 +407,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
             ],
           }),
         },
-        ...(context.locale ? await serverSideTranslations(context.locale, ["common"]) : {}),
+        ...(await getLayoutProps(context.locale)),
       },
     };
   } catch (error) {
