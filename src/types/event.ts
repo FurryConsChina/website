@@ -68,6 +68,7 @@ const EventBaseSchema = z.object({
   status: z.string(),
   scale: z.string(),
   type: z.enum(EventTypeMap).nullable(),
+  // 历史活动的空信源和购票渠道可能序列化为 {}。
   sources: z
     .array(
       z.object({
@@ -76,6 +77,7 @@ const EventBaseSchema = z.object({
         description: z.string().nullish(),
       }),
     )
+    .or(z.strictObject({}).transform(() => null))
     .nullable(),
   ticketChannels: z
     .array(
@@ -86,6 +88,7 @@ const EventBaseSchema = z.object({
         available: z.boolean(),
       }),
     )
+    .or(z.strictObject({}).transform(() => null))
     .nullable(),
   thumbnail: z.string().nullable(),
   detail: z.string().nullable(),
