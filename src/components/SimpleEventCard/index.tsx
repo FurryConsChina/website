@@ -34,8 +34,7 @@ function SimpleEventCard({ event }: { event: SimpleEventItem }) {
         <p className="text-center text-slate-600">{event.organization?.name}</p>
         {event.startAt && event.endAt && (
           <p className="text-center text-slate-600 text-sm">
-            {event.startAt && <span>{dayjs(event.startAt).locale(dayjsLocale).format(dateFormat)}</span>}
-            -
+            {event.startAt && <span>{dayjs(event.startAt).locale(dayjsLocale).format(dateFormat)}</span>}-
             {event.endAt && <span>{dayjs(event.endAt).locale(dayjsLocale).format(dateFormat)}</span>}
           </p>
         )}

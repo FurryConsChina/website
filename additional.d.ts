@@ -22,7 +22,7 @@ interface TMapNamespace {
       zoom: number;
       pitch: number;
       rotation: number;
-    }
+    },
   ) => TMapMapInstance;
   MultiMarker: new (options: {
     id: string;

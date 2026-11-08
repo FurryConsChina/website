@@ -93,15 +93,14 @@ function DurationSection({ durationType, events }: { durationType: string; event
 
   const groupByMonthEvent = useMemo(() => {
     return groupBy(events, (event) =>
-      // Some event open in the last day of start month, but it should be count in next month.
-      {
-        const endDate = event.endAt ? new Date(event.endAt) : null;
-        if (!endDate) {
-          return "unknown";
-        }
-        return `${endDate.getFullYear()}-${endDate.getMonth() + 1}`;
-      },
-    );
+    // Some event open in the last day of start month, but it should be count in next month.
+    {
+      const endDate = event.endAt ? new Date(event.endAt) : null;
+      if (!endDate) {
+        return "unknown";
+      }
+      return `${endDate.getFullYear()}-${endDate.getMonth() + 1}`;
+    });
   }, [events]);
 
   const sortedMonths = useMemo(() => {

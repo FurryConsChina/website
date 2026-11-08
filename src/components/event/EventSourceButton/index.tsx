@@ -16,13 +16,7 @@ function getUrl(value: string) {
   }
 }
 
-export default function EventSourceButton({
-  sources,
-  eventName,
-}: {
-  sources: EventSource[];
-  eventName: string;
-}) {
+export default function EventSourceButton({ sources, eventName }: { sources: EventSource[]; eventName: string }) {
   const { t } = useTranslation();
   const firstSource = sources[0];
   if (!firstSource) {
@@ -98,9 +92,13 @@ export default function EventSourceButton({
                 source,
                 `block w-full px-4 py-3 text-left transition-all duration-200 rounded-md ${focus ? "bg-red-50 text-red-600" : "text-gray-700"}`,
                 <>
-                  <span className="block font-medium">{source.name || `${getSourceActionText(source)} ${index + 1}`}</span>
+                  <span className="block font-medium">
+                    {source.name || `${getSourceActionText(source)} ${index + 1}`}
+                  </span>
                   {(source.description || source.url) && (
-                    <span className="mt-1 block truncate text-sm text-gray-500">{source.description || source.url}</span>
+                    <span className="mt-1 block truncate text-sm text-gray-500">
+                      {source.description || source.url}
+                    </span>
                   )}
                 </>,
               )
