@@ -6,6 +6,8 @@ import Image from "@/components/image";
 import PageviewTag from "@/components/PageviewHeatTag";
 import { GetServerSidePropsContext } from "next/types";
 import { useMemo } from "react";
+import Pagination from "@/components/Pagination";
+import type { ListResponse } from "@/types/api";
 import toast from "react-hot-toast";
 import { FaPaw, FaQq, FaTwitter, FaWeibo } from "react-icons/fa";
 import { MdOutlineContentCopy } from "react-icons/md";
@@ -42,12 +44,13 @@ import axios from "axios";
 dayjs.extend(relativeTime);
 
 export default function OrganizationDetail(props: {
-  events: EventCardItem[];
+  events: ListResponse<EventCardItem>;
   organization: Organization;
+  firstEventStartAt: string | null;
   pageviewCount: number | null;
 }) {
   const { t, i18n } = useTranslation();
-  const { organization, events, pageviewCount } = props;
+  const { organization, events, firstEventStartAt, pageviewCount } = props;
   const dayjsLocale = getDayjsLocale(i18n.language);
 
   const website = getOrganizationLink(organization, OrganizationLinkType.Website);
@@ -61,9 +64,8 @@ export default function OrganizationDetail(props: {
   const rednote = getOrganizationLink(organization, OrganizationLinkType.Rednote);
 
   const formattedFirstEventTime = useMemo(() => {
-    const theBeginningEvent = events[events.length - 1];
-    if (theBeginningEvent && theBeginningEvent.startAt) {
-      const date = new Date(theBeginningEvent.startAt);
+    if (firstEventStartAt) {
+      const date = new Date(firstEventStartAt);
 
       return {
         year: date.getUTCFullYear(),
@@ -73,7 +75,7 @@ export default function OrganizationDetail(props: {
     }
 
     return null;
-  }, [events]);
+  }, [firstEventStartAt]);
 
   const formattedCreationTime = useMemo(() => {
     if (organization.foundedOn) {
@@ -125,7 +127,7 @@ export default function OrganizationDetail(props: {
                   })}
                 </span>
               )}
-              <span>{t("organization.totalEvent", { amount: events.length })}</span>
+              <span>{t("organization.totalEvent", { amount: events.total })}</span>
               {formattedFirstEventTime && (
                 <span>
                   {t("organization.firstTimeEvent", {
@@ -287,11 +289,11 @@ export default function OrganizationDetail(props: {
         <p className="text-slate-700 whitespace-pre-line">{organization.description || t("organization.defaultDes")}</p>
       </div>
 
-      {!!events.length && (
+      {events.total > 0 && (
         <section className="mt-8 rounded-xl">
           <h2 className="text-xl text-slate-600 mb-4">{t("organization.passedEvent")}</h2>
-          <div className="grid gird-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-8">
-            {events.map((e) => (
+          <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-8">
+            {events.records.map((e) => (
               <EventCard
                 key={e.id}
                 event={e}
@@ -300,6 +302,15 @@ export default function OrganizationDetail(props: {
               />
             ))}
           </div>
+          <Pagination
+            className="mt-8"
+            current={events.current}
+            totalPages={Math.ceil(events.total / events.pageSize)}
+            getPageHref={(page) => ({
+              pathname: `/${organization.slug}`,
+              query: page > 1 ? { page } : {},
+            })}
+          />
         </section>
       )}
     </div>
@@ -320,6 +331,17 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     organization: context.params?.organization,
   });
 
+  const pageResult = z.coerce
+    .number()
+    .int()
+    .min(1)
+    .max(Number.MAX_SAFE_INTEGER)
+    .safeParse(context.query.page ?? 1);
+  if (!pageResult.success || Array.isArray(context.query.page)) {
+    return { notFound: true };
+  }
+  const current = pageResult.data;
+
   try {
     const locale = formatLocale(context.locale);
     const pageviewPath = getOrganizationDetailUrl({
@@ -328,63 +350,62 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       fullUrl: false,
     });
 
-    const data = await OrganizationsAPI.getOrganizationDetail(reqParamsParseResult.organization);
+    const slug = reqParamsParseResult.organization;
+    const [data, events] = await Promise.all([
+      OrganizationsAPI.getOrganizationDetail(slug),
+      OrganizationsAPI.getOrganizationEvents(slug, { current, pageSize: 12, orderByStartAt: "desc" }),
+    ]);
 
-    if (!data) {
+    if (!data || current > Math.max(1, Math.ceil(events.total / events.pageSize))) {
       return {
         notFound: true,
       };
     }
 
-    // 访问量按实体读取历史本底，需要先取得组织 ID。
-    const pv = await InfraAPI.getPageview({
-      targetType: "organization",
-      targetId: data.organization.id,
-      path: pageviewPath,
-    }).catch((): null => null);
+    const [pv, layoutProps] = await Promise.all([
+      InfraAPI.getPageview({
+        targetType: "organization",
+        targetId: data.organization.id,
+        path: pageviewPath,
+      }).catch((): null => null),
+      getLayoutProps(context.locale),
+    ]);
 
     const validOrganization = data.organization;
-    const validEvents: EventCardItem[] =
-      data.events
-        ?.map((e) => {
-          const { primary, others } = getEventOrganizations(e);
-          return {
-            id: e.id,
-            urlKey: e.urlKey,
-            name: e.name,
-            startAt: e.startAt,
-            endAt: e.endAt,
-            scale: e.scale,
-            type: e.type,
-            locationType: e.locationType,
-            placeName: e.place?.name ?? null,
-            region: e.region ? { localName: e.region.localName } : null,
-            organization: primary ? { slug: primary.slug, name: primary.name } : null,
-            organizations: others.map((o) => ({ slug: o.slug, name: o.name })),
-            features: e.features.map((f) => ({ name: f.name })),
-            thumbnail: e.thumbnail ?? null,
-            media: null,
-          };
-        })
-        .sort((a, b) => {
-          if (a.startAt && b.startAt) {
-            return dayjs(a.startAt).isBefore(b.startAt) ? 1 : -1;
-          }
-          return 0;
-        }) || [];
+    const validEvents: EventCardItem[] = events.records.map((e) => {
+      const { primary, others } = getEventOrganizations(e);
+      return {
+        id: e.id,
+        urlKey: e.urlKey,
+        name: e.name,
+        startAt: e.startAt,
+        endAt: e.endAt,
+        scale: e.scale,
+        type: e.type,
+        locationType: e.locationType,
+        placeName: e.place?.name ?? null,
+        region: e.region ? { localName: e.region.localName } : null,
+        organization: primary ? { slug: primary.slug, name: primary.name } : null,
+        organizations: others.map((o) => ({ slug: o.slug, name: o.name })),
+        features: e.features.map((f) => ({ name: f.name })),
+        thumbnail: e.thumbnail ?? null,
+        media: null,
+      };
+    });
 
     return {
       props: {
         organization: validOrganization,
-        events: validEvents,
+        events: { ...events, records: validEvents },
+        firstEventStartAt: data.firstEventStartAt,
         pageviewCount: pv,
         headMetas: {
           title: `${validOrganization?.name}`,
           des: organizationDetailDescriptionGenerator(
             locale,
             validOrganization!,
-            validEvents?.length,
-            validEvents[0]?.startAt,
+            events.total,
+            data.latestEventStartAt,
           ),
           keywords: keywordGenerator({
             page: "organization",
@@ -407,7 +428,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
             ],
           }),
         },
-        ...(await getLayoutProps(context.locale)),
+        ...layoutProps,
       },
     };
   } catch (error) {

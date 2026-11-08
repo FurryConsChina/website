@@ -17,9 +17,19 @@ export class OrganizationsAPI {
   static async getOrganizationDetail(slug: string) {
     const response = await API.get<{
       organization: Organization;
-      events: OrganizationEventItem[];
-    }>("website/organization/detail", {
-      params: { slug },
+      firstEventStartAt: string | null;
+      latestEventStartAt: string | null;
+    }>(`website/organization/${slug}`);
+
+    return response.data;
+  }
+
+  static async getOrganizationEvents(
+    slug: string,
+    params: { current: number; pageSize: number; orderByStartAt?: "asc" | "desc" },
+  ) {
+    const response = await API.get<ListResponse<OrganizationEventItem>>(`website/organization/${slug}/events`, {
+      params,
     });
 
     return response.data;
