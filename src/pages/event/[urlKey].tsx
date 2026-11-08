@@ -92,8 +92,8 @@ export default function EventDetail({ event, pageviewCount }: { event: EventItem
 
             <p aria-label={t("event.aria.location")} className="flex items-center text-gray-500 mt-4">
               <IoLocation className="text-gray-500 inline-block mr-2" />
-              {`${event.region?.localName || t("event.unknown")} · ${
-                event.place?.address ? event.place.address : t("event.unknown")
+              {`${event.location.region?.localName || t("event.unknown")} · ${
+                event.location.place?.address ? event.location.place.address : t("event.unknown")
               }`}
             </p>
 
@@ -102,12 +102,12 @@ export default function EventDetail({ event, pageviewCount }: { event: EventItem
               <EventDate event={event} locale={i18n.language as currentSupportLocale} />
             </p>
 
-            {!!event.type && !!event.locationType && (
+            {!!event.type && !!event.location.type && (
               <p aria-label={t("event.aria.venueType")} className="flex items-center text-gray-500">
                 <FaHotel className="text-gray-500 inline-block mr-2" />
 
                 {[
-                  event.locationType && t(`event.locationType.${event.locationType}`),
+                  event.location.type && t(`event.locationType.${event.location.type}`),
                   event.type && t(`event.type.${event.type}`),
                 ]
                   .filter(Boolean)
@@ -126,9 +126,9 @@ export default function EventDetail({ event, pageviewCount }: { event: EventItem
       </div>
 
       <EventMapCard
-        key={`${event.place?.latitude ?? ""}:${event.place?.longitude ?? ""}`}
-        latitude={event.place?.latitude}
-        longitude={event.place?.longitude}
+        key={`${event.location.place?.latitude ?? ""}:${event.location.place?.longitude ?? ""}`}
+        latitude={event.location.place?.latitude}
+        longitude={event.location.place?.longitude}
       />
 
       <div className="flex my-4 lg:items-start flex-col-reverse md:flex-row">
@@ -177,31 +177,21 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     const { locale: localeParam } = context;
     const appLocale = formatLocale(localeParam);
 
-    const identifier = z
+    const urlKey = z
       .string()
-      .regex(/^(?:[a-z0-9]{7}|[a-zA-Z0-9-]+-[a-z0-9]{7})$/)
+      .regex(/^[a-z0-9]{7}$/)
       .safeParse(context.params?.urlKey);
 
-    if (!identifier.success) {
+    if (!urlKey.success) {
       return { notFound: true };
     }
 
-    if (identifier.data.length !== 7) {
-      const event = await EventsAPI.getEventDetail({ "full-slug": identifier.data });
-      return {
-        redirect: {
-          destination: getEventDetailUrl({ urlKey: event.urlKey, locale: appLocale }),
-          statusCode: 301,
-        },
-      };
-    }
-
     const pageviewPath = getEventDetailUrl({
-      urlKey: identifier.data,
+      urlKey: urlKey.data,
       locale: appLocale,
     });
 
-    const event = await EventsAPI.getEventDetail({ "url-key": identifier.data });
+    const event = await EventsAPI.getEventDetail(urlKey.data);
     // 访问量按实体读取历史本底，需要先取得活动 ID。
     const pv = await InfraAPI.getPageview({
       targetType: "event",
@@ -223,7 +213,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
             event: {
               name: event?.name,
               startDate: event?.startAt,
-              city: event.region?.localName || undefined,
+              city: event.location.region?.localName || undefined,
             },
           }),
           des: eventDescriptionGenerator(appLocale, { ...event, organization: primaryOrganization }),

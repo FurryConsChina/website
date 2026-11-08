@@ -1,20 +1,19 @@
-import { EventSchema } from "@/types/event";
-import type { EventItem } from "@/types/event";
+import { EventListItemSchema, EventSchema } from "@/types/event";
+import type { EventItem, EventListItem } from "@/types/event";
 import { ListResponse } from "@/types/api";
 import API from "@/api";
 
 export class EventsAPI {
-  static async getEventDetail(
-    params:
-      | { "url-key": string; "full-slug"?: never; slug?: never; organization?: never }
-      | { "full-slug": string; "url-key"?: never; slug?: never; organization?: never }
-      | { slug: string; organization: string; "url-key"?: never; "full-slug"?: never },
-  ): Promise<EventItem> {
+  static async getEventDetail(urlKey: string): Promise<EventItem> {
+    const response = await API.get(`website/event/url-key/${encodeURIComponent(urlKey)}`);
+
+    return EventSchema.parse(response.data);
+  }
+
+  static async getLegacyEventDetail(params: { slug: string; organization: string }): Promise<EventItem> {
     const response = await API.get("website/event/detail", { params });
 
-    const validEvent = EventSchema.parse(response.data);
-
-    return validEvent;
+    return EventSchema.parse(response.data);
   }
 
   static async getEventList({
@@ -34,7 +33,7 @@ export class EventsAPI {
     eventRegionCode?: string[];
     organizationSlug?: string[];
   }) {
-    const response = await API.post<ListResponse<EventItem>>("/website/event/list", {
+    const response = await API.post<ListResponse<EventListItem>>("/website/event/list", {
       current,
       pageSize,
       eventStartAt,
@@ -44,6 +43,9 @@ export class EventsAPI {
       organizationSlug,
     });
 
-    return response.data;
+    return {
+      ...response.data,
+      records: response.data.records.map((event) => EventListItemSchema.parse(event)),
+    };
   }
 }

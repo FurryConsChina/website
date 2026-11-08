@@ -1,5 +1,5 @@
 import { OrganizationStatus } from "@/constants/organization";
-import type { EventItem } from "@/types/event";
+import type { EventListItem } from "@/types/event";
 import * as z from "zod/v4";
 
 export const OrganizationLinkSchema = z.object({
@@ -14,7 +14,7 @@ export const OrganizationLinkSchema = z.object({
   updatedAt: z.iso.datetime(),
 });
 
-export const OrganizationSchema = z.object({
+export const OrganizationSummarySchema = z.object({
   id: z.uuid(),
   slug: z.string(),
   name: z.string(),
@@ -24,6 +24,10 @@ export const OrganizationSchema = z.object({
   logoUrl: z.string().nullable(),
   contactMail: z.email().nullable(),
   foundedOn: z.iso.datetime().nullable(),
+});
+
+export const OrganizationSchema = z.object({
+  ...OrganizationSummarySchema.shape,
   links: z.array(OrganizationLinkSchema),
 });
 
@@ -38,7 +42,7 @@ export type OrganizationListItem = {
 };
 
 /** 组织详情接口的活动项：后端会去掉 detail/media/ticketChannels，并附带该组织的参与类型。 */
-export type OrganizationEventItem = Omit<EventItem, "detail" | "media" | "ticketChannels"> & {
+export type OrganizationEventItem = Omit<EventListItem, "detail" | "media" | "ticketChannels"> & {
   activityType:
     | "hosted"
     | "participated:guest"
