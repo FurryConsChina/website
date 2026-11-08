@@ -151,7 +151,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.23.2, @babel/runtime@npm:^7.29.7":
+"@babel/runtime@npm:^7.23.2":
   version: 7.29.13
   resolution: "@babel/runtime@npm:7.29.13"
   checksum: 10/874e520d41a28eb873eb0278d303fc506271d59b0f41d0708298dd7d04701b2f4b97eb7d402322488b0fc5cecd55b396338db5aa4b1d4a1d4b84d973a58d70b6
@@ -4321,22 +4321,21 @@ __metadata:
     eslint-config-next: "npm:16.4.5"
     eslint-config-prettier: "npm:^10.1.8"
     git-revision-webpack-plugin: "npm:^5.0.0"
-    i18next: "npm:^26.7.2"
+    i18next: "npm:^27.0.0"
     next: "npm:16.4.5"
-    next-i18next: "npm:^16.4.6"
+    next-i18next: "npm:^16.4.7"
     nuqs: "npm:^2.10.2"
     oxfmt: "npm:0.77.0"
     postcss: "npm:^8.5.32"
     postcss-flexbugs-fixes: "npm:^5.0.2"
-    postcss-nested: "npm:^7.0.2"
     postcss-preset-env: "npm:^11.6.2"
     react: "npm:19.3.1"
     react-dom: "npm:19.3.1"
     react-hot-toast: "npm:^2.6.1"
-    react-i18next: "npm:^17.1.13"
+    react-i18next: "npm:^18.0.0"
     react-icons: "npm:^5.7.0"
     tailwindcss: "npm:^3.4.19"
-    typescript: "npm:5.9.3"
+    typescript: "npm:6.0.3"
     webpack-stats-plugin: "npm:^1.1.3"
     zod: "npm:^4.6.7"
   languageName: unknown
@@ -4616,15 +4615,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"i18next@npm:^26.7.2":
-  version: 26.7.2
-  resolution: "i18next@npm:26.7.2"
+"i18next@npm:^27.0.0":
+  version: 27.0.0
+  resolution: "i18next@npm:27.0.0"
   peerDependencies:
     typescript: ^5 || ^6 || ^7
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/43bc0c79b4590108c81887dcf0cf583107bf6052fb7d658281fdabb5a8e7304a1869031acab7dd3cfeb267bb445dfa6f967643a39098666fcfdfcb1d9a494b82
+  checksum: 10/27a7a2c9747f6baef043fb02806bb3148f8c4296bfbf733d947984149117d2ab603e5b57fcf74bcd0ec16ea4f0eb56142bb19047f99d257a29fc6cf76684d0fa
   languageName: node
   linkType: hard
 
@@ -5321,7 +5320,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next-i18next@npm:^16.4.6":
+"next-i18next@npm:^16.4.7":
   version: 16.4.7
   resolution: "next-i18next@npm:16.4.7"
   dependencies:
@@ -6072,17 +6071,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-nested@npm:^7.0.2":
-  version: 7.0.2
-  resolution: "postcss-nested@npm:7.0.2"
-  dependencies:
-    postcss-selector-parser: "npm:^7.0.0"
-  peerDependencies:
-    postcss: ^8.2.14
-  checksum: 10/adcb74bb94869f7313f2677bcdf5dd9e368602ca6d3e1c1e3da514ee00ccf5c2bdd414fdb9141de65b0b7aee83d8f2b149c0d3723bc4af5ee8b8062dc6e09c3d
-  languageName: node
-  linkType: hard
-
 "postcss-nesting@npm:^14.0.3":
   version: 14.0.3
   resolution: "postcss-nesting@npm:14.0.3"
@@ -6265,7 +6253,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-selector-parser@npm:^7.0.0, postcss-selector-parser@npm:^7.1.1":
+"postcss-selector-parser@npm:^7.1.1":
   version: 7.1.7
   resolution: "postcss-selector-parser@npm:7.1.7"
   dependencies:
@@ -6415,25 +6403,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-i18next@npm:^17.1.13":
-  version: 17.1.13
-  resolution: "react-i18next@npm:17.1.13"
+"react-i18next@npm:^18.0.0":
+  version: 18.0.0
+  resolution: "react-i18next@npm:18.0.0"
   dependencies:
-    "@babel/runtime": "npm:^7.29.7"
     html-parse-stringify: "npm:^4.0.1"
-    use-sync-external-store: "npm:^1.6.0"
   peerDependencies:
-    i18next: ">= 26.2.0"
-    react: ">= 16.8.0"
+    i18next: ">= 27.0.0"
+    react: ">= 18.0.0"
     typescript: ^5 || ^6 || ^7
   peerDependenciesMeta:
-    react-dom:
-      optional: true
-    react-native:
-      optional: true
     typescript:
       optional: true
-  checksum: 10/335ed1351bb01b12b70e9d85c56a6b05ae236ee2813b3062b64f2e7c36c80fc2d304002d642174bc3295de4d3391160a2f8c2c23b356f4f26104cc684b4bac41
+  checksum: 10/ab9b077dc42cb04fd9da0cecad4647e6147b4bdf1951a01d72d074e5d4c2d75bdae0cc68403cb5093b9a1549b10b1109926ed2bf9abbefb2c6e2d7299711e659
   languageName: node
   linkType: hard
 
@@ -7390,23 +7372,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:5.9.3":
-  version: 5.9.3
-  resolution: "typescript@npm:5.9.3"
+"typescript@npm:6.0.3":
+  version: 6.0.3
+  resolution: "typescript@npm:6.0.3"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10/c089d9d3da2729fd4ac517f9b0e0485914c4b3c26f80dc0cffcb5de1719a17951e92425d55db59515c1a7ddab65808466debb864d0d56dcf43f27007d0709594
+  checksum: 10/0ef2357a4cffd916b52b683a021cdab0f81eea4e9aa35f2d254581c9a5106da02224e3392e1b0ed42b7a48f80c966e5f52b8e1a27941fa0523c1705a9c2e0330
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>":
-  version: 5.9.3
-  resolution: "typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"
+"typescript@patch:typescript@npm%3A6.0.3#optional!builtin<compat/typescript>":
+  version: 6.0.3
+  resolution: "typescript@patch:typescript@npm%3A6.0.3#optional!builtin<compat/typescript>::version=6.0.3&hash=5786d5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10/696e1b017bc2635f4e0c94eb4435357701008e2f272f553d06e35b494b8ddc60aa221145e286c28ace0c89ee32827a28c2040e3a69bdc108b1a5dc8fb40b72e3
+  checksum: 10/22b67a18dafedf9b1468b64ca20d9aa02ea61d449b65413d8aa6552aeb63f52ef369e86beb25b6b4c91a803d9726ee5c196f391a9b64201263263410a4223ee6
   languageName: node
   linkType: hard
 
