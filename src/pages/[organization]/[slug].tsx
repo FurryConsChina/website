@@ -14,8 +14,14 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   const params = z
     .object({
-      slug: z.string().min(1).regex(/^[a-zA-Z0-9-]+$/),
-      organization: z.string().min(1).regex(/^[a-zA-Z0-9-]+$/),
+      slug: z
+        .string()
+        .min(1)
+        .regex(/^[a-zA-Z0-9-]+$/),
+      organization: z
+        .string()
+        .min(1)
+        .regex(/^[a-zA-Z0-9-]+$/),
     })
     .safeParse(context.params);
 

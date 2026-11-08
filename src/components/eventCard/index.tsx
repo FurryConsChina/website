@@ -75,7 +75,11 @@ export default function EventCard({
           "hover:outline-red-400 hover:scale-105",
         )}
       >
-        <div className={clsx("flex md:flex-col justify-between md:justify-end min-h-[150px] md:h-full rounded-xl relative")}>
+        <div
+          className={clsx(
+            "flex md:flex-col justify-between md:justify-end min-h-[150px] md:h-full rounded-xl relative",
+          )}
+        >
           <EventCover
             imageUrl={finalEventCoverImage}
             eventName={event.name}
@@ -112,7 +116,10 @@ export default function EventCard({
                 "md:truncate md:group-hover:text-clip md:group-hover:whitespace-normal",
               )}
             >
-              {[event.region?.localName, [event.organization?.name, ...event.organizations.map((o) => o.name)].filter(Boolean).join("·")]
+              {[
+                event.region?.localName,
+                [event.organization?.name, ...event.organizations.map((o) => o.name)].filter(Boolean).join("·"),
+              ]
                 .filter(Boolean)
                 .join(" ")}
             </h4>

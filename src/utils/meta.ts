@@ -152,21 +152,9 @@ function generateCityDetailKeywords(city: { name: string }, locale: currentSuppo
   switch (locale) {
     case "zh-Hans":
     default:
-      return [
-        `${city.name}`,
-        `${city.name}兽展`,
-        `${city.name}兽聚`,
-        `${city.name}兽展时间`,
-        `${city.name}兽展日历`,
-      ];
+      return [`${city.name}`, `${city.name}兽展`, `${city.name}兽聚`, `${city.name}兽展时间`, `${city.name}兽展日历`];
     case "zh-Hant":
-      return [
-        `${city.name}`,
-        `${city.name}獸展`,
-        `${city.name}獸聚`,
-        `${city.name}獸展時間`,
-        `${city.name}獸展日曆`,
-      ];
+      return [`${city.name}`, `${city.name}獸展`, `${city.name}獸聚`, `${city.name}獸展時間`, `${city.name}獸展日曆`];
     case "en":
       return [
         `${city.name}`,
@@ -333,11 +321,7 @@ function organizationDetailDescriptionGenerator(
   }
 }
 
-function cityDetailDescriptionGenerator(
-  locale: currentSupportLocale,
-  cityName: string,
-  eventCount: number,
-) {
+function cityDetailDescriptionGenerator(locale: currentSupportLocale, cityName: string, eventCount: number) {
   switch (locale) {
     case "zh-Hans":
     default:

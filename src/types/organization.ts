@@ -39,5 +39,10 @@ export type OrganizationListItem = {
 
 /** 组织详情接口的活动项：后端会去掉 detail/media/ticketChannels，并附带该组织的参与类型。 */
 export type OrganizationEventItem = Omit<EventItem, "detail" | "media" | "ticketChannels"> & {
-  activityType: "hosted" | "participated:guest" | "participated:exhibitor" | "participated:sponsor" | "participated:media";
+  activityType:
+    | "hosted"
+    | "participated:guest"
+    | "participated:exhibitor"
+    | "participated:sponsor"
+    | "participated:media";
 };
