@@ -24,7 +24,7 @@ export function generateEventDetailStructuredData({
       })
     : null;
   const organizationName = primaryOrganization?.name ?? null;
-  const placeAddress = event?.place?.address ?? null;
+  const placeAddress = event.location.place?.address ?? null;
 
   return {
     breadcrumb: {
@@ -60,11 +60,11 @@ export function generateEventDetailStructuredData({
       eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
       location: {
         "@type": "Place",
-        name: placeAddress,
+        name: event.location.place?.name ?? null,
         address: {
           "@type": "PostalAddress",
           streetAddress: placeAddress,
-          addressLocality: event.region?.localName ?? null,
+          addressLocality: event.location.region?.localName ?? null,
           // postalCode: "19019",
           // addressRegion: event?.city,
           addressCountry: "CN",

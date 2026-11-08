@@ -3,7 +3,7 @@ import { Field, Label, Switch } from "@headlessui/react";
 import { groupBy } from "es-toolkit/compat";
 import { createLoader, parseAsBoolean, useQueryState } from "nuqs";
 import { useTranslation } from "next-i18next/pages";
-import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
+import { getLayoutProps } from "@/utils/layoutProps";
 import type { GetServerSidePropsContext } from "next";
 import { EventsAPI } from "@/api/events";
 import EventCard from "@/components/eventCard";
@@ -258,12 +258,7 @@ export async function getServerSideProps({ locale = "zh-Hans", query, res }: Get
     eventStartAt: includePastEvents
       ? dayjs().startOf("year").toISOString()
       : dayjs().subtract(1, "month").startOf("month").toISOString(),
-    eventStatus: [
-      EventStatus.EventScheduled,
-      EventStatus.EventPostponed,
-      EventStatus.EventRescheduled,
-      EventStatus.EventMovedOnline,
-    ],
+    eventStatus: [EventStatus.EventScheduled, EventStatus.EventRescheduled, EventStatus.EventMovedOnline],
   });
 
   return {
@@ -279,7 +274,7 @@ export async function getServerSideProps({ locale = "zh-Hans", query, res }: Get
           scale: event.scale,
           type: event.type,
           locationType: event.locationType,
-          address: event.place?.address ?? null,
+          placeName: event.place?.name ?? null,
           region: event.region ? { localName: event.region.localName ?? null } : null,
           organization: primary ? { slug: primary.slug, name: primary.name } : null,
           organizations: others.map((organization) => ({
@@ -297,7 +292,7 @@ export async function getServerSideProps({ locale = "zh-Hans", query, res }: Get
           locale: formatLocale(locale),
         }),
       },
-      ...(await serverSideTranslations(locale, ["common"])),
+      ...(await getLayoutProps(locale)),
     },
   };
 }

@@ -137,7 +137,7 @@ export default function EventCard({
             <div className="mt-1 flex items-start text-xs md:text-sm text-slate-600 truncate group-hover:text-clip group-hover:whitespace-normal">
               {/* <IoLocation className="hidden md:block mr-1 flex-shrink-0 text-xs h-5" /> */}
               <i className={clsx(styles.locationIcon, "hidden md:block mr-1 flex-shrink-0 text-xs h-5")} />
-              <EventAddress event={event} />
+              <EventLocation event={event} />
             </div>
 
             {!!tags.length && (
@@ -294,19 +294,19 @@ export function EventDate({
   return `${startDateLabel} - ${endDateLabel}`;
 }
 
-function EventAddress({
+function EventLocation({
   event,
 }: {
   event: {
     region: { localName: string | null } | null;
-    address: string | null;
+    placeName: string | null;
   };
 }) {
   const { t } = useTranslation();
 
   return (
-    <span aria-label={t("event.aria.address")} className="truncate">
-      {event.region?.localName} {event.address || t("event.unknown")}
+    <span aria-label={t("event.aria.location")} className="truncate">
+      {event.region?.localName} {event.placeName || t("event.unknown")}
     </span>
   );
 }

@@ -1,6 +1,6 @@
 import { sendTrack } from "@/utils/track";
 import { GetStaticPropsContext } from "next";
-import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
+import { getLayoutProps } from "@/utils/layoutProps";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useTranslation } from "next-i18next/pages";
@@ -41,7 +41,7 @@ export default function NotFoundPage() {
 export async function getStaticProps(context: GetStaticPropsContext) {
   return {
     props: {
-      ...(context.locale ? await serverSideTranslations(context.locale, ["common"]) : {}),
+      ...(await getLayoutProps(context.locale)),
     },
   };
 }

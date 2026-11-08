@@ -7,7 +7,7 @@ import { breadcrumbGenerator } from "@/utils/structuredData";
 import { sendTrack } from "@/utils/track";
 import { groupBy } from "es-toolkit";
 import type { GetServerSidePropsContext } from "next";
-import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
+import { getLayoutProps } from "@/utils/layoutProps";
 import Link from "next/link";
 import { FaLink } from "react-icons/fa6";
 import { useTranslation } from "next-i18next/pages";
@@ -124,7 +124,7 @@ export async function getServerSideProps({ locale, res }: { locale: string; res:
           ],
         }),
       },
-      ...(await serverSideTranslations(locale, ["common"])),
+      ...(await getLayoutProps(locale)),
     },
   };
 }

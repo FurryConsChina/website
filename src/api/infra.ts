@@ -1,9 +1,9 @@
 import API from "@/api";
 
 type GetPageviewResponse = {
-  success: boolean;
-  pageCount?: {
-    pageviews?: number | { value?: number } | null;
+  success: true;
+  pageCount: {
+    pageviews: number;
   } | null;
 };
 
@@ -19,8 +19,7 @@ export class InfraAPI {
       params: { targetType, targetId, path },
     });
 
-    const pageviews = response.data.pageCount?.pageviews;
-    const count = typeof pageviews === "number" ? pageviews : pageviews?.value;
+    const count = response.data.pageCount?.pageviews;
 
     return typeof count === "number" && Number.isFinite(count) ? count : null;
   }

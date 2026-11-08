@@ -1,10 +1,9 @@
 import { DurationType, SelectedFilterType } from "@/types/list";
-import type { EventOrganizer } from "@/types/event";
 import { groupBy } from "es-toolkit/compat";
 import dayjs from "dayjs";
 
 /** 从主办关联中拆出显式标记的主办组织（isPrimary）与其余协办组织；未标记时主办为空，不做猜测。 */
-export function getEventOrganizations(event: { organizers: EventOrganizer[] }) {
+export function getEventOrganizations<T>(event: { organizers: { isPrimary: boolean; organization: T }[] }) {
   const primary = event.organizers.find((organizer) => organizer.isPrimary)?.organization ?? null;
   const others = event.organizers
     .map((organizer) => organizer.organization)

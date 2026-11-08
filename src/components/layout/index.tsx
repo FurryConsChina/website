@@ -30,8 +30,10 @@ export default function Layout({
   children,
   headMetas,
   structuredData,
+  slogan,
 }: {
   children: React.ReactNode;
+  slogan?: string | null;
   headMetas?: {
     title?: string;
     des?: string;
@@ -137,7 +139,7 @@ export default function Layout({
         )}
       </Head>
       <Toaster />
-      <Header />
+      <Header slogan={slogan} />
       <AnnouncementSlider />
       <div className="flex-grow mx-1 lg:mx-0">{children}</div>
       <Sidebar />

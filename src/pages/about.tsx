@@ -1,6 +1,6 @@
 import { FriendSiteLinks } from "@/constants/staticConfig";
 import { keywordGenerator } from "@/utils/meta";
-import { serverSideTranslations } from "next-i18next/pages/serverSideTranslations";
+import { getLayoutProps } from "@/utils/layoutProps";
 
 const Moderators = [
   {
@@ -245,7 +245,7 @@ export async function getStaticProps({ locale }: { locale: string }) {
   return {
     props: {
       headMetas: {},
-      ...(await serverSideTranslations(locale, ["common"])),
+      ...(await getLayoutProps(locale)),
     },
     revalidate: 500,
   };

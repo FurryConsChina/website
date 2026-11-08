@@ -30,7 +30,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 
   try {
-    const event = await EventsAPI.getEventDetail(params.data);
+    const event = await EventsAPI.getLegacyEventDetail(params.data);
     return {
       redirect: {
         destination: getEventDetailUrl({

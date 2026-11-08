@@ -1,6 +1,5 @@
 {
   "header.title": "獸展日曆",
-  "header.slogan": "蟬鳴之時",
   "header.nav.homepage": "首頁",
   "header.nav.city": "城市",
   "header.nav.organization": "主辦單位",
@@ -95,6 +94,10 @@
   "organization.des": "主辦單位簡介",
   "organization.defaultDes": "這個主辦單位尚未提供簡介。",
   "organization.passedEvent": "歷年活動",
+  "pagination.label": "分頁導覽",
+  "pagination.previousPage": "上一頁",
+  "pagination.nextPage": "下一頁",
+  "pagination.pageCounter": "第 {{current}} / {{total}} 頁",
   "pageview.label": "熱度",
   "pageview.aria": "本頁累計瀏覽 {{count}} 次",
   "years.title": "年度統計",
