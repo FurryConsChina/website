@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
-const { withSentryConfig } = require("@sentry/nextjs");
+const { withSentryConfig } = require("@sentry/nextjs/config");
 const { GitRevisionPlugin } = require("git-revision-webpack-plugin");
 const { StatsWriterPlugin } = require("webpack-stats-plugin");
 const withBundleAnalyzer = require("@next/bundle-analyzer")({

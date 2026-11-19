@@ -2,7 +2,7 @@ import { AboutUsLinks, FriendSiteLinks } from "@/constants/staticConfig";
 import { sendTrack } from "@/utils/track";
 import Link from "next/link";
 import { useTranslation } from "next-i18next/pages";
-import Image from "@/components/image";
+import Image from "@/components/Image";
 
 export default function Footer({ isCNRegion }: { isCNRegion: boolean }) {
   const { t } = useTranslation();

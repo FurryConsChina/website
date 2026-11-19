@@ -4,7 +4,7 @@ import { NuqsAdapter } from "nuqs/adapters/next/pages";
 import { Noto_Sans_SC, Rubik } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 
-import Layout from "@/components/layout";
+import Layout from "@/components/Layout";
 
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";

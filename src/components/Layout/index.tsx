@@ -1,10 +1,10 @@
 import Head from "next/head";
 import React from "react";
-import Header from "@/components/layout/header";
-import Footer from "@/components/layout/footer";
+import Header from "@/components/Layout/header";
+import Footer from "@/components/Layout/footer";
 import { descriptionGenerator, titleGenerator, universalKeywords } from "@/utils/meta";
 import { currentSupportLocale } from "@/utils/locale";
-import AnnouncementSlider from "@/components/announcementSlider";
+import AnnouncementSlider from "@/components/AnnouncementSlider";
 import { useRouter } from "next/router";
 import { Toaster } from "react-hot-toast";
 import Sidebar from "@/components/Sidebar";

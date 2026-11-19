@@ -5,14 +5,14 @@ import "dayjs/locale/zh-tw";
 import Link from "next/link";
 import { useMemo } from "react";
 import { useTranslation } from "next-i18next/pages";
-import Image from "@/components/image";
+import Image from "@/components/Image";
 import { getEventCoverImgPath } from "@/utils/imageLoader";
 import { sendTrack } from "@/utils/track";
 import { getEventDetailUrl } from "@/utils/url";
 import { currentSupportLocale, getDayjsLocale } from "@/utils/locale";
 
 import type { EventCardItem } from "@/types/event";
-import styles from "@/components/eventCard/index.module.css";
+import styles from "@/components/EventCard/index.module.css";
 
 export default function EventCard({
   event,

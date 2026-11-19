@@ -4,7 +4,7 @@ import Autoplay from "embla-carousel-autoplay";
 import useEmblaCarousel from "embla-carousel-react";
 import clsx from "clsx";
 
-import Image from "@/components/image";
+import Image from "@/components/Image";
 import { sendTrack } from "@/utils/track";
 
 import styles from "./index.module.css";
