@@ -1,6 +1,7 @@
 import { eventGroupByMonth, eventGroupByYear, getEventOrganizations } from "@/utils/event";
 import SimpleEventCard from "@/components/SimpleEventCard";
 import { getLayoutProps } from "@/utils/layoutProps";
+import type { GetServerSidePropsContext } from "next";
 import { useTranslation } from "next-i18next/pages";
 import { EventsAPI } from "@/api/events";
 import type { SimpleEventItem } from "@/types/event";
@@ -19,7 +20,7 @@ export default function Years({ events }: { events: SimpleEventItem[] }) {
   return (
     <div>
       <div className="mb-4 border rounded-xl p-6 bg-white">
-        <h2 className="font-bold text-red-400 text-2xl mb-4">{t("years.title")}</h2>
+        <h1 className="font-bold text-red-400 text-2xl mb-4">{t("years.title")}</h1>
         <div className="text-gray-600">
           {t("years.des", {
             totalYear: years.filter((year) => year !== "no-date").length,
@@ -71,11 +72,16 @@ export default function Years({ events }: { events: SimpleEventItem[] }) {
   );
 }
 
-export async function getStaticProps({ locale }: { locale: string }) {
-  const events = await EventsAPI.getEventList({
-    current: "1",
-    pageSize: "999",
-  });
+export async function getServerSideProps({ locale = "zh-Hans", res }: GetServerSidePropsContext) {
+  res.setHeader("Cache-Control", "public, s-maxage=500, stale-while-revalidate=500");
+
+  const [events, layoutProps] = await Promise.all([
+    EventsAPI.getEventList({
+      current: "1",
+      pageSize: "999",
+    }),
+    getLayoutProps(locale),
+  ]);
   const slimEvents: SimpleEventItem[] = events.records.map((event) => {
     const { primary } = getEventOrganizations(event);
     return {
@@ -89,14 +95,15 @@ export async function getStaticProps({ locale }: { locale: string }) {
       organization: primary ? { slug: primary.slug, name: primary.name } : null,
     };
   });
+  const totalYears = eventGroupByYear(slimEvents, "asc").filter((group) => group.year !== "no-date").length;
 
   return {
     props: {
       events: slimEvents,
       headMetas: {
         title: YearPageMeta[locale as currentSupportLocale].title,
-        des: YearPageMeta[locale as currentSupportLocale].description(12, events.total || 0),
-        link: "/years",
+        des: YearPageMeta[locale as currentSupportLocale].description(totalYears, events.total || 0),
+        url: "/years",
       },
       structuredData: {
         ...breadcrumbGenerator({
@@ -108,8 +115,7 @@ export async function getStaticProps({ locale }: { locale: string }) {
           ],
         }),
       },
-      ...(await getLayoutProps(locale)),
+      ...layoutProps,
     },
-    revalidate: 500,
   };
 }

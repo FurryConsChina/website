@@ -85,11 +85,14 @@ export default function City(props: { regionGroups: Record<string, RegionListIte
 export async function getServerSideProps({ locale, res }: { locale: string; res: GetServerSidePropsContext["res"] }) {
   res.setHeader("Cache-Control", "public, s-maxage=300, stale-while-revalidate=300");
 
-  const regions = await RegionAPI.getRegionList({
-    current: 1,
-    pageSize: 100,
-    withEvents: true,
-  });
+  const [regions, layoutProps] = await Promise.all([
+    RegionAPI.getRegionList({
+      current: 1,
+      pageSize: 100,
+      withEvents: true,
+    }),
+    getLayoutProps(locale),
+  ]);
 
   const regionWithoutCountry = regions.records.filter((item) => item.kind !== RegionType.COUNTRY);
 
@@ -112,7 +115,7 @@ export async function getServerSideProps({ locale, res }: { locale: string; res:
       headMetas: {
         title: CityPageMeta[locale as currentSupportLocale].title,
         des: CityPageMeta[locale as currentSupportLocale].description(regions.total),
-        link: "/city",
+        url: "/city",
       },
       structuredData: {
         ...breadcrumbGenerator({
@@ -124,7 +127,7 @@ export async function getServerSideProps({ locale, res }: { locale: string; res:
           ],
         }),
       },
-      ...(await getLayoutProps(locale)),
+      ...layoutProps,
     },
   };
 }

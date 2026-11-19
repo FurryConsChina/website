@@ -1,7 +1,11 @@
 import { RegionAPI } from "@/api/region";
+import Pagination from "@/components/Pagination";
+import type { ListResponse } from "@/types/api";
 import type { RegionListItem } from "@/types/region";
+import { getEventOrganizations } from "@/utils/event";
 import { sendTrack } from "@/utils/track";
 import { getEventDetailUrl } from "@/utils/url";
+import axios from "axios";
 import { GetServerSidePropsContext } from "next";
 import Link from "next/link";
 import * as z from "zod/v4";
@@ -13,7 +17,6 @@ import { getLayoutProps } from "@/utils/layoutProps";
 import { groupBy } from "es-toolkit";
 import { useTranslation } from "next-i18next/pages";
 import { currentSupportLocale, getDayjsLocale, monthNumberFormatter } from "@/utils/locale";
-import { EventsAPI } from "@/api/events";
 import dayjs from "dayjs";
 import { breadcrumbGenerator } from "@/utils/structuredData";
 import { cityDetailDescriptionGenerator, cityDetailKeywordGenerator, CityPageMeta } from "@/utils/meta";
@@ -28,10 +31,16 @@ type CityEventItem = {
   organization: { name: string; slug: string } | null;
 };
 
-export default function CityDetail({ region, events }: { region: RegionListItem; events: CityEventItem[] }) {
+export default function CityDetail({
+  region,
+  events,
+}: {
+  region: RegionListItem;
+  events: ListResponse<CityEventItem>;
+}) {
   const { t, i18n } = useTranslation();
   // 按年份分组
-  const groupEventsByYear = groupBy(events, (event) => {
+  const groupEventsByYear = groupBy(events.records, (event) => {
     const year = event.startAt ? dayjs(event.startAt).year() : "no-date";
     return year;
   });
@@ -82,11 +91,10 @@ export default function CityDetail({ region, events }: { region: RegionListItem;
   return (
     <>
       <div className="bg-white border p-6 rounded-xl">
-        <h2 className="text-2xl font-bold text-gray-600">{region.name}</h2>
+        <h1 className="text-2xl font-bold text-gray-600">{region.name}</h1>
       </div>
 
       <div className="bg-white border p-6 rounded-xl mt-6">
-        <h2 className="text-2xl font-bold text-gray-600"></h2>
         <div className="grid grid-cols-1 gap-8 mt-4">
           {yearList.map((year) => (
             <div key={year} className="space-y-4">
@@ -107,6 +115,15 @@ export default function CityDetail({ region, events }: { region: RegionListItem;
             </div>
           ))}
         </div>
+        <Pagination
+          className="mt-8"
+          current={events.current}
+          totalPages={Math.ceil(events.total / events.pageSize)}
+          getPageHref={(page) => ({
+            pathname: `/city/${region.slug}`,
+            query: page > 1 ? { page } : {},
+          })}
+        />
       </div>
     </>
   );
@@ -159,88 +176,92 @@ function MonthSection({ events }: { events: CityEventItem[] }) {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const { locale = "zh-Hans", params, res } = context;
+  const { locale = "zh-Hans", params, query, res } = context;
   res.setHeader("Cache-Control", "public, s-maxage=300, stale-while-revalidate=300");
 
-  const regionCode = z
+  const regionCodeResult = z
     .string()
     .min(1)
     .regex(/^[a-zA-Z0-9-]+$/)
-    .parse(params?.code);
+    .safeParse(params?.code);
 
-  const [region, regionEvents] = await Promise.all([
-    RegionAPI.getRegionDetail(regionCode),
-    EventsAPI.getEventList({
-      eventRegionCode: [regionCode],
-      current: "1",
-      pageSize: "50",
-    }),
-  ]);
-
-  if (!region) {
-    return {
-      notFound: true,
-    };
+  if (!regionCodeResult.success) {
+    return { notFound: true };
   }
+  const regionCode = regionCodeResult.data;
 
-  const pickEventSchema = z.array(
-    z.object({
-      id: z.string(),
-      urlKey: z.string(),
-      thumbnail: z.string().nullable(),
-      organizers: z.array(
-        z.object({
-          isPrimary: z.boolean(),
-          organization: z.object({
-            name: z.string(),
-            slug: z.string(),
-          }),
-        }),
-      ),
-      name: z.string(),
-      startAt: z.string().nullable(),
-      endAt: z.string().nullable(),
-    }),
-  );
+  const pageResult = z.coerce
+    .number()
+    .int()
+    .min(1)
+    .max(Number.MAX_SAFE_INTEGER)
+    .safeParse(query.page ?? 1);
+  if (!pageResult.success || Array.isArray(query.page)) {
+    return { notFound: true };
+  }
+  const current = pageResult.data;
 
-  const parsedEvents: CityEventItem[] = pickEventSchema.parse(regionEvents.records).map((event) => {
-    const primary = event.organizers.find((organizer) => organizer.isPrimary)?.organization ?? null;
+  try {
+    const [region, regionEvents, layoutProps] = await Promise.all([
+      RegionAPI.getRegionDetail(regionCode),
+      RegionAPI.getRegionEvents(regionCode, {
+        current,
+        pageSize: 24,
+        orderByStartAt: "desc",
+      }),
+      getLayoutProps(locale),
+    ]);
+
+    if (!region || current > Math.max(1, Math.ceil(regionEvents.total / regionEvents.pageSize))) {
+      return {
+        notFound: true,
+      };
+    }
+
+    const parsedEvents: CityEventItem[] = regionEvents.records.map((event) => {
+      const { primary } = getEventOrganizations(event);
+      return {
+        id: event.id,
+        urlKey: event.urlKey,
+        name: event.name,
+        startAt: event.startAt,
+        endAt: event.endAt,
+        thumbnail: event.thumbnail ?? null,
+        organization: primary ? { slug: primary.slug, name: primary.name } : null,
+      };
+    });
+
     return {
-      id: event.id,
-      urlKey: event.urlKey,
-      name: event.name,
-      startAt: event.startAt,
-      endAt: event.endAt,
-      thumbnail: event.thumbnail,
-      organization: primary,
+      props: {
+        headMetas: {
+          title: `${region.name} - ${CityPageMeta[locale as currentSupportLocale].title}`,
+          des: cityDetailDescriptionGenerator(locale as currentSupportLocale, region.name, regionEvents.total),
+          keywords: cityDetailKeywordGenerator(locale as currentSupportLocale, { name: region.name }),
+          url: `/city/${regionCode}`,
+        },
+        structuredData: {
+          ...breadcrumbGenerator({
+            items: [
+              {
+                name: CityPageMeta[locale as currentSupportLocale].title,
+                item: "/city",
+              },
+              {
+                name: region.name,
+                item: `/city/${regionCode}`,
+              },
+            ],
+          }),
+        },
+        region: region,
+        events: { ...regionEvents, records: parsedEvents },
+        ...layoutProps,
+      },
     };
-  });
-
-  return {
-    props: {
-      headMetas: {
-        title: `${region.name} - ${CityPageMeta[locale as currentSupportLocale].title}`,
-        des: cityDetailDescriptionGenerator(locale as currentSupportLocale, region.name, regionEvents.total),
-        keywords: cityDetailKeywordGenerator(locale as currentSupportLocale, { name: region.name }),
-        link: `/city/${regionCode}`,
-      },
-      structuredData: {
-        ...breadcrumbGenerator({
-          items: [
-            {
-              name: CityPageMeta[locale as currentSupportLocale].title,
-              item: "/city",
-            },
-            {
-              name: region.name,
-              item: `/city/${regionCode}`,
-            },
-          ],
-        }),
-      },
-      region: region,
-      events: parsedEvents,
-      ...(await getLayoutProps(locale)),
-    },
-  };
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.status === 404) {
+      return { notFound: true };
+    }
+    throw error;
+  }
 }

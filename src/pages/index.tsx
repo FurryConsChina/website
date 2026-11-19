@@ -25,7 +25,7 @@ export const searchParams = {
 
 export const loadSearchParams = createLoader(searchParams);
 
-export default function Home(props: { events: EventCardItem[] }) {
+export default function Home(props: { events: EventCardItem[]; nowTimestamp: number }) {
   const { t } = useTranslation();
   const [includePastEvents, setIncludePastEvents] = useQueryState(
     "includePastEvents",
@@ -42,8 +42,15 @@ export default function Home(props: { events: EventCardItem[] }) {
     }),
     [eventScale, includePastEvents],
   );
-  const filteredEvents = filteringEvents(props.events, selectedFilter);
-  const groupByCustomDurationEvents = groupByCustomDurationEvent(filteredEvents);
+  const filteredEvents = useMemo(
+    () => filteringEvents(props.events, selectedFilter, props.nowTimestamp),
+    [props.events, selectedFilter, props.nowTimestamp],
+  );
+  const groupByCustomDurationEvents = useMemo(
+    () => groupByCustomDurationEvent(filteredEvents, props.nowTimestamp),
+    [filteredEvents, props.nowTimestamp],
+  );
+  const currentYear = new Date(props.nowTimestamp).getFullYear();
 
   return (
     <>
@@ -72,15 +79,17 @@ export default function Home(props: { events: EventCardItem[] }) {
           </div>
         )}
 
-        {Object.keys(groupByCustomDurationEvents).map((type) =>
-          groupByCustomDurationEvents[type as DurationType].length ? (
+        {Object.keys(groupByCustomDurationEvents)
+          .filter((type) => groupByCustomDurationEvents[type as DurationType].length > 0)
+          .map((type, sectionIndex) => (
             <DurationSection
               key={type}
               durationType={type}
               events={groupByCustomDurationEvents[type as DurationType]}
+              currentYear={currentYear}
+              prioritizeFirstCards={sectionIndex === 0}
             />
-          ) : null,
-        )}
+          ))}
 
         <FriendSiteBlock />
       </div>
@@ -88,7 +97,17 @@ export default function Home(props: { events: EventCardItem[] }) {
   );
 }
 
-function DurationSection({ durationType, events }: { durationType: string; events: EventCardItem[] }) {
+function DurationSection({
+  durationType,
+  events,
+  currentYear,
+  prioritizeFirstCards,
+}: {
+  durationType: string;
+  events: EventCardItem[];
+  currentYear: number;
+  prioritizeFirstCards?: boolean;
+}) {
   const { t, i18n } = useTranslation();
 
   const groupByMonthEvent = useMemo(() => {
@@ -123,12 +142,13 @@ function DurationSection({ durationType, events }: { durationType: string; event
           <span className="text-sm text-gray-500 font-bold ml-1">{t("homepage.total", { total: events.length })}</span>
         </h3>
         <div className="grid gap-4 md:gap-8 grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {sortEvents(events, "asc").map((event) => (
+          {sortEvents(events, "asc").map((event, index) => (
             <EventCard
               key={event.id}
               event={event}
               sizes="(max-width: 750px) 650px, (max-width: 1080px) 552px, 552px"
               fallbackWidth={650}
+              priority={prioritizeFirstCards && index < 4}
             />
           ))}
         </div>
@@ -138,11 +158,11 @@ function DurationSection({ durationType, events }: { durationType: string; event
 
   return (
     <>
-      {sortedMonths.map((month) => (
+      {sortedMonths.map((month, monthIndex) => (
         <div key={month} className="rounded-xl bg-gray-100/80 p-2 my-4">
           <h3 className="text-lg md:text-xl text-red-400 font-bold mb-2 md:mb-6">
             {month !== "unknown"
-              ? parseInt(month.split("-")[0]) === new Date().getFullYear()
+              ? parseInt(month.split("-")[0]) === currentYear
                 ? t("homepage.month", {
                     month: monthNumberFormatter(month.split("-")[1], i18n.language),
                   })
@@ -156,12 +176,13 @@ function DurationSection({ durationType, events }: { durationType: string; event
             </span>
           </h3>
           <div className="grid gap-4 md:gap-8 grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {sortEvents(groupByMonthEvent[month], "asc").map((event) => (
+            {sortEvents(groupByMonthEvent[month], "asc").map((event, index) => (
               <EventCard
                 key={event.id}
                 event={event}
                 sizes="(max-width: 750px) 650px, (max-width: 1080px) 552px, 552px"
                 fallbackWidth={650}
+                priority={prioritizeFirstCards && monthIndex === 0 && index < 4}
               />
             ))}
           </div>
@@ -252,17 +273,22 @@ export async function getServerSideProps({ locale = "zh-Hans", query, res }: Get
   res.setHeader("Cache-Control", "public, s-maxage=300, stale-while-revalidate=300");
 
   const { includePastEvents } = loadSearchParams(query);
-  const events = await EventsAPI.getEventList({
-    current: "1",
-    pageSize: "999",
-    eventStartAt: includePastEvents
-      ? dayjs().startOf("year").toISOString()
-      : dayjs().subtract(1, "month").startOf("month").toISOString(),
-    eventStatus: [EventStatus.EventScheduled, EventStatus.EventRescheduled, EventStatus.EventMovedOnline],
-  });
+  const nowTimestamp = Date.now();
+  const [events, layoutProps] = await Promise.all([
+    EventsAPI.getEventList({
+      current: "1",
+      pageSize: "999",
+      eventStartAt: includePastEvents
+        ? dayjs(nowTimestamp).startOf("year").toISOString()
+        : dayjs(nowTimestamp).subtract(1, "month").startOf("month").toISOString(),
+      eventStatus: [EventStatus.EventScheduled, EventStatus.EventRescheduled, EventStatus.EventMovedOnline],
+    }),
+    getLayoutProps(locale),
+  ]);
 
   return {
     props: {
+      nowTimestamp,
       events: events.records.map((event) => {
         const { primary, others } = getEventOrganizations(event);
         return {
@@ -292,7 +318,7 @@ export async function getServerSideProps({ locale = "zh-Hans", query, res }: Get
           locale: formatLocale(locale),
         }),
       },
-      ...(await getLayoutProps(locale)),
+      ...layoutProps,
     },
   };
 }

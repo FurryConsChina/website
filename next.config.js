@@ -49,7 +49,7 @@ const nextConfig = {
       }),
     );
 
-    if (!dev && !isServer) {
+    if (!dev && !isServer && process.env.WEBPACK_STATS === "true") {
       config.plugins.push(
         new StatsWriterPlugin({
           filename: "../webpack-stats.json",

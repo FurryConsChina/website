@@ -111,7 +111,7 @@ export default function OrganizationDetail(props: {
           )}
           <div className="mt-4 md:mt-0 md:ml-4 ">
             <div className="flex flex-wrap items-center gap-2 mb-2">
-              <h2 className="text-2xl font-bold">{organization.name}</h2>
+              <h1 className="text-2xl font-bold">{organization.name}</h1>
             </div>
 
             <div className="flex items-center gap-2 mb-2 text-gray-500">
@@ -293,12 +293,13 @@ export default function OrganizationDetail(props: {
         <section className="mt-8 rounded-xl">
           <h2 className="text-xl text-slate-600 mb-4">{t("organization.passedEvent")}</h2>
           <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-8">
-            {events.records.map((e) => (
+            {events.records.map((e, index) => (
               <EventCard
                 key={e.id}
                 event={e}
                 sizes="(max-width: 750px)750px, (max-width: 1080px) 1080px, (min-width: 1200px) 1200px, 1200px"
                 fallbackWidth={1200}
+                priority={index < 3}
               />
             ))}
           </div>
@@ -327,9 +328,13 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       .regex(/^[a-zA-Z0-9-]+$/),
   });
 
-  const reqParamsParseResult = orgParamsSchema.parse({
+  const reqParamsParseResult = orgParamsSchema.safeParse({
     organization: context.params?.organization,
   });
+
+  if (!reqParamsParseResult.success) {
+    return { notFound: true };
+  }
 
   const pageResult = z.coerce
     .number()
@@ -344,13 +349,13 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   try {
     const locale = formatLocale(context.locale);
+    const slug = reqParamsParseResult.data.organization;
     const pageviewPath = getOrganizationDetailUrl({
-      organizationSlug: reqParamsParseResult.organization,
+      organizationSlug: slug,
       locale,
       fullUrl: false,
     });
 
-    const slug = reqParamsParseResult.organization;
     const [data, events] = await Promise.all([
       OrganizationsAPI.getOrganizationDetail(slug),
       OrganizationsAPI.getOrganizationEvents(slug, { current, pageSize: 12, orderByStartAt: "desc" }),

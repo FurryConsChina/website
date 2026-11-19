@@ -4,6 +4,7 @@ import Image from "@/components/image";
 import Link from "next/link";
 import { sendTrack } from "@/utils/track";
 import { getLayoutProps } from "@/utils/layoutProps";
+import type { GetServerSidePropsContext } from "next";
 import { useTranslation } from "next-i18next/pages";
 import { OrganizationsAPI } from "@/api/organizations";
 import { OrganizationListItem } from "@/types/organization";
@@ -80,12 +81,17 @@ function OrganizationItem({ organization }: { organization: OrganizationListItem
   );
 }
 
-export async function getStaticProps({ locale }: { locale: string }) {
-  const organizations = await OrganizationsAPI.getOrganizationList({
-    current: "1",
-    pageSize: "999",
-    sortBy: "eventCount",
-  });
+export async function getServerSideProps({ locale = "zh-Hans", res }: GetServerSidePropsContext) {
+  res.setHeader("Cache-Control", "public, s-maxage=500, stale-while-revalidate=500");
+
+  const [organizations, layoutProps] = await Promise.all([
+    OrganizationsAPI.getOrganizationList({
+      current: "1",
+      pageSize: "999",
+      sortBy: "eventCount",
+    }),
+    getLayoutProps(locale),
+  ]);
 
   if (!organizations) {
     return {
@@ -105,7 +111,7 @@ export async function getStaticProps({ locale }: { locale: string }) {
       headMetas: {
         title: OrganizationPageMeta[locale as currentSupportLocale].title,
         des: OrganizationPageMeta[locale as currentSupportLocale].description(organizations.total),
-        link: "/organization",
+        url: "/organization",
       },
       structuredData: {
         ...breadcrumbGenerator({
@@ -117,8 +123,7 @@ export async function getStaticProps({ locale }: { locale: string }) {
           ],
         }),
       },
-      ...(await getLayoutProps(locale)),
+      ...layoutProps,
     },
-    revalidate: 500,
   };
 }

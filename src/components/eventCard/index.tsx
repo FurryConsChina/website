@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import "dayjs/locale/zh-cn";
 import "dayjs/locale/zh-tw";
 import Link from "next/link";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "next-i18next/pages";
 import Image from "@/components/image";
 import { getEventCoverImgPath } from "@/utils/imageLoader";
@@ -14,30 +14,23 @@ import { currentSupportLocale, getDayjsLocale } from "@/utils/locale";
 import type { EventCardItem } from "@/types/event";
 import styles from "@/components/eventCard/index.module.css";
 
-let instancesCount = 0;
-
 export default function EventCard({
   event,
   sizes,
   fallbackWidth,
   fallbackHeight,
+  priority = false,
 }: {
   event: EventCardItem;
   sizes?: string;
   fallbackWidth?: number;
   fallbackHeight?: number;
+  priority?: boolean;
 }) {
   const { t, i18n } = useTranslation();
   const eventUrl = getEventDetailUrl({ urlKey: event.urlKey });
   const finalEventCoverImage = getEventCoverImgPath(event);
   const isDefaultCover = finalEventCoverImage.includes("fec-event-default-cover");
-
-  useEffect(() => {
-    instancesCount += 1;
-    return () => {
-      instancesCount -= 1;
-    };
-  }, []);
 
   const tags = useMemo(() => {
     const result = new Set<string>();
@@ -87,6 +80,7 @@ export default function EventCard({
             fallbackHeight={fallbackHeight}
             fallbackWidth={fallbackWidth}
             isDefault={isDefaultCover}
+            priority={priority}
           />
 
           <div
@@ -152,36 +146,13 @@ export default function EventCard({
   );
 }
 
-function OrganizationPill({ logoUrl, organizationName }: { logoUrl: string | null; organizationName: string }) {
-  const { t } = useTranslation();
-  if (!logoUrl) return null;
-  return (
-    <div className="flex justify-between items-center rounded-full w-fit">
-      {logoUrl && (
-        <div className="hidden md:block border-2 rounded-full border-white">
-          <Image
-            src={logoUrl}
-            alt={t("organization.logoAlt", { name: organizationName })}
-            className={clsx("rounded-full object-cover w-[28px] h-[28px] bg-white")}
-            width={100}
-            height={100}
-            sizes="100px"
-            aria-label="organization's logo"
-            autoFormat
-            priority={instancesCount <= 3}
-          />
-        </div>
-      )}
-    </div>
-  );
-}
-
 function EventCover({
   imageUrl,
   eventName,
   sizes,
   fallbackHeight,
   fallbackWidth,
+  priority,
 }: {
   imageUrl: string;
   eventName: string;
@@ -189,6 +160,7 @@ function EventCover({
   sizes?: string;
   fallbackWidth?: number;
   fallbackHeight?: number;
+  priority?: boolean;
 }) {
   const { t } = useTranslation();
   return (
@@ -207,7 +179,7 @@ function EventCover({
           className={clsx("object-contain h-full w-full")}
           sizes={sizes}
           autoFormat
-          priority={instancesCount <= 3}
+          priority={priority}
           fallbackHeight={fallbackHeight}
           fallbackWidth={fallbackWidth}
         />
@@ -220,7 +192,6 @@ function EventCover({
         className={clsx("object-cover h-full w-full blur-3xl")}
         sizes={sizes}
         autoFormat
-        priority={instancesCount <= 3}
         fallbackHeight={fallbackHeight}
         fallbackWidth={fallbackWidth}
       />

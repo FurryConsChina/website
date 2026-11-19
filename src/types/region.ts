@@ -1,4 +1,5 @@
 import { RegionType } from "@/constants/region";
+import type { EventListItem } from "@/types/event";
 import * as z from "zod/v4";
 
 export const RegionSchema = z.object({
@@ -36,3 +37,6 @@ export type RegionListItem = Region & {
     }[];
   }[];
 };
+
+/** 地区活动接口的活动项：后端会去掉 detail/media/ticketChannels。 */
+export type RegionEventItem = Omit<EventListItem, "detail" | "media" | "ticketChannels">;
