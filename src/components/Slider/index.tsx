@@ -1,6 +1,6 @@
 import { sendTrack } from "@/utils/track";
 import { useState } from "react";
-import NextImage from "@/components/image";
+import NextImage from "@/components/Image";
 import { IoIosArrowDown } from "react-icons/io";
 import { FaLink } from "react-icons/fa6";
 import clsx from "clsx";

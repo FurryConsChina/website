@@ -1,4 +1,4 @@
-import NextImage from "@/components/image";
+import NextImage from "@/components/Image";
 import {
   BiliButton,
   EmailButton,
@@ -10,7 +10,7 @@ import {
   WebsiteButton,
   WeiboButton,
 } from "@/components/OrganizationLinkButton";
-import OrganizationStatus from "@/components/organizationStatus";
+import OrganizationStatus from "@/components/OrganizationStatus";
 import { OrganizationLinkType } from "@/constants/organization";
 import type { EventItem } from "@/types/event";
 import { getEventOrganizations } from "@/utils/event";

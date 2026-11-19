@@ -1,8 +1,8 @@
-import EventCard from "@/components/eventCard";
-import OrganizationStatus from "@/components/organizationStatus";
+import EventCard from "@/components/EventCard";
+import OrganizationStatus from "@/components/OrganizationStatus";
 import styles from "@/styles/Organization.module.css";
 import clsx from "clsx";
-import Image from "@/components/image";
+import Image from "@/components/Image";
 import PageviewTag from "@/components/PageviewHeatTag";
 import { GetServerSidePropsContext } from "next/types";
 import { useMemo } from "react";

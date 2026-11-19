@@ -9,7 +9,7 @@ import axios from "axios";
 import { GetServerSidePropsContext } from "next";
 import Link from "next/link";
 import * as z from "zod/v4";
-import Image from "@/components/image";
+import Image from "@/components/Image";
 import { getEventCoverImgPath } from "@/utils/imageLoader";
 import "dayjs/locale/zh-cn";
 import "dayjs/locale/zh-tw";

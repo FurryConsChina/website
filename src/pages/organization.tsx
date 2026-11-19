@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { groupBy } from "es-toolkit/compat";
-import Image from "@/components/image";
+import Image from "@/components/Image";
 import Link from "next/link";
 import { sendTrack } from "@/utils/track";
 import { getLayoutProps } from "@/utils/layoutProps";
