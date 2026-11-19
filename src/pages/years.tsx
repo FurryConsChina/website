@@ -1,6 +1,7 @@
 import { eventGroupByMonth, eventGroupByYear, getEventOrganizations } from "@/utils/event";
 import SimpleEventCard from "@/components/SimpleEventCard";
 import { getLayoutProps } from "@/utils/layoutProps";
+import type { GetServerSidePropsContext } from "next";
 import { useTranslation } from "next-i18next/pages";
 import { EventsAPI } from "@/api/events";
 import type { SimpleEventItem } from "@/types/event";
@@ -71,7 +72,9 @@ export default function Years({ events }: { events: SimpleEventItem[] }) {
   );
 }
 
-export async function getStaticProps({ locale }: { locale: string }) {
+export async function getServerSideProps({ locale = "zh-Hans", res }: GetServerSidePropsContext) {
+  res.setHeader("Cache-Control", "public, s-maxage=500, stale-while-revalidate=500");
+
   const [events, layoutProps] = await Promise.all([
     EventsAPI.getEventList({
       current: "1",
@@ -114,6 +117,5 @@ export async function getStaticProps({ locale }: { locale: string }) {
       },
       ...layoutProps,
     },
-    revalidate: 500,
   };
 }
