@@ -26,6 +26,7 @@ jobs:
       NEXT_PUBLIC_ENABLE_TRACK: ${{ vars.ENABLE_TRACK }}
       FEC_API_URL: ${{ vars.FEC_API_URL }}
       FEC_API_TOKEN: ${{secrets.FEC_API_TOKEN}}
+      WEBPACK_STATS: "true"
     steps:
       - uses: actions/checkout@v7
 

@@ -81,11 +81,14 @@ function OrganizationItem({ organization }: { organization: OrganizationListItem
 }
 
 export async function getStaticProps({ locale }: { locale: string }) {
-  const organizations = await OrganizationsAPI.getOrganizationList({
-    current: "1",
-    pageSize: "999",
-    sortBy: "eventCount",
-  });
+  const [organizations, layoutProps] = await Promise.all([
+    OrganizationsAPI.getOrganizationList({
+      current: "1",
+      pageSize: "999",
+      sortBy: "eventCount",
+    }),
+    getLayoutProps(locale),
+  ]);
 
   if (!organizations) {
     return {
@@ -105,7 +108,7 @@ export async function getStaticProps({ locale }: { locale: string }) {
       headMetas: {
         title: OrganizationPageMeta[locale as currentSupportLocale].title,
         des: OrganizationPageMeta[locale as currentSupportLocale].description(organizations.total),
-        link: "/organization",
+        url: "/organization",
       },
       structuredData: {
         ...breadcrumbGenerator({
@@ -117,7 +120,7 @@ export async function getStaticProps({ locale }: { locale: string }) {
           ],
         }),
       },
-      ...(await getLayoutProps(locale)),
+      ...layoutProps,
     },
     revalidate: 500,
   };

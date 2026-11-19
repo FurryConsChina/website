@@ -1,4 +1,4 @@
-import { Children, useCallback, useEffect, useRef, useState } from "react";
+import { Children, useCallback, useEffect, useState } from "react";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import Autoplay from "embla-carousel-autoplay";
 import useEmblaCarousel from "embla-carousel-react";
@@ -88,18 +88,17 @@ const sponsorSlides = [
 ];
 
 export default function SponsorBanner() {
-  const autoplay = useRef(Autoplay({ delay: 5000, stopOnInteraction: false, stopOnMouseEnter: true }));
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [autoplay.current]);
+  const [autoplay] = useState(() => Autoplay({ delay: 5000, stopOnInteraction: false, stopOnMouseEnter: true }));
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [autoplay]);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [slideCount, setSlideCount] = useState(0);
+  const slideCount = sponsorSlides.length;
 
-  const syncCarouselState = useCallback(() => {
+  const syncSelectedIndex = useCallback(() => {
     if (!emblaApi) {
       return;
     }
 
     setSelectedIndex(emblaApi.selectedScrollSnap());
-    setSlideCount(emblaApi.scrollSnapList().length);
   }, [emblaApi]);
 
   useEffect(() => {
@@ -107,13 +106,12 @@ export default function SponsorBanner() {
       return;
     }
 
-    syncCarouselState();
-    emblaApi.on("select", syncCarouselState).on("reInit", syncCarouselState);
+    emblaApi.on("select", syncSelectedIndex).on("reInit", syncSelectedIndex);
 
     return () => {
-      emblaApi.off("select", syncCarouselState).off("reInit", syncCarouselState);
+      emblaApi.off("select", syncSelectedIndex).off("reInit", syncSelectedIndex);
     };
-  }, [emblaApi, syncCarouselState]);
+  }, [emblaApi, syncSelectedIndex]);
 
   return (
     <section aria-label="推荐活动" className="relative mb-6 w-full overflow-hidden rounded-xl group">

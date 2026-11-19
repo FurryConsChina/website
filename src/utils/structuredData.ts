@@ -16,6 +16,7 @@ export function generateEventDetailStructuredData({
   const organizerLabel = locale === "en" ? "Organizers" : "展商";
   const { primary: primaryOrganization } = getEventOrganizations(event);
   // getServerSideProps 的返回值必须可 JSON 序列化，undefined 会报错，可空字段统一回退为 null。
+  const organizationListUrl = toAbsoluteUrl(locale === "zh-Hans" ? "/organization" : `/${locale}/organization`) ?? null;
   const organizationUrl = primaryOrganization
     ? getOrganizationDetailUrl({
         organizationSlug: primaryOrganization.slug,
@@ -35,7 +36,7 @@ export function generateEventDetailStructuredData({
           "@type": "ListItem",
           position: 1,
           name: organizerLabel,
-          item: organizationUrl,
+          item: organizationListUrl,
         },
         {
           "@type": "ListItem",
@@ -57,7 +58,10 @@ export function generateEventDetailStructuredData({
       startDate: event?.startAt,
       endDate: event?.endAt,
       eventStatus: EventStatusSchema[event?.status || EventStatus.EventScheduled],
-      eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+      eventAttendanceMode:
+        event?.status === EventStatus.EventMovedOnline
+          ? "https://schema.org/OnlineEventAttendanceMode"
+          : "https://schema.org/OfflineEventAttendanceMode",
       location: {
         "@type": "Place",
         name: event.location.place?.name ?? null,

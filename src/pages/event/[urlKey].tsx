@@ -79,9 +79,9 @@ export default function EventDetail({ event, pageviewCount }: { event: EventItem
             )}
 
             <div className="flex flex-wrap items-baseline gap-2 gap-y-1">
-              <h2 aria-label={t("event.aria.name")} className="font-bold text-3xl text-gray-700">
+              <h1 aria-label={t("event.aria.name")} className="font-bold text-3xl text-gray-700">
                 {event.name}
-              </h2>
+              </h1>
             </div>
             <h2 className="text-gray-600 text-sm flex items-center gap-2">
               {t("event.hostBy", {
@@ -141,7 +141,7 @@ export default function EventDetail({ event, pageviewCount }: { event: EventItem
           <div id="event-detail__left" className="md:w-8/12">
             {event.detail && (
               <div className="bg-white rounded-xl flex-grow p-6 md:mr-4 mb-4">
-                <p
+                <div
                   className="text-gray-600 whitespace-pre-line break-words"
                   dangerouslySetInnerHTML={{ __html: event.detail }}
                 />
@@ -159,7 +159,6 @@ export default function EventDetail({ event, pageviewCount }: { event: EventItem
                       })}
                       src={cover.url}
                       className="w-full"
-                      priority
                       autoFormat
                     />
                   </div>
@@ -196,7 +195,10 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       locale: appLocale,
     });
 
-    const event = await EventsAPI.getEventDetail(urlKey.data);
+    const [event, layoutProps] = await Promise.all([
+      EventsAPI.getEventDetail(urlKey.data),
+      getLayoutProps(localeParam),
+    ]);
     // 访问量按实体读取历史本底，需要先取得活动 ID。
     const pv = await InfraAPI.getPageview({
       targetType: "event",
@@ -232,7 +234,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
           event,
           locale: appLocale,
         }),
-        ...(await getLayoutProps(localeParam)),
+        ...layoutProps,
       },
     };
   } catch (error) {
