@@ -90,15 +90,15 @@ export default function CityDetail({
 
   return (
     <>
-      <div className="bg-white border p-6 rounded-xl">
-        <h1 className="text-2xl font-bold text-gray-600">{region.name}</h1>
+      <div className="bg-white shadow-sm p-4 sm:p-6 rounded-xl">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-600">{region.name}</h1>
       </div>
 
-      <div className="bg-white border p-6 rounded-xl mt-6">
-        <div className="grid grid-cols-1 gap-8 mt-4">
+      <div className="bg-white shadow-sm p-4 sm:p-6 rounded-xl mt-3 sm:mt-6">
+        <div className="grid grid-cols-1 gap-6 sm:gap-8 mt-1 sm:mt-4">
           {yearList.map((year) => (
-            <div key={year} className="space-y-4">
-              <h3 className="text-xl font-semibold text-gray-700 border-b pb-2">
+            <div key={year} className="space-y-3 sm:space-y-4">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-700 border-b pb-2">
                 {year === "no-date"
                   ? t("years.unknown")
                   : t("years.known", {
@@ -108,7 +108,7 @@ export default function CityDetail({
 
               {Object.entries(yearMonthData[year]).map(([month, monthEvents]) => (
                 <div key={`${year}-${month}`}>
-                  <h4 className="text-lg font-medium text-gray-600 mb-3">{getMonthName(month)}</h4>
+                  <h4 className="text-base sm:text-lg font-medium text-gray-600 mb-2 sm:mb-3">{getMonthName(month)}</h4>
                   <MonthSection events={monthEvents} />
                 </div>
               ))}
@@ -116,7 +116,7 @@ export default function CityDetail({
           ))}
         </div>
         <Pagination
-          className="mt-8"
+          className="mt-6 sm:mt-8"
           current={events.current}
           totalPages={Math.ceil(events.total / events.pageSize)}
           getPageHref={(page) => ({
@@ -135,7 +135,7 @@ function MonthSection({ events }: { events: CityEventItem[] }) {
   const dayjsLocale = getDayjsLocale(i18n.language);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mt-2.5 sm:mt-4">
       {events.map((event) => (
         <Link
           key={event.id}
@@ -149,9 +149,9 @@ function MonthSection({ events }: { events: CityEventItem[] }) {
               },
             })
           }
-          className="rounded-xl shadow-xl h-36 relative flex justify-center items-center group"
+          className="rounded-xl shadow-md sm:shadow-xl h-32 sm:h-36 relative flex justify-center items-center group overflow-hidden"
         >
-          <div className="rounded-xl duration-500 transition group-hover:border-gray-400 w-full h-full absolute brightness-75 hover:brightness-100">
+          <div className="rounded-xl duration-500 transition group-hover:border-gray-400 w-full h-full absolute brightness-75 group-hover:brightness-95">
             <Image
               alt={t("city.eventBackgroundAlt", { name: event.name })}
               src={getEventCoverImgPath(event)}
@@ -160,10 +160,10 @@ function MonthSection({ events }: { events: CityEventItem[] }) {
               autoFormat
             />
           </div>
-          <div className="z-10 relative pointer-events-none">
-            <h4 className="tracking-wide text-white font-bold text-lg text-center">{`${event.organization?.name} · ${event.name}`}</h4>
+          <div className="z-10 relative pointer-events-none px-4 py-2 text-center">
+            <h4 className="tracking-wide text-white font-bold text-base sm:text-lg text-center drop-shadow-sm line-clamp-2">{`${event.organization?.name} · ${event.name}`}</h4>
             {event.startAt && event.endAt && (
-              <p className="text-center text-white">
+              <p className="text-center text-white/95 text-xs sm:text-sm mt-1 drop-shadow-sm">
                 {event.startAt && <span>{dayjs(event.startAt).locale(dayjsLocale).format(dateFormat)}</span>}-
                 {event.endAt && <span>{dayjs(event.endAt).locale(dayjsLocale).format(dateFormat)}</span>}
               </p>

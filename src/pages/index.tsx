@@ -69,7 +69,7 @@ export default function Home(props: { events: EventCardItem[]; nowTimestamp: num
         />
 
         {filteredEvents.length === 0 && (
-          <div className="bg-white border rounded-xl p-6 mt-6 text-center h-96 flex justify-center flex-col">
+          <div className="bg-white shadow-sm rounded-xl p-6 mt-6 text-center h-96 flex justify-center flex-col">
             <h1 className="text-xl text-red-400 font-bold">
               {t("homepage.noResult")}
               <br></br>
@@ -136,12 +136,14 @@ function DurationSection({
 
   if (durationType === DurationType.Now) {
     return (
-      <div className="rounded-xl bg-gray-100/80 p-2 my-4">
-        <h3 className="text-lg md:text-xl text-red-400 font-bold mb-2 md:mb-6">
+      <div className="rounded-xl bg-gray-100/80 p-2.5 sm:p-4 md:p-2 my-3 md:my-4">
+        <h3 className="text-lg md:text-xl text-red-400 font-bold mb-2.5 md:mb-6 px-0.5">
           {t("homepage.group.status.now")}
-          <span className="text-sm text-gray-500 font-bold ml-1">{t("homepage.total", { total: events.length })}</span>
+          <span className="text-sm text-gray-500 font-bold ml-1.5">
+            {t("homepage.total", { total: events.length })}
+          </span>
         </h3>
-        <div className="grid gap-4 md:gap-8 grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-3 md:gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {sortEvents(events, "asc").map((event, index) => (
             <EventCard
               key={event.id}
@@ -159,8 +161,8 @@ function DurationSection({
   return (
     <>
       {sortedMonths.map((month, monthIndex) => (
-        <div key={month} className="rounded-xl bg-gray-100/80 p-2 my-4">
-          <h3 className="text-lg md:text-xl text-red-400 font-bold mb-2 md:mb-6">
+        <div key={month} className="rounded-xl bg-gray-100/80 p-2.5 sm:p-4 md:p-2 my-3 md:my-4">
+          <h3 className="text-lg md:text-xl text-red-400 font-bold mb-2.5 md:mb-6 px-0.5">
             {month !== "unknown"
               ? parseInt(month.split("-")[0]) === currentYear
                 ? t("homepage.month", {
@@ -171,11 +173,11 @@ function DurationSection({
                     month: monthNumberFormatter(month.split("-")[1], i18n.language),
                   })
               : null}
-            <span className="text-sm text-gray-500 font-bold ml-1">
+            <span className="text-sm text-gray-500 font-bold ml-1.5">
               {t("homepage.total", { total: groupByMonthEvent[month].length })}
             </span>
           </h3>
-          <div className="grid gap-4 md:gap-8 grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid gap-3 md:gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {sortEvents(groupByMonthEvent[month], "asc").map((event, index) => (
               <EventCard
                 key={event.id}
@@ -230,16 +232,16 @@ function Filter({
 
   const selectedScaleValue = EventScaleScaleOptions.filter((e) => selectedFilter.eventScale.includes(e.key));
   return (
-    <div className="bg-white border rounded-xl p-6 flex sm:items-center flex-col sm:flex-row relative">
+    <div className="bg-white shadow-sm rounded-xl p-3.5 sm:p-5 md:p-6 flex sm:items-center flex-col sm:flex-row relative">
       <Field>
-        <div className="flex items-center max-sm:mb-4 max-sm:justify-between">
-          <Label className="mr-4 text-gray-600">{t("event.filter.onlyAvailable")}</Label>
+        <div className="flex items-center max-sm:mb-3 max-sm:justify-between">
+          <Label className="mr-4 text-sm sm:text-base text-gray-600">{t("event.filter.onlyAvailable")}</Label>
           <Switch
             checked={!selectedFilter.includePastEvents}
             onChange={(v) => handleFilter("includePastEvents", !v)}
             className={`${
               !selectedFilter.includePastEvents ? "bg-red-400" : "bg-gray-200"
-            } relative inline-flex h-6 w-11 items-center rounded-full`}
+            } relative inline-flex h-6 w-11 shrink-0 items-center rounded-full`}
           >
             <span className="sr-only">{t("event.filter.onlyAvailable")}</span>
             <span
@@ -257,7 +259,7 @@ function Filter({
         value={selectedScaleValue[0].key}
         id="scale"
         onChange={(e) => handleFilter("eventScale", [e.target.value])}
-        className="bg-white p-2 border rounded-xl text-gray-600"
+        className="bg-white py-2 px-3 border rounded-xl text-sm sm:text-base text-gray-600"
       >
         {EventScaleScaleOptions.map((option) => (
           <option className="text-gray-600" key={option.key} value={option.key}>

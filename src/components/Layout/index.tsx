@@ -141,7 +141,7 @@ export default function Layout({
       <Toaster />
       <Header slogan={slogan} />
       <AnnouncementSlider />
-      <div className="flex-grow mx-1 lg:mx-0">{children}</div>
+      <div className="flex-grow mx-2.5 sm:mx-4 xl:mx-0">{children}</div>
       <Sidebar />
       <Footer isCNRegion={IS_CN_REGION} />
     </div>

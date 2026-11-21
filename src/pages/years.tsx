@@ -19,25 +19,25 @@ export default function Years({ events }: { events: SimpleEventItem[] }) {
 
   return (
     <div>
-      <div className="mb-4 border rounded-xl p-6 bg-white">
-        <h1 className="font-bold text-red-400 text-2xl mb-4">{t("years.title")}</h1>
-        <div className="text-gray-600">
+      <div className="mb-3 sm:mb-4 shadow-sm rounded-xl p-4 sm:p-6 bg-white">
+        <h1 className="font-bold text-red-400 text-xl sm:text-2xl mb-3 sm:mb-4">{t("years.title")}</h1>
+        <div className="text-sm sm:text-base text-gray-600">
           {t("years.des", {
             totalYear: years.filter((year) => year !== "no-date").length,
             totalAmount: events.length,
           })}
           <br />
-          <div className="flex flex-wrap gap-x-4 gap-y-4 mt-2">
+          <div className="flex flex-wrap gap-2 sm:gap-3 mt-3">
             {groupByYearEvents.map((group) => (
               <a
                 key={group.year}
                 href={`#${group.year}`}
-                className="text-center border rounded-full flex items-center cursor-pointer group overflow-hidden"
+                className="text-center text-sm sm:text-base border rounded-full flex items-center cursor-pointer group overflow-hidden"
               >
-                <span className="font-bold text-red-400 bg-slate-100 px-2 py-1 group-hover:bg-red-400 group-hover:text-white rounded-l transition-all duration-300">
+                <span className="font-bold text-red-400 bg-slate-100 px-2.5 py-1 group-hover:bg-red-400 group-hover:text-white rounded-l transition-all duration-300">
                   {t("years.known", { year: group.year })}
                 </span>
-                <span className=" text-slate-500 font-medium px-4 py-1">{group.events.length}</span>
+                <span className="text-slate-500 font-medium px-3 sm:px-4 py-1">{group.events.length}</span>
               </a>
             ))}
           </div>
@@ -45,15 +45,21 @@ export default function Years({ events }: { events: SimpleEventItem[] }) {
       </div>
 
       {groupByYearEvents.map((yearGroup) => (
-        <section key={yearGroup.year} className="mb-4 border rounded-xl p-6 bg-white" id={yearGroup.year}>
-          <h2 className="font-bold text-red-400 text-2xl mb-4">
+        <section
+          key={yearGroup.year}
+          className="mb-3 sm:mb-4 shadow-sm rounded-xl p-4 sm:p-6 bg-white"
+          id={yearGroup.year}
+        >
+          <h2 className="font-bold text-red-400 text-xl sm:text-2xl mb-2 sm:mb-4">
             {yearGroup.year === "no-date" ? t("years.unknown") : t("years.known", { year: yearGroup.year })}
           </h2>
-          <p className="text-gray-600 mb-4">{t("years.total", { total: yearGroup.events.length })}：</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+          <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">
+            {t("years.total", { total: yearGroup.events.length })}：
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-2">
             {eventGroupByMonth(yearGroup.events, "asc").map((monthGroup) => (
-              <div key={monthGroup.month + yearGroup.year} className="border rounded-xl bg-gray-100 p-2">
-                <h3 className="text-red-400 text-xl font-bold mb-2">
+              <div key={monthGroup.month + yearGroup.year} className="rounded-xl bg-gray-100 p-2.5 sm:p-2">
+                <h3 className="text-red-400 text-lg sm:text-xl font-bold mb-2">
                   {t("years.month", {
                     month: monthNumberFormatter(monthGroup.month, i18n.language),
                   })}

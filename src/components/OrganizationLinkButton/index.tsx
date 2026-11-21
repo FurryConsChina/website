@@ -25,7 +25,7 @@ function OrganizationLinkButton({
   label?: ReactNode;
 }) {
   const className = clsx(
-    "flex items-center rounded-xl px-4 py-3 text-white w-full text-left md:hover:-translate-x-2 shadow transition duration-300",
+    "flex items-center rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-white w-full text-left md:hover:-translate-x-2 active:opacity-90 shadow transition duration-300 min-w-0",
     bgColorClass,
   );
 
@@ -42,10 +42,10 @@ function OrganizationLinkButton({
   const buttonContext = (
     <>
       {icon && <span className="mr-2 flex-shrink-0 text-xl">{icon}</span>}
-      {icon && <span className="h-[16px] w-[2px] bg-white mx-4 opacity-50" />}
-      <div>
-        {label && <span className="text-xs">{label}</span>}
-        <p>{children}</p>
+      {icon && <span className="h-[16px] w-[2px] bg-white mx-3 sm:mx-4 opacity-50 shrink-0" />}
+      <div className="min-w-0 flex-1">
+        {label && <span className="text-xs block">{label}</span>}
+        <p className="text-sm sm:text-base truncate">{children}</p>
       </div>
     </>
   );

@@ -1,15 +1,28 @@
 import EventCard from "@/components/EventCard";
-import OrganizationStatus from "@/components/OrganizationStatus";
+import {
+  BiliButton,
+  EmailButton,
+  FacebookButton,
+  PlurkButton,
+  QQGroupButton,
+  RednoteButton,
+  TwitterButton,
+  WebsiteButton,
+  WeiboButton,
+  WikifurButton,
+} from "@/components/OrganizationLinkButton";
+import OrganizationStatus, { getOranizationStatusConfig } from "@/components/OrganizationStatus";
 import styles from "@/styles/Organization.module.css";
 import clsx from "clsx";
 import Image from "@/components/Image";
 import PageviewTag from "@/components/PageviewHeatTag";
 import { GetServerSidePropsContext } from "next/types";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import Pagination from "@/components/Pagination";
 import type { ListResponse } from "@/types/api";
 import toast from "react-hot-toast";
 import { FaPaw, FaQq, FaTwitter, FaWeibo } from "react-icons/fa";
+import { GrStatusGoodSmall } from "react-icons/gr";
 import { MdOutlineContentCopy } from "react-icons/md";
 import { SiBilibili, SiXiaohongshu } from "react-icons/si";
 import dayjs from "dayjs";
@@ -48,10 +61,13 @@ export default function OrganizationDetail(props: {
   organization: Organization;
   firstEventStartAt: string | null;
   pageviewCount: number | null;
+  nowTimestamp: number;
 }) {
   const { t, i18n } = useTranslation();
-  const { organization, events, firstEventStartAt, pageviewCount } = props;
+  const { organization, events, firstEventStartAt, pageviewCount, nowTimestamp } = props;
   const dayjsLocale = getDayjsLocale(i18n.language);
+  const statusConfig = getOranizationStatusConfig(organization.status, t);
+  const [flippedStats, setFlippedStats] = useState<Record<string, boolean>>({});
 
   const website = getOrganizationLink(organization, OrganizationLinkType.Website);
   const bilibili = getOrganizationLink(organization, OrganizationLinkType.Bilibili);
@@ -92,12 +108,228 @@ export default function OrganizationDetail(props: {
     }
   }, [organization.foundedOn, dayjsLocale]);
 
+  const avgEventsPerYear = useMemo(() => {
+    const startSource = firstEventStartAt || organization.foundedOn;
+    if (!startSource || events.total <= 0) return null;
+    const yearsSpan = Math.max(1, dayjs(nowTimestamp).diff(dayjs(startSource), "year", true));
+    return Number((events.total / yearsSpan).toFixed(1));
+  }, [events.total, firstEventStartAt, organization.foundedOn, nowTimestamp]);
+
+  const stats = [
+    {
+      key: "totalEvents",
+      label: t("organization.stats.totalEvents"),
+      value: String(events.total),
+      backLabel: avgEventsPerYear != null ? t("organization.stats.avgPerYearLabel") : null,
+      backValue: avgEventsPerYear != null ? t("organization.stats.avgPerYearValue", { count: avgEventsPerYear }) : null,
+    },
+    ...(formattedCreationTime
+      ? [
+          {
+            key: "founded",
+            label: t("organization.stats.founded"),
+            value: formattedCreationTime.createDistance,
+            backLabel: t("organization.stats.foundedDate"),
+            backValue: `${formattedCreationTime.year}.${String(formattedCreationTime.month).padStart(2, "0")}.${String(formattedCreationTime.day).padStart(2, "0")}`,
+          },
+        ]
+      : []),
+    ...(formattedFirstEventTime
+      ? [
+          {
+            key: "firstEvent",
+            label: t("organization.stats.firstEvent"),
+            value: `${formattedFirstEventTime.year}.${String(formattedFirstEventTime.month).padStart(2, "0")}`,
+            backLabel: t("organization.stats.firstEventDate"),
+            backValue: `${formattedFirstEventTime.year}.${String(formattedFirstEventTime.month).padStart(2, "0")}.${String(formattedFirstEventTime.day).padStart(2, "0")}`,
+          },
+        ]
+      : []),
+  ];
+
+  const toggleStatFlip = (key: string) => {
+    setFlippedStats((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const hasChannels = Boolean(
+    website ||
+    qqGroup ||
+    bilibili ||
+    weibo ||
+    twitter ||
+    organization.contactMail ||
+    wikifur ||
+    plurk ||
+    facebook ||
+    rednote,
+  );
+
   return (
     <div>
-      <div className="border bg-white rounded-xl p-6">
-        <div className="flex flex-col md:flex-row">
+      {/* Mobile */}
+      <div className="md:hidden bg-white shadow-sm rounded-xl overflow-hidden">
+        {organization.logoUrl && (
+          <div className="relative h-32 sm:h-36 overflow-hidden bg-gray-100">
+            <Image
+              className="w-full h-full object-cover scale-150 blur-2xl opacity-55 saturate-150"
+              containerClassName="w-full h-full block"
+              alt=""
+              width={200}
+              height={200}
+              src={organization.logoUrl}
+              autoFormat
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-white/55" />
+          </div>
+        )}
+
+        <div className="p-4 sm:p-6">
           {organization.logoUrl && (
-            <div className="border rounded flex justify-center p-2 w-full md:w-48 md:h-48 h-48 shrink-0">
+            <div className="relative z-10 -mt-16 mx-auto rounded-2xl bg-white shadow-[0_8px_24px_rgba(0,0,0,0.12)] ring-4 ring-white flex items-center justify-center w-24 h-24 overflow-hidden">
+              <Image
+                className="object-contain w-full h-full"
+                containerClassName="w-full h-full flex items-center justify-center"
+                alt={t("organization.logoAlt", { name: organization.name })}
+                width={200}
+                height={200}
+                src={organization.logoUrl}
+                autoFormat
+              />
+            </div>
+          )}
+
+          <div className="mt-3">
+            <div className="text-xl sm:text-2xl font-bold text-gray-800 text-center break-words mb-2">
+              {organization.name}
+            </div>
+
+            <div className="flex justify-center mb-4">
+              <div className="inline-flex items-center gap-2.5 rounded-full bg-white px-4 py-1.5 text-xs font-medium text-gray-700 shadow">
+                <span className="inline-flex items-center gap-1.5 leading-none">
+                  <GrStatusGoodSmall className={clsx("text-[9px] shrink-0", statusConfig.color)} aria-hidden />
+                  <span>{statusConfig.label}</span>
+                </span>
+                {pageviewCount != null && (
+                  <>
+                    <span className="h-3 w-px bg-gray-200" aria-hidden />
+                    <PageviewTag count={pageviewCount} className="text-red-400" />
+                  </>
+                )}
+              </div>
+            </div>
+
+            <dl
+              className={clsx(
+                "grid gap-2.5",
+                stats.length === 1 && "grid-cols-1",
+                stats.length === 2 && "grid-cols-2",
+                stats.length === 3 && "grid-cols-3",
+              )}
+            >
+              {stats.map((stat) => {
+                const canFlip = Boolean(stat.backValue && stat.backLabel);
+                const isFlipped = canFlip && Boolean(flippedStats[stat.key]);
+
+                if (!canFlip) {
+                  return (
+                    <div
+                      key={stat.key}
+                      className="flex flex-col-reverse items-center justify-center rounded-xl bg-[#f5f5f7] py-3 px-2 text-center"
+                    >
+                      <dt className="mt-1 text-xs text-gray-400">{stat.label}</dt>
+                      <dd className="text-base sm:text-lg font-bold text-gray-800 tabular-nums leading-tight">
+                        {stat.value}
+                      </dd>
+                    </div>
+                  );
+                }
+
+                return (
+                  <button
+                    key={stat.key}
+                    type="button"
+                    aria-pressed={isFlipped}
+                    onClick={() => toggleStatFlip(stat.key)}
+                    className="w-full text-center cursor-pointer select-none focus:outline-none"
+                    style={{ perspective: "600px" }}
+                  >
+                    <div
+                      className="relative w-full transition-transform duration-500"
+                      style={{
+                        transformStyle: "preserve-3d",
+                        transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)",
+                      }}
+                    >
+                      <div
+                        className="flex flex-col-reverse items-center justify-center rounded-xl bg-[#f5f5f7] py-3 px-2 text-center"
+                        style={{
+                          backfaceVisibility: "hidden",
+                          WebkitBackfaceVisibility: "hidden",
+                        }}
+                      >
+                        <dt className="mt-1 text-xs text-gray-400">{stat.label}</dt>
+                        <dd className="text-base sm:text-lg font-bold text-gray-800 tabular-nums leading-tight">
+                          {stat.value}
+                        </dd>
+                      </div>
+
+                      <div
+                        className="absolute inset-0 flex flex-col-reverse items-center justify-center rounded-xl bg-red-400 text-white py-3 px-1.5 text-center"
+                        style={{
+                          backfaceVisibility: "hidden",
+                          WebkitBackfaceVisibility: "hidden",
+                          transform: "rotateY(180deg)",
+                        }}
+                      >
+                        <span className="mt-1 text-xs text-white/80">{stat.backLabel}</span>
+                        <span className="text-sm sm:text-base font-bold tabular-nums leading-tight">
+                          {stat.backValue}
+                        </span>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </dl>
+          </div>
+
+          <div className="border-t border-gray-100 my-5" />
+
+          <div>
+            <h2 className="text-base font-bold text-slate-700 mb-2">{t("organization.des")}</h2>
+            <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line break-words">
+              {organization.description || t("organization.defaultDes")}
+            </p>
+          </div>
+
+          {hasChannels && (
+            <>
+              <div className="border-t border-gray-100 my-5" />
+              <div>
+                <h2 className="text-base font-bold text-slate-700 mb-3">{t("organization.links")}</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {website && <WebsiteButton t={t} href={website} />}
+                  {qqGroup && <QQGroupButton t={t} text={qqGroup} />}
+                  {bilibili && <BiliButton t={t} href={bilibili} />}
+                  {weibo && <WeiboButton t={t} href={weibo} />}
+                  {rednote && <RednoteButton t={t} href={rednote} />}
+                  {twitter && <TwitterButton t={t} href={twitter} />}
+                  {organization.contactMail && <EmailButton t={t} mail={organization.contactMail} />}
+                  {wikifur && <WikifurButton t={t} href={wikifur} />}
+                  {plurk && <PlurkButton t={t} href={plurk} />}
+                  {facebook && <FacebookButton t={t} href={facebook} />}
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Desktop: 保持原有桌面端排版不变 */}
+      <div className="hidden md:block bg-white shadow-sm rounded-xl p-6">
+        <div className="flex flex-row">
+          {organization.logoUrl && (
+            <div className="border rounded flex justify-center p-2 w-48 h-48 shrink-0">
               <Image
                 className="object-contain h-full"
                 containerClassName="h-full"
@@ -109,7 +341,7 @@ export default function OrganizationDetail(props: {
               />
             </div>
           )}
-          <div className="mt-4 md:mt-0 md:ml-4 ">
+          <div className="ml-4">
             <div className="flex flex-wrap items-center gap-2 mb-2">
               <h1 className="text-2xl font-bold">{organization.name}</h1>
             </div>
@@ -149,12 +381,7 @@ export default function OrganizationDetail(props: {
               )}
             </div>
 
-            <div
-              className={clsx(
-                "flex items-center flex-wrap first:mr-0 gap-4",
-                // styles.links
-              )}
-            >
+            <div className="flex items-center flex-wrap first:mr-0 gap-4">
               {website && (
                 <a
                   href={website}
@@ -290,9 +517,9 @@ export default function OrganizationDetail(props: {
       </div>
 
       {events.total > 0 && (
-        <section className="mt-8 rounded-xl">
-          <h2 className="text-xl text-slate-600 mb-4">{t("organization.passedEvent")}</h2>
-          <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-8">
+        <section className="mt-6 sm:mt-8 rounded-xl">
+          <h2 className="text-lg sm:text-xl text-slate-600 mb-3 sm:mb-4 px-0.5">{t("organization.passedEvent")}</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-8">
             {events.records.map((e, index) => (
               <EventCard
                 key={e.id}
@@ -304,7 +531,7 @@ export default function OrganizationDetail(props: {
             ))}
           </div>
           <Pagination
-            className="mt-8"
+            className="mt-6 sm:mt-8"
             current={events.current}
             totalPages={Math.ceil(events.total / events.pageSize)}
             getPageHref={(page) => ({
@@ -404,6 +631,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         events: { ...events, records: validEvents },
         firstEventStartAt: data.firstEventStartAt,
         pageviewCount: pv,
+        nowTimestamp: Date.now(),
         headMetas: {
           title: `${validOrganization?.name}`,
           des: organizationDetailDescriptionGenerator(

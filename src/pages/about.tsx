@@ -158,39 +158,39 @@ export default function About() {
         <div className="flex justify-center">
           <h2 className="text-lg text-white mb-4 bg-geraldine rounded-full w-fit px-4">贡献者</h2>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           {Moderators.map((moderator) => (
             <a
-              key={moderator.id}
+              key={moderator.name}
               href={moderator.link}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center flex-col bg-white rounded-xl p-4 hover:bg-red-300 transition duration-300 group hover:shadow-md hover:-translate-y-2"
+              className="flex items-center flex-col bg-white shadow-sm rounded-xl p-3 sm:p-4 hover:bg-red-300 transition duration-300 group hover:shadow-md md:hover:-translate-y-2 text-center"
             >
-              <img src={moderator.avatar} alt={moderator.name} className="w-20 h-20 rounded-full" />
-              <h3 className="text-lg text-slate-600 font-bold mt-2 group-hover:text-white transition duration-300">
+              <img src={moderator.avatar} alt={moderator.name} className="w-16 h-16 sm:w-20 sm:h-20 rounded-full" />
+              <h3 className="text-base sm:text-lg text-slate-600 font-bold mt-2 group-hover:text-white transition duration-300">
                 {moderator.name}
               </h3>
-              <p className="text-slate-500 m-0 p-0 group-hover:text-white transition duration-300">
+              <p className="text-xs sm:text-base text-slate-500 m-0 p-0 group-hover:text-white transition duration-300">
                 {moderator.description}
               </p>
             </a>
           ))}
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mt-3 sm:mt-4">
           {Contributors.map((contributor) => (
             <a
               key={contributor.id}
               href={contributor.link}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center flex-col bg-white rounded-xl p-4 group hover:shadow-md hover:-translate-y-2 hover:bg-red-300 transition duration-300"
+              className="flex items-center flex-col bg-white shadow-sm rounded-xl p-3 sm:p-4 group hover:shadow-md md:hover:-translate-y-2 hover:bg-red-300 transition duration-300 text-center"
             >
-              <img src={contributor.avatar} alt={contributor.name} className="w-20 h-20 rounded-full" />
-              <h3 className="text-lg text-slate-600 font-bold mt-2 group-hover:text-white transition duration-300">
+              <img src={contributor.avatar} alt={contributor.name} className="w-16 h-16 sm:w-20 sm:h-20 rounded-full" />
+              <h3 className="text-base sm:text-lg text-slate-600 font-bold mt-2 group-hover:text-white transition duration-300">
                 {contributor.name}
               </h3>
-              <p className="text-slate-500 m-0 p-0 group-hover:text-white transition duration-300">
+              <p className="text-xs sm:text-base text-slate-500 m-0 p-0 group-hover:text-white transition duration-300">
                 {contributor.description}
               </p>
             </a>

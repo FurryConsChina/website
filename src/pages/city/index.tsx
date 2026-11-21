@@ -26,7 +26,7 @@ export default function City(props: { regionGroups: Record<string, RegionListIte
 
   return (
     <>
-      <div className="bg-white border p-6 rounded-xl">
+      <div className="bg-white shadow-sm p-4 sm:p-6 rounded-xl">
         {groupKeys.map((groupKey) => {
           const groupName = (() => {
             if (groupKey === "china") {
@@ -42,20 +42,23 @@ export default function City(props: { regionGroups: Record<string, RegionListIte
           })();
 
           return (
-            <div key={groupKey} className="mb-8 last:mb-0">
-              <h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">
+            <div key={groupKey} className="mb-6 sm:mb-8 last:mb-0">
+              <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4 border-b pb-2">
                 {groupName}
-                {t("city.group.count", {
-                  count: regionGroups[groupKey].length,
-                })}
+                <span className="text-sm sm:text-base font-normal text-gray-500 ml-1">
+                  {t("city.group.count", {
+                    count: regionGroups[groupKey].length,
+                  })}
+                </span>
               </h3>
-              <ul className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              <ul className="grid grid-cols-3 md:grid-cols-4 gap-2.5 sm:gap-4">
                 {regionGroups[groupKey]
                   .sort((a, b) => b.displayOrder - a.displayOrder)
                   .map((region) => (
                     <li key={region.id} className="group">
                       <Link
                         href={`/city/${region.slug}`}
+                        className="block rounded-lg bg-gray-50 sm:bg-transparent border border-gray-100 sm:border-transparent px-2.5 py-2 sm:p-0 active:bg-red-50 transition"
                         onClick={() =>
                           sendTrack({
                             eventName: "click-city-jump-link",
@@ -66,9 +69,9 @@ export default function City(props: { regionGroups: Record<string, RegionListIte
                           })
                         }
                       >
-                        <h2 className="text-lg font-bold text-gray-600 flex items-center group-hover:text-red-400 transition duration-300">
-                          <FaLink className="inline-block h-3 w-3 mr-1" />
-                          {region.name}
+                        <h2 className="text-sm sm:text-lg font-bold text-gray-600 flex items-center justify-center sm:justify-start group-hover:text-red-400 transition duration-300">
+                          <FaLink className="hidden sm:inline-block h-3 w-3 mr-1 shrink-0" />
+                          <span className="truncate">{region.name}</span>
                         </h2>
                       </Link>
                     </li>

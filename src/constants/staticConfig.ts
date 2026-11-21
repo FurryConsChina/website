@@ -8,6 +8,7 @@ export const FriendSiteLinks = [
   {
     link: "https://srkyxk.com/?utm_source=fcc",
     label: "兽人控游戏库 SRK.Games",
+    shortLabel: "兽人控游戏库",
     description:
       "地表最强兽人控游戏索引！从传统角色扮演兽游到恋爱模拟，或是战略类兽人游戏，甚至更小众的选择，你都能在这里找到。",
   },
@@ -25,6 +26,7 @@ export const FriendSiteLinks = [
   {
     link: "https://www.furwall.net/?utm_source=fcc&utm_campaign=friend_link",
     label: "绒毛墙 - 兽迷交流新天地",
+    shortLabel: "绒毛墙",
     description: "让社群交流更亲密友善，还能精彩重温兽圈中每一个温馨与欢乐的瞬间，让这段旅程充满毛绒绒的爱与共鸣。",
   },
   {
