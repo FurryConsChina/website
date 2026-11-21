@@ -3,7 +3,13 @@ import { ListResponse } from "@/types/api";
 import type { RegionEventItem, RegionListItem } from "@/types/region";
 
 export class RegionAPI {
-  static async getRegionList(params: { current: number; pageSize: number; code?: string; withEvents?: boolean }) {
+  static async getRegionList(params: {
+    current: number;
+    pageSize: number;
+    code?: string;
+    search?: string;
+    withEvents?: boolean;
+  }) {
     const response = await API.get<ListResponse<RegionListItem>>("website/region", { params });
     return response.data;
   }

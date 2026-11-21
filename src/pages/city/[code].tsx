@@ -1,25 +1,32 @@
-import { RegionAPI } from "@/api/region";
-import Pagination from "@/components/Pagination";
-import type { ListResponse } from "@/types/api";
-import type { RegionListItem } from "@/types/region";
-import { getEventOrganizations } from "@/utils/event";
-import { sendTrack } from "@/utils/track";
-import { getEventDetailUrl } from "@/utils/url";
 import axios from "axios";
-import { GetServerSidePropsContext } from "next";
-import Link from "next/link";
-import * as z from "zod/v4";
-import Image from "@/components/Image";
-import { getEventCoverImgPath } from "@/utils/imageLoader";
+import dayjs from "dayjs";
 import "dayjs/locale/zh-cn";
 import "dayjs/locale/zh-tw";
-import { getLayoutProps } from "@/utils/layoutProps";
 import { groupBy } from "es-toolkit";
+import type { GetServerSidePropsContext } from "next";
+import Link from "next/link";
 import { useTranslation } from "next-i18next/pages";
+import { IoArrowForward, IoChevronForward } from "react-icons/io5";
+import * as z from "zod/v4";
+
+import { RegionAPI } from "@/api/region";
+import Image from "@/components/Image";
+import Pagination from "@/components/Pagination";
+import type { ListResponse } from "@/types/api";
+import { getEventOrganizations } from "@/utils/event";
+import { getEventCoverImgPath } from "@/utils/imageLoader";
+import { getLayoutProps } from "@/utils/layoutProps";
 import { currentSupportLocale, getDayjsLocale, monthNumberFormatter } from "@/utils/locale";
-import dayjs from "dayjs";
-import { breadcrumbGenerator } from "@/utils/structuredData";
 import { cityDetailDescriptionGenerator, cityDetailKeywordGenerator, CityPageMeta } from "@/utils/meta";
+import { breadcrumbGenerator } from "@/utils/structuredData";
+import { sendTrack } from "@/utils/track";
+import { getEventDetailUrl } from "@/utils/url";
+
+type CitySummary = {
+  slug: string;
+  name: string;
+  eventCount: number;
+};
 
 type CityEventItem = {
   id: string;
@@ -31,41 +38,29 @@ type CityEventItem = {
   organization: { name: string; slug: string } | null;
 };
 
-export default function CityDetail({
-  region,
-  events,
-}: {
-  region: RegionListItem;
-  events: ListResponse<CityEventItem>;
-}) {
+export default function CityDetail({ region, events }: { region: CitySummary; events: ListResponse<CityEventItem> }) {
   const { t, i18n } = useTranslation();
-  // 按年份分组
-  const groupEventsByYear = groupBy(events.records, (event) => {
-    const year = event.startAt ? dayjs(event.startAt).year() : "no-date";
-    return year;
-  });
 
-  // 对每个年份内的事件按月份分组
+  const groupEventsByYear = groupBy(events.records, (event) =>
+    event.startAt ? String(dayjs(event.startAt).year()) : "no-date",
+  );
+
   const yearMonthData = Object.entries(groupEventsByYear).reduce(
     (acc, [year, yearEvents]) => {
       if (year === "no-date") {
         acc[year] = { "no-date": yearEvents };
       } else {
-        // 按月份分组
-        const monthGroups = groupBy(yearEvents, (event) => {
-          return event.startAt ? dayjs(event.startAt).format("M") : "no-date";
-        });
-
-        // 对每个月份内的事件按开始日期排序
+        const monthGroups = groupBy(yearEvents, (event) =>
+          event.startAt ? dayjs(event.startAt).format("M") : "no-date",
+        );
         Object.keys(monthGroups).forEach((month) => {
           monthGroups[month].sort((a, b) => {
             if (!a.startAt && !b.startAt) return 0;
             if (!a.startAt) return 1;
             if (!b.startAt) return -1;
-            return new Date(a.startAt).getTime() - new Date(b.startAt).getTime();
+            return new Date(b.startAt).getTime() - new Date(a.startAt).getTime();
           });
         });
-
         acc[year] = monthGroups;
       }
       return acc;
@@ -73,14 +68,12 @@ export default function CityDetail({
     {} as Record<string, Record<string, CityEventItem[]>>,
   );
 
-  // 排序年份（最新的在前）
   const yearList = Object.keys(yearMonthData).sort((a, b) => {
     if (a === "no-date") return 1;
     if (b === "no-date") return -1;
-    return parseInt(b) - parseInt(a);
+    return parseInt(b, 10) - parseInt(a, 10);
   });
 
-  // 月份名称映射
   const getMonthName = (month: string) => {
     if (month === "no-date") return t("years.unknown");
     return t("homepage.month", {
@@ -89,32 +82,62 @@ export default function CityDetail({
   };
 
   return (
-    <>
+    <div className="space-y-4">
+      {/* 城市头部信息卡 */}
       <div className="bg-white shadow-sm p-4 sm:p-6 rounded-xl">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-600">{region.name}</h1>
+        <div className="flex items-center gap-1.5 text-xs sm:text-sm text-gray-400 mb-2">
+          <Link href="/city" className="hover:text-red-400 transition-colors">
+            {t("header.nav.city")}
+          </Link>
+          <IoChevronForward className="text-xs shrink-0" aria-hidden />
+          <span className="text-gray-600 font-medium">{region.name}</span>
+        </div>
+
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex flex-wrap items-baseline gap-2.5">
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-800">{region.name}</h1>
+            <span className="rounded-full bg-gray-100 px-3 py-1 text-xs sm:text-sm font-medium text-gray-600 tabular-nums">
+              {t("city.totalEvents", { count: events.total })}
+            </span>
+          </div>
+
+          <Link
+            href={{ pathname: "/", query: { region: region.slug, includePastEvents: "true" } }}
+            className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-gray-100 hover:bg-red-400 hover:text-white px-3.5 py-2 text-xs sm:text-sm font-medium text-slate-700 transition-colors self-start sm:self-auto"
+          >
+            <span>{t("city.filterOnHome")}</span>
+            <IoArrowForward className="text-sm shrink-0" aria-hidden />
+          </Link>
+        </div>
       </div>
 
-      <div className="bg-white shadow-sm p-4 sm:p-6 rounded-xl mt-3 sm:mt-6">
-        <div className="grid grid-cols-1 gap-6 sm:gap-8 mt-1 sm:mt-4">
-          {yearList.map((year) => (
-            <div key={year} className="space-y-3 sm:space-y-4">
-              <h3 className="text-lg sm:text-xl font-semibold text-gray-700 border-b pb-2">
-                {year === "no-date"
-                  ? t("years.unknown")
-                  : t("years.known", {
-                      year: year,
-                    })}
-              </h3>
+      {/* 按年/月倒序展示活动 */}
+      <div className="bg-white shadow-sm p-4 sm:p-6 rounded-xl">
+        <div className="space-y-7 sm:space-y-8">
+          {yearList.map((year) => {
+            const sortedMonths = Object.keys(yearMonthData[year]).sort((a, b) => {
+              if (a === "no-date") return 1;
+              if (b === "no-date") return -1;
+              return parseInt(b, 10) - parseInt(a, 10);
+            });
 
-              {Object.entries(yearMonthData[year]).map(([month, monthEvents]) => (
-                <div key={`${year}-${month}`}>
-                  <h4 className="text-base sm:text-lg font-medium text-gray-600 mb-2 sm:mb-3">{getMonthName(month)}</h4>
-                  <MonthSection events={monthEvents} />
-                </div>
-              ))}
-            </div>
-          ))}
+            return (
+              <section key={year} className="space-y-4">
+                <h2 className="text-lg sm:text-xl font-bold text-red-400 border-b border-gray-100 pb-2">
+                  {year === "no-date" ? t("years.unknown") : t("years.known", { year })}
+                </h2>
+
+                {sortedMonths.map((month) => (
+                  <div key={`${year}-${month}`}>
+                    <h3 className="text-sm sm:text-base font-bold text-gray-500 mb-2.5">{getMonthName(month)}</h3>
+                    <MonthSection events={yearMonthData[year][month]} />
+                  </div>
+                ))}
+              </section>
+            );
+          })}
         </div>
+
         <Pagination
           className="mt-6 sm:mt-8"
           current={events.current}
@@ -125,7 +148,7 @@ export default function CityDetail({
           })}
         />
       </div>
-    </>
+    </div>
   );
 }
 
@@ -135,7 +158,7 @@ function MonthSection({ events }: { events: CityEventItem[] }) {
   const dayjsLocale = getDayjsLocale(i18n.language);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mt-2.5 sm:mt-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
       {events.map((event) => (
         <Link
           key={event.id}
@@ -149,23 +172,28 @@ function MonthSection({ events }: { events: CityEventItem[] }) {
               },
             })
           }
-          className="rounded-xl shadow-md sm:shadow-xl h-32 sm:h-36 relative flex justify-center items-center group overflow-hidden"
+          className="group relative h-36 sm:h-40 rounded-xl overflow-hidden bg-gray-200 block shadow-sm"
         >
-          <div className="rounded-xl duration-500 transition group-hover:border-gray-400 w-full h-full absolute brightness-75 group-hover:brightness-95">
-            <Image
-              alt={t("city.eventBackgroundAlt", { name: event.name })}
-              src={getEventCoverImgPath(event)}
-              width={350}
-              className="h-full w-full object-cover rounded-xl overflow-hidden"
-              autoFormat
-            />
-          </div>
-          <div className="z-10 relative pointer-events-none px-4 py-2 text-center">
-            <h4 className="tracking-wide text-white font-bold text-base sm:text-lg text-center drop-shadow-sm line-clamp-2">{`${event.organization?.name} · ${event.name}`}</h4>
-            {event.startAt && event.endAt && (
-              <p className="text-center text-white/95 text-xs sm:text-sm mt-1 drop-shadow-sm">
-                {event.startAt && <span>{dayjs(event.startAt).locale(dayjsLocale).format(dateFormat)}</span>}-
-                {event.endAt && <span>{dayjs(event.endAt).locale(dayjsLocale).format(dateFormat)}</span>}
+          <Image
+            alt={t("city.eventBackgroundAlt", { name: event.name })}
+            src={getEventCoverImgPath(event)}
+            width={420}
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            autoFormat
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/10" />
+
+          <div className="absolute inset-x-0 bottom-0 p-3.5 sm:p-4">
+            {event.organization?.name && (
+              <div className="text-xs font-medium text-white/80 truncate">{event.organization.name}</div>
+            )}
+            <h4 className="mt-0.5 text-base sm:text-lg font-bold text-white line-clamp-2 leading-snug">{event.name}</h4>
+            {event.startAt && (
+              <p className="mt-1 text-xs text-white/85 tabular-nums">
+                {dayjs(event.startAt).locale(dayjsLocale).format(dateFormat)}
+                {event.endAt && !dayjs(event.startAt).isSame(dayjs(event.endAt), "day")
+                  ? ` - ${dayjs(event.endAt).locale(dayjsLocale).format(dateFormat)}`
+                  : ""}
               </p>
             )}
           </div>
@@ -253,7 +281,11 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
             ],
           }),
         },
-        region: region,
+        region: {
+          slug: region.slug,
+          name: region.name,
+          eventCount: region.eventCount,
+        },
         events: { ...regionEvents, records: parsedEvents },
         ...layoutProps,
       },

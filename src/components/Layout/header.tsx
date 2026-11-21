@@ -3,11 +3,13 @@ import clsx from "clsx";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { IoMdClose } from "react-icons/io";
+import { IoSearch } from "react-icons/io5";
 import { useTranslation } from "next-i18next/pages";
 import Image from "@/components/Image";
 import { TbMenuDeep } from "react-icons/tb";
 import { useCurrentPath } from "@/utils/path";
 import LocaleMenu, { MobileLocaleSelector } from "@/components/Layout/localeMenu";
+import SearchModal from "@/components/SearchModal";
 import imageLoader from "@/utils/imageLoader";
 
 // const AnimeEmojis = [
@@ -63,6 +65,7 @@ const NavLinks = [
 
 export default function Header({ slogan }: { slogan?: string | null }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const bodyRef = useRef<HTMLBodyElement | null>(null);
 
@@ -84,20 +87,30 @@ export default function Header({ slogan }: { slogan?: string | null }) {
     }
   };
 
+  const handleOpenSearch = () => {
+    if (isMenuOpen) {
+      handleMenuClick(false);
+    }
+    setIsSearchOpen(true);
+  };
+
   return (
-    <header className="sticky top-0 z-30 md:relative md:mt-8 md:mb-8">
-      <div
-        className={clsx(
-          "shadow bg-white flex justify-between items-center rounded-b-xl md:rounded-xl",
-          "px-3 py-2 md:p-0",
-        )}
-      >
-        <HeaderLeft slogan={slogan} />
-        <HeaderNav isMenuOpen={isMenuOpen} switchMenu={handleMenuClick} />
-        <HeaderRight />
-      </div>
-      <MobileMenu isOpen={isMenuOpen} switchMenu={handleMenuClick} />
-    </header>
+    <>
+      <header className="sticky top-0 z-30 md:relative md:mt-8 md:mb-8">
+        <div
+          className={clsx(
+            "shadow bg-white flex justify-between items-center rounded-b-xl md:rounded-xl",
+            "px-3 py-2 md:p-0",
+          )}
+        >
+          <HeaderLeft slogan={slogan} />
+          <HeaderNav isMenuOpen={isMenuOpen} switchMenu={handleMenuClick} onOpenSearch={handleOpenSearch} />
+          <HeaderRight onOpenSearch={handleOpenSearch} />
+        </div>
+        <MobileMenu isOpen={isMenuOpen} switchMenu={handleMenuClick} />
+      </header>
+      <SearchModal open={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+    </>
   );
 }
 
@@ -154,21 +167,39 @@ function HeaderLeft({ slogan }: { slogan?: string | null }) {
   );
 }
 
-function HeaderNav({ isMenuOpen, switchMenu }: { isMenuOpen: boolean; switchMenu: (open: boolean) => void }) {
+function HeaderNav({
+  isMenuOpen,
+  switchMenu,
+  onOpenSearch,
+}: {
+  isMenuOpen: boolean;
+  switchMenu: (open: boolean) => void;
+  onOpenSearch: () => void;
+}) {
   const { t } = useTranslation();
   const { isCurrentPath } = useCurrentPath();
 
   return (
     <>
-      <button
-        type="button"
-        aria-expanded={isMenuOpen}
-        aria-label="Toggle navigation menu"
-        className="block md:hidden p-1.5 -mr-1 rounded-lg text-2xl text-gray-600 active:bg-gray-100 transition-colors"
-        onClick={() => switchMenu(!isMenuOpen)}
-      >
-        {isMenuOpen ? <IoMdClose /> : <TbMenuDeep />}
-      </button>
+      <div className="flex items-center gap-1 md:hidden shrink-0">
+        <button
+          type="button"
+          aria-label={t("event.filter.search")}
+          className="p-1.5 rounded-lg text-xl text-gray-600 active:bg-gray-100 transition-colors"
+          onClick={onOpenSearch}
+        >
+          <IoSearch />
+        </button>
+        <button
+          type="button"
+          aria-expanded={isMenuOpen}
+          aria-label="Toggle navigation menu"
+          className="p-1.5 -mr-1 rounded-lg text-2xl text-gray-600 active:bg-gray-100 transition-colors"
+          onClick={() => switchMenu(!isMenuOpen)}
+        >
+          {isMenuOpen ? <IoMdClose /> : <TbMenuDeep />}
+        </button>
+      </div>
       <nav className={clsx("hidden md:block mx-3 my-2 flex-auto", "bg-gray-100 rounded-md px-3 py-2")}>
         <ol className="flex gap-4 justify-between">
           {NavLinks.map((nav) => (
@@ -176,7 +207,7 @@ function HeaderNav({ isMenuOpen, switchMenu }: { isMenuOpen: boolean; switchMenu
               key={nav.name}
               className={clsx(
                 "font-bold rounded-md w-full",
-                isCurrentPath(nav.link)
+                isCurrentPath(nav.link, nav.link !== "/")
                   ? "text-geraldine bg-white"
                   : "text-slate-700 hover:text-geraldine hover:bg-white/70",
               )}
@@ -204,11 +235,22 @@ function HeaderNav({ isMenuOpen, switchMenu }: { isMenuOpen: boolean; switchMenu
   );
 }
 
-function HeaderRight() {
+function HeaderRight({ onOpenSearch }: { onOpenSearch: () => void }) {
+  const { t } = useTranslation();
+
   return (
     <div className="hidden md:flex items-center justify-end px-4 py-2 h-full lg:basis-1/4">
       <div className="border-l border-gray-200 pl-6">
-        <div className="bg-gray-100 rounded-md px-2 py-2 flex gap-8 justify-center">
+        <div className="bg-gray-100 rounded-md px-3 py-2 flex items-center gap-3">
+          <button
+            type="button"
+            aria-label={t("event.filter.search")}
+            onClick={onOpenSearch}
+            className="text-gray-600 hover:text-gray-900 flex items-center justify-center transition-colors"
+          >
+            <IoSearch size={20} aria-hidden />
+          </button>
+          <span className="h-5 w-px bg-gray-300/80" aria-hidden />
           <LocaleMenu />
         </div>
       </div>
@@ -243,7 +285,9 @@ function MobileMenu({ isOpen, switchMenu }: { isOpen: boolean; switchMenu: (open
                 href={nav.link}
                 className={clsx(
                   "px-3 py-3.5 rounded-xl font-bold shadow-sm text-base text-center tracking-wide block transition-colors",
-                  isCurrentPath(nav.link) ? "text-white bg-red-400" : "text-slate-700 bg-white active:bg-gray-50",
+                  isCurrentPath(nav.link, nav.link !== "/")
+                    ? "text-white bg-red-400"
+                    : "text-slate-700 bg-white active:bg-gray-50",
                 )}
                 onClick={() => {
                   switchMenu(false);

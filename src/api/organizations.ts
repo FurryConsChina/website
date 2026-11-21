@@ -3,7 +3,7 @@ import API from "@/api";
 import { ListResponse } from "@/types/api";
 
 export class OrganizationsAPI {
-  static async getOrganizationList(params: { current: string; pageSize: string; sortBy?: string }) {
+  static async getOrganizationList(params: { current: string; pageSize: string; sortBy?: string; keyword?: string }) {
     const response = await API.get<ListResponse<Omit<Organization, "links"> & { eventCount: number }>>(
       "website/organization",
       {

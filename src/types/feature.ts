@@ -8,3 +8,5 @@ export const FeatureSchema = z.object({
   isPublic: z.boolean(),
   sortOrder: z.number(),
 });
+
+export const PublicFeatureSchema = FeatureSchema.omit({ sortOrder: true });

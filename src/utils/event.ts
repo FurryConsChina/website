@@ -1,4 +1,4 @@
-import { DurationType, SelectedFilterType } from "@/types/list";
+import { DurationType } from "@/types/list";
 import { groupBy } from "es-toolkit/compat";
 import dayjs from "dayjs";
 
@@ -15,28 +15,6 @@ type EventListable = {
   endAt: string | null;
   scale: string;
 };
-
-export function eventGroupByYear<T extends EventListable>(data: T[], order: "asc" | "desc") {
-  const groupByStartDate = groupBy(data, (e) => (e.startAt ? dayjs(e.startAt).year() : "no-date"));
-
-  const years = Object.keys(groupByStartDate).sort((a, b) => {
-    if (a !== "no-date" && b !== "no-date") {
-      return Number(b) - Number(a);
-    }
-    if (a === "no-date") {
-      return -1;
-    }
-    if (b === "no-date") {
-      return 1;
-    }
-    return 0;
-  });
-
-  return years.map((year) => ({
-    year,
-    events: sortEvents(groupByStartDate[year], order),
-  }));
-}
 
 export function eventGroupByMonth<T extends EventListable>(data: T[], monthOrder: "asc" | "desc") {
   const groupByStartDate = groupBy(data, (e) => (e.startAt ? dayjs(e.startAt).month() + 1 : "no-date"));
@@ -63,30 +41,6 @@ export function eventGroupByMonth<T extends EventListable>(data: T[], monthOrder
     month,
     events: sortEvents(groupByStartDate[month], "asc"),
   }));
-}
-
-export function filteringEvents<T extends EventListable>(
-  events: T[],
-  selectedFilter: SelectedFilterType,
-  nowTimestamp: number = Date.now(),
-) {
-  return events.filter((event) => {
-    const endTime = event.endAt ? new Date(new Date(event.endAt).setHours(23, 59, 59, 999)).getTime() : null;
-    if (!selectedFilter.includePastEvents) {
-      // for now, if event is cancelled, the data willn't include it at all.
-      // if (event.status === EventStatus.EventCancelled) {
-      //   return false;
-      // }
-      if (endTime && nowTimestamp > endTime) {
-        return false;
-      }
-    }
-
-    if (selectedFilter.eventScale[0] !== "all" && !selectedFilter.eventScale.includes(event.scale)) {
-      return false;
-    }
-    return true;
-  });
 }
 
 export function groupByCustomDurationEvent<T extends EventListable>(events: T[], nowTimestamp: number = Date.now()) {

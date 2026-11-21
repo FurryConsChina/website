@@ -1,81 +1,150 @@
-import { useMemo, useState } from "react";
-import { Field, Label, Switch } from "@headlessui/react";
+import { useMemo } from "react";
 import { groupBy } from "es-toolkit/compat";
-import { createLoader, parseAsBoolean, useQueryState } from "nuqs";
+import { createLoader, parseAsArrayOf, parseAsBoolean, parseAsString, useQueryStates } from "nuqs";
 import { useTranslation } from "next-i18next/pages";
 import { getLayoutProps } from "@/utils/layoutProps";
 import type { GetServerSidePropsContext } from "next";
 import { EventsAPI } from "@/api/events";
+import { RegionAPI } from "@/api/region";
 import EventCard from "@/components/EventCard";
+import EventFilterBar, {
+  EMPTY_FILTERS,
+  type FilterFeatureOption,
+  type FilterRegionOption,
+  type HomeFilterState,
+} from "@/components/EventFilterBar";
 import { FriendSiteBlock } from "@/components/Layout/footer";
-import { EventScale, EventStatus } from "@/constants/event";
-import { filteringEvents, getEventOrganizations, groupByCustomDurationEvent, sortEvents } from "@/utils/event";
-import { sendTrack } from "@/utils/track";
+import { EventLocationType, EventScale, EventStatus, EventTypeMap } from "@/constants/event";
+import { RegionType } from "@/constants/region";
+import { getEventOrganizations, groupByCustomDurationEvent, sortEvents } from "@/utils/event";
 
 import { DurationType } from "@/types/list";
 import type { EventCardItem } from "@/types/event";
 import { formatLocale, monthNumberFormatter } from "@/utils/locale";
 import { keywordGenerator } from "@/utils/meta";
 import dayjs from "dayjs";
-import SponsorBanner from "@/components/SponsorBanner";
+
+const VALID_SCALES = new Set<string>(Object.values(EventScale));
+const VALID_TYPES = new Set<string>(Object.values(EventTypeMap));
+const VALID_LOCATION_TYPES = new Set<string>(Object.values(EventLocationType));
+const REGION_SLUG_REGEX = /^[a-zA-Z0-9-]+$/;
 
 export const searchParams = {
+  q: parseAsString.withDefault(""),
   includePastEvents: parseAsBoolean.withDefault(false),
+  region: parseAsArrayOf(parseAsString).withDefault([]),
+  scale: parseAsArrayOf(parseAsString).withDefault([]),
+  type: parseAsArrayOf(parseAsString).withDefault([]),
+  locationType: parseAsArrayOf(parseAsString).withDefault([]),
+  feature: parseAsArrayOf(parseAsString).withDefault([]),
 };
 
 export const loadSearchParams = createLoader(searchParams);
 
-export default function Home(props: { events: EventCardItem[]; nowTimestamp: number }) {
+export default function Home(props: {
+  events: EventCardItem[];
+  regions: FilterRegionOption[];
+  features: FilterFeatureOption[];
+  nowTimestamp: number;
+}) {
   const { t } = useTranslation();
-  const [includePastEvents, setIncludePastEvents] = useQueryState(
-    "includePastEvents",
-    parseAsBoolean.withDefault(false).withOptions({
-      shallow: false,
-      history: "push",
-    }),
-  );
-  const [eventScale, setEventScale] = useState<(typeof EventScale)[keyof typeof EventScale][]>(["all"]);
-  const selectedFilter = useMemo(
-    () => ({
-      includePastEvents,
-      eventScale,
-    }),
-    [eventScale, includePastEvents],
-  );
-  const filteredEvents = useMemo(
-    () => filteringEvents(props.events, selectedFilter, props.nowTimestamp),
-    [props.events, selectedFilter, props.nowTimestamp],
-  );
+  const [filters, setFilters] = useQueryStates(searchParams, {
+    shallow: false,
+    history: "push",
+  });
+
+  const filteredEvents = useMemo(() => {
+    if (filters.includePastEvents) {
+      return props.events;
+    }
+    return props.events.filter((event) => {
+      const endTime = event.endAt ? new Date(new Date(event.endAt).setHours(23, 59, 59, 999)).getTime() : null;
+      return !endTime || props.nowTimestamp <= endTime;
+    });
+  }, [props.events, filters.includePastEvents, props.nowTimestamp]);
+
   const groupByCustomDurationEvents = useMemo(
     () => groupByCustomDurationEvent(filteredEvents, props.nowTimestamp),
     [filteredEvents, props.nowTimestamp],
   );
   const currentYear = new Date(props.nowTimestamp).getFullYear();
 
+  const hasFilterCriteria = (state: HomeFilterState) =>
+    Boolean(
+      state.q ||
+      state.region.length ||
+      state.scale.length ||
+      state.type.length ||
+      state.locationType.length ||
+      state.feature.length,
+    );
+
+  const hasActiveSearchOrFilter = hasFilterCriteria(filters) || filters.includePastEvents;
+
+  const handleFilterChange = (next: HomeFilterState) => {
+    const prevHadCriteria = hasFilterCriteria(filters);
+    const nextHasCriteria = hasFilterCriteria(next);
+    const toggledOnlySwitch =
+      next.includePastEvents !== filters.includePastEvents && prevHadCriteria === nextHasCriteria;
+
+    let includePastEvents = next.includePastEvents;
+    if (!toggledOnlySwitch) {
+      if (!prevHadCriteria && nextHasCriteria) {
+        includePastEvents = true;
+      } else if (prevHadCriteria && !nextHasCriteria) {
+        includePastEvents = false;
+      }
+    }
+
+    void setFilters({
+      q: next.q || null,
+      includePastEvents: includePastEvents ? true : null,
+      region: next.region.length ? next.region : null,
+      scale: next.scale.length ? next.scale : null,
+      type: next.type.length ? next.type : null,
+      locationType: next.locationType.length ? next.locationType : null,
+      feature: next.feature.length ? next.feature : null,
+    });
+  };
+
   return (
     <>
       <div>
-        {/* <SponsorBanner /> */}
-        <Filter
-          selectedFilter={selectedFilter}
-          onChange={(filter) => {
-            if (filter.includePastEvents !== includePastEvents) {
-              void setIncludePastEvents(filter.includePastEvents);
-            }
-            if (filter.eventScale[0] !== eventScale[0]) {
-              setEventScale(filter.eventScale);
-            }
-          }}
+        <EventFilterBar
+          filters={filters}
+          regions={props.regions}
+          features={props.features}
+          onChange={handleFilterChange}
         />
 
         {filteredEvents.length === 0 && (
-          <div className="bg-white shadow-sm rounded-xl p-6 mt-6 text-center h-96 flex justify-center flex-col">
-            <h1 className="text-xl text-red-400 font-bold">
+          <div className="bg-white shadow-sm rounded-xl p-6 mt-4 text-center min-h-[260px] flex justify-center items-center flex-col">
+            <h1 className="text-lg sm:text-xl text-red-400 font-bold">
               {t("homepage.noResult")}
-              <br></br>
+              <br />
               {t("homepage.noResultTip")}
             </h1>
-            <p className="text-base text-gray-400 mt-2">{t("homepage.noResultContact")}</p>
+            <p className="text-sm sm:text-base text-gray-400 mt-2">{t("homepage.noResultContact")}</p>
+            {hasActiveSearchOrFilter && (
+              <div className="mt-4 flex flex-wrap justify-center gap-2">
+                {!filters.includePastEvents && (
+                  <button
+                    type="button"
+                    onClick={() => handleFilterChange({ ...filters, includePastEvents: true })}
+                    className="px-4 py-2 rounded-xl bg-red-400 text-white text-sm font-bold active:bg-red-500 transition-colors"
+                  >
+                    {t("event.filter.searchWithPast")}
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => handleFilterChange(EMPTY_FILTERS)}
+                  className="px-4 py-2 rounded-xl bg-[#f5f5f7] text-gray-600 text-sm font-medium active:bg-gray-200 transition-colors"
+                >
+                  {t("event.filter.clearAll")}
+                </button>
+              </div>
+            )}
           </div>
         )}
 
@@ -194,103 +263,89 @@ function DurationSection({
   );
 }
 
-const EventScaleScaleOptions = [
-  { key: "all" },
-  { key: EventScale.Cosy },
-  { key: EventScale.Small },
-  { key: EventScale.Medium },
-  { key: EventScale.Large },
-  { key: EventScale.XLarge },
-];
-function Filter({
-  onChange,
-  selectedFilter,
-}: {
-  onChange: (filter: {
-    includePastEvents: boolean;
-    eventScale: (typeof EventScale)[keyof typeof EventScale][];
-  }) => void;
-  selectedFilter: {
-    includePastEvents: boolean;
-    eventScale: (typeof EventScale)[keyof typeof EventScale][];
-  };
-}) {
-  const { t } = useTranslation();
-  const handleFilter = (key: string, value: unknown) => {
-    sendTrack({
-      eventName: "click-filter",
-      eventValue: {
-        filterName: key,
-        filterValue: value,
-      },
-    });
-    onChange({
-      ...selectedFilter,
-      [key]: value,
-    });
-  };
-
-  const selectedScaleValue = EventScaleScaleOptions.filter((e) => selectedFilter.eventScale.includes(e.key));
-  return (
-    <div className="bg-white shadow-sm rounded-xl p-3.5 sm:p-5 md:p-6 flex sm:items-center flex-col sm:flex-row relative">
-      <Field>
-        <div className="flex items-center max-sm:mb-3 max-sm:justify-between">
-          <Label className="mr-4 text-sm sm:text-base text-gray-600">{t("event.filter.onlyAvailable")}</Label>
-          <Switch
-            checked={!selectedFilter.includePastEvents}
-            onChange={(v) => handleFilter("includePastEvents", !v)}
-            className={`${
-              !selectedFilter.includePastEvents ? "bg-red-400" : "bg-gray-200"
-            } relative inline-flex h-6 w-11 shrink-0 items-center rounded-full`}
-          >
-            <span className="sr-only">{t("event.filter.onlyAvailable")}</span>
-            <span
-              className={`${
-                !selectedFilter.includePastEvents ? "translate-x-6" : "translate-x-1"
-              } inline-block h-4 w-4 transform rounded-full bg-white transition`}
-            />
-          </Switch>
-        </div>
-      </Field>
-
-      <div className="bg-gray-100 w-[2px] h-4 mx-4 hidden sm:block" />
-
-      <select
-        value={selectedScaleValue[0].key}
-        id="scale"
-        onChange={(e) => handleFilter("eventScale", [e.target.value])}
-        className="bg-white py-2 px-3 border rounded-xl text-sm sm:text-base text-gray-600"
-      >
-        {EventScaleScaleOptions.map((option) => (
-          <option className="text-gray-600" key={option.key} value={option.key}>
-            {t(`event.filter.${option.key}`)}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
-}
-
 export async function getServerSideProps({ locale = "zh-Hans", query, res }: GetServerSidePropsContext) {
-  res.setHeader("Cache-Control", "public, s-maxage=300, stale-while-revalidate=300");
+  const parsed = loadSearchParams(query);
+  const keyword = parsed.q.trim().slice(0, 128);
+  const regionSlug = parsed.region.filter((slug) => REGION_SLUG_REGEX.test(slug));
+  const eventScale = parsed.scale.filter((value) => VALID_SCALES.has(value));
+  const eventType = parsed.type.filter((value) => VALID_TYPES.has(value));
+  const eventLocationType = parsed.locationType.filter((value) => VALID_LOCATION_TYPES.has(value));
+  const eventFeature = parsed.feature.map((item) => item.trim()).filter(Boolean);
 
-  const { includePastEvents } = loadSearchParams(query);
+  const hasActiveQuery = Boolean(
+    keyword ||
+    regionSlug.length ||
+    eventScale.length ||
+    eventType.length ||
+    eventLocationType.length ||
+    eventFeature.length,
+  );
+
+  res.setHeader(
+    "Cache-Control",
+    hasActiveQuery
+      ? "public, s-maxage=60, stale-while-revalidate=60"
+      : "public, s-maxage=300, stale-while-revalidate=300",
+  );
+
   const nowTimestamp = Date.now();
-  const [events, layoutProps] = await Promise.all([
+  const eventStartAt = hasActiveQuery
+    ? undefined
+    : parsed.includePastEvents
+      ? dayjs(nowTimestamp).startOf("year").toISOString()
+      : dayjs(nowTimestamp).subtract(1, "month").startOf("month").toISOString();
+
+  const [events, regionList, featureList, layoutProps] = await Promise.all([
     EventsAPI.getEventList({
       current: "1",
       pageSize: "999",
-      eventStartAt: includePastEvents
-        ? dayjs(nowTimestamp).startOf("year").toISOString()
-        : dayjs(nowTimestamp).subtract(1, "month").startOf("month").toISOString(),
+      keyword: keyword || undefined,
+      eventStartAt,
       eventStatus: [EventStatus.EventScheduled, EventStatus.EventRescheduled, EventStatus.EventMovedOnline],
+      regionSlug: regionSlug.length ? regionSlug : undefined,
+      eventScale: eventScale.length ? eventScale : undefined,
+      eventType: eventType.length ? eventType : undefined,
+      eventLocationType: eventLocationType.length ? eventLocationType : undefined,
+      eventFeature: eventFeature.length ? eventFeature : undefined,
+    }),
+    RegionAPI.getRegionList({
+      current: 1,
+      pageSize: 500,
+      withEvents: false,
+    }),
+    EventsAPI.getFeatureList().catch((error) => {
+      console.error("[home] failed to load event features", error);
+      return null;
     }),
     getLayoutProps(locale),
   ]);
 
+  const parentRegionIds = new Set(regionList.records.map((item) => item.parentId).filter(Boolean));
+  const regions: FilterRegionOption[] = regionList.records
+    .filter((item) => item.eventCount > 0 && !(item.kind === RegionType.COUNTRY && parentRegionIds.has(item.id)))
+    .map((item) => ({
+      id: item.id,
+      slug: item.slug,
+      name: item.name,
+      localName: item.localName ?? null,
+      parentId: item.parentId ?? null,
+      displayOrder: item.displayOrder,
+      eventCount: item.eventCount,
+    }));
+
+  const seenFeatureNames = new Set<string>();
+  const features: FilterFeatureOption[] = [];
+  for (const item of featureList?.records ?? []) {
+    if (seenFeatureNames.has(item.name)) continue;
+    seenFeatureNames.add(item.name);
+    features.push({ name: item.name, category: item.category ?? null });
+  }
+
   return {
     props: {
       nowTimestamp,
+      regions,
+      features,
       events: events.records.map((event) => {
         const { primary, others } = getEventOrganizations(event);
         return {
