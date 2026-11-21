@@ -27,13 +27,13 @@ function SimpleEventCard({ event }: { event: SimpleEventItem }) {
           },
         })
       }
-      className="rounded-xl shadow relative flex justify-center items-center group bg-white"
+      className="rounded-xl shadow-sm sm:shadow relative flex justify-center items-center group bg-white active:bg-gray-50 transition-colors"
     >
-      <div className="z-10 relative pointer-events-none p-2">
-        <h4 className="tracking-wide text-slate-700 font-bold text-base text-center group-hover:text-red-400 transition">{`${event.region?.localName} · ${event.name}`}</h4>
-        <p className="text-center text-slate-600">{event.organization?.name}</p>
+      <div className="z-10 relative pointer-events-none p-2.5 sm:p-2">
+        <h4 className="tracking-wide text-slate-700 font-bold text-sm sm:text-base text-center group-hover:text-red-400 transition">{`${event.region?.localName} · ${event.name}`}</h4>
+        <p className="text-center text-slate-600 text-xs sm:text-sm mt-0.5">{event.organization?.name}</p>
         {event.startAt && event.endAt && (
-          <p className="text-center text-slate-600 text-sm">
+          <p className="text-center text-slate-500 text-xs sm:text-sm mt-0.5">
             {event.startAt && <span>{dayjs(event.startAt).locale(dayjsLocale).format(dateFormat)}</span>}-
             {event.endAt && <span>{dayjs(event.endAt).locale(dayjsLocale).format(dateFormat)}</span>}
           </p>

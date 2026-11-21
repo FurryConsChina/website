@@ -64,15 +64,11 @@ export default function EventCard({
           })
         }
         className={clsx(
-          "bg-white rounded-xl min-h-[150px] md:h-[384px] relative group md:outline md:outline-[5px] outline-white transition-all duration-300 drop-shadow-sm hover:shadow-2xl hover:-translate-y-2 overflow-hidden",
-          "hover:outline-red-400 hover:scale-105",
+          "bg-white rounded-xl md:h-[384px] relative group md:outline md:outline-[5px] outline-white transition-all duration-300 drop-shadow-sm md:hover:shadow-2xl md:hover:-translate-y-2 overflow-hidden",
+          "md:hover:outline-red-400 md:hover:scale-105 active:scale-[0.99]",
         )}
       >
-        <div
-          className={clsx(
-            "flex md:flex-col justify-between md:justify-end min-h-[150px] md:h-full rounded-xl relative",
-          )}
-        >
+        <div className={clsx("flex md:flex-col justify-between md:justify-end md:h-full rounded-xl relative")}>
           <EventCover
             imageUrl={finalEventCoverImage}
             eventName={event.name}
@@ -85,16 +81,19 @@ export default function EventCard({
 
           <div
             className={clsx(
-              "w-[60%] md:w-full",
+              "w-[64%] sm:w-[68%] md:w-full min-w-0",
               // "md:h-2/5",
-              "p-2 md:p-3",
+              "p-2.5 sm:p-3",
               // tags.length && "group-hover:md:h-[50%]",
               "transition-all duration-300 rounded-r-xl md:rounded-xl z-10 bg-white/90 group-hover:md:bg-white",
               styles.eventCardDescContainer,
             )}
           >
-            <div className="flex items-center justify-between1">
-              <h5 aria-label="The name of the cons organizer" className={clsx("text-xs md:text-sm text-slate-500")}>
+            <div className="flex items-center">
+              <h5
+                aria-label="The name of the cons organizer"
+                className={clsx("text-[11px] sm:text-xs md:text-sm text-slate-500")}
+              >
                 {[
                   event.locationType && t(`event.locationType.${event.locationType}`),
                   event.type && t(`event.type.${event.type}`),
@@ -106,8 +105,8 @@ export default function EventCard({
 
             <h4
               className={clsx(
-                "font-bold text-lg md:text-xl text-slate-800 group-hover:text-red-400 transition-colors duration-75 leading-5",
-                "md:truncate md:group-hover:text-clip md:group-hover:whitespace-normal",
+                "font-bold text-base sm:text-lg md:text-xl text-slate-800 group-hover:text-red-400 transition-colors duration-75 leading-snug md:leading-5 mt-0.5 md:mt-0",
+                "line-clamp-2 md:line-clamp-none md:truncate md:group-hover:text-clip md:group-hover:whitespace-normal",
               )}
             >
               {[
@@ -118,24 +117,29 @@ export default function EventCard({
                 .join(" ")}
             </h4>
 
-            <h5 aria-label="The name of the cons" className={clsx("text-xs md:text-sm text-slate-500")}>
+            <h5 aria-label="The name of the cons" className={clsx("text-xs md:text-sm text-slate-500 truncate mt-0.5")}>
               {event.name}
             </h5>
 
-            <div className="mt-2 flex items-start text-xs md:text-sm text-slate-600 " suppressHydrationWarning>
+            <div
+              className="mt-1.5 md:mt-2 flex items-center md:items-start text-xs md:text-sm text-slate-600"
+              suppressHydrationWarning
+            >
               {/* <BsCalendar2DateFill className="mr-1 flex-shrink-0 text-xs h-5" /> */}
-              <i className={clsx(styles.calendarIcon, "hidden md:block mr-1 flex-shrink-0 text-xs h-5")} />
-              <EventDate event={event} locale={i18n.language as currentSupportLocale} />
+              <i className={clsx(styles.calendarIcon, "block mr-1.5 md:mr-1 flex-shrink-0 text-xs h-4 md:h-5")} />
+              <span className="truncate">
+                <EventDate event={event} locale={i18n.language as currentSupportLocale} />
+              </span>
             </div>
 
-            <div className="mt-1 flex items-start text-xs md:text-sm text-slate-600 truncate group-hover:text-clip group-hover:whitespace-normal">
+            <div className="mt-1 flex items-center md:items-start text-xs md:text-sm text-slate-600 truncate group-hover:text-clip group-hover:whitespace-normal">
               {/* <IoLocation className="hidden md:block mr-1 flex-shrink-0 text-xs h-5" /> */}
-              <i className={clsx(styles.locationIcon, "hidden md:block mr-1 flex-shrink-0 text-xs h-5")} />
+              <i className={clsx(styles.locationIcon, "block mr-1.5 md:mr-1 flex-shrink-0 text-xs h-4 md:h-5")} />
               <EventLocation event={event} />
             </div>
 
             {!!tags.length && (
-              <div className={clsx("mt-4", "")}>
+              <div className={clsx("mt-2 md:mt-4")}>
                 <Tags tags={tags} />
               </div>
             )}
@@ -166,7 +170,7 @@ function EventCover({
   return (
     <div
       className={clsx(
-        "relative self-stretch overflow-hidden md:absolute top-0 left-0 w-[40%] flex-grow-0 flex items-center justify-center",
+        "relative self-stretch overflow-hidden md:absolute top-0 left-0 w-[36%] sm:w-[32%] flex-grow-0 flex items-center justify-center",
         "md:w-full md:h-3/5",
         "md:group-hover:scale-125 transition-all duration-300",
       )}
@@ -286,7 +290,10 @@ function Tags({ tags }: { tags: string[] }) {
   return (
     <div className="flex flex-nowrap gap-1 scrollbar-hide overflow-x-auto scrollbar-width-0">
       {tags.map((t) => (
-        <span className="text-xs bg-slate-100 px-1 rounded text-gray-700 whitespace-nowrap" key={t}>
+        <span
+          className="text-[11px] md:text-xs bg-slate-100 px-1.5 py-0.5 rounded text-gray-700 whitespace-nowrap"
+          key={t}
+        >
           {t}
         </span>
       ))}

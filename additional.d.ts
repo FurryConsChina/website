@@ -11,6 +11,7 @@ interface AnalyticsTracker {
 
 interface TMapMapInstance {
   on: (eventName: string, handler: () => void) => void;
+  destroy?: () => void;
 }
 
 interface TMapNamespace {

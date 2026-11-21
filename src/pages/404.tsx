@@ -18,7 +18,7 @@ export default function NotFoundPage() {
   }, []);
 
   return (
-    <main className="grid min-h-full place-items-center bg-white rounded-2xl px-6 py-24 sm:py-32 lg:px-8">
+    <main className="grid min-h-full place-items-center bg-white shadow-sm rounded-2xl px-6 py-24 sm:py-32 lg:px-8">
       <div className="text-center">
         <p className="text-base font-semibold text-red-400">404</p>
         <h1 className="mt-4 text-3xl font-bold tracking-tight text-red-400 sm:text-5xl">{t("error.404.title")}</h1>

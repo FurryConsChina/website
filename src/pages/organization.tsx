@@ -17,18 +17,18 @@ export default function OrganizationPage({ organizations }: { organizations: Org
   const { t } = useTranslation();
 
   return (
-    <div className="bg-white p-6 rounded-xl">
+    <div className="bg-white shadow-sm p-4 sm:p-6 rounded-xl">
       <section>
-        <h1 className="font-bold text-gray-600 text-2xl">{t("organization.active")}</h1>
-        <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        <h1 className="font-bold text-gray-600 text-xl sm:text-2xl">{t("organization.active")}</h1>
+        <div className="mt-3 sm:mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-6">
           {groupByStatusOrganizations["active"].map((o) => (
             <OrganizationItem key={o.id} organization={o} />
           ))}
         </div>
       </section>
       <section className="mt-6">
-        <h1 className="font-bold text-gray-600 text-2xl">{t("organization.inactive")}</h1>
-        <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        <h1 className="font-bold text-gray-600 text-xl sm:text-2xl">{t("organization.inactive")}</h1>
+        <div className="mt-3 sm:mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-6">
           {groupByStatusOrganizations["inactive"].map((o) => (
             <OrganizationItem key={o.id} organization={o} />
           ))}
@@ -54,7 +54,7 @@ function OrganizationItem({ organization }: { organization: OrganizationListItem
         })
       }
     >
-      <div className="rounded-xl border py-3 px-2 cursor-pointer h-full flex flex-col items-center justify-center">
+      <div className="rounded-xl border py-3 px-2 cursor-pointer h-full flex flex-col items-center justify-center hover:border-red-300 active:bg-gray-50 transition-colors">
         {organization.logoUrl && (
           <div className="relative mx-auto">
             <Image

@@ -18,12 +18,14 @@ type MapLoadingStatusType = (typeof MapLoadingStatus)[keyof typeof MapLoadingSta
 type EventMapCardProps = {
   latitude?: number | null;
   longitude?: number | null;
+  embedded?: boolean;
 };
 
 export default function EventMapCard(props: EventMapCardProps) {
   const { t } = useTranslation();
   const { latitude, longitude, isValid } = parseCoordinates(props.latitude, props.longitude);
   const mapContainerRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<TMapMapInstance | null>(null);
   const hasInitializedRef = useRef(false);
   const [scriptReloadKey, setScriptReloadKey] = useState(0);
   const [mapLoadingStatus, setMapLoadingStatus] = useState<MapLoadingStatusType>(() => {
@@ -34,7 +36,13 @@ export default function EventMapCard(props: EventMapCardProps) {
   });
 
   const initMap = useCallback(() => {
-    if (!window.TMap || !isValid || !mapContainerRef.current || hasInitializedRef.current) {
+    if (
+      !window.TMap ||
+      !isValid ||
+      !mapContainerRef.current ||
+      mapContainerRef.current.offsetWidth === 0 ||
+      hasInitializedRef.current
+    ) {
       return;
     }
 
@@ -49,6 +57,7 @@ export default function EventMapCard(props: EventMapCardProps) {
         rotation: 45,
       });
 
+      mapInstanceRef.current = map;
       hasInitializedRef.current = true;
 
       map.on("tilesloaded", () => {
@@ -86,6 +95,23 @@ export default function EventMapCard(props: EventMapCardProps) {
     if (window.TMap) {
       queueMicrotask(initMap);
     }
+
+    const container = mapContainerRef.current;
+    if (!container) return;
+
+    const observer = new ResizeObserver(() => {
+      if (container.offsetWidth > 0 && window.TMap && !hasInitializedRef.current) {
+        initMap();
+      }
+    });
+    observer.observe(container);
+
+    return () => {
+      observer.disconnect();
+      mapInstanceRef.current?.destroy?.();
+      mapInstanceRef.current = null;
+      hasInitializedRef.current = false;
+    };
   }, [initMap]);
 
   const handleRetryLoadMap = useCallback(() => {
@@ -115,10 +141,25 @@ export default function EventMapCard(props: EventMapCardProps) {
         onError={() => setMapLoadingStatus(MapLoadingStatus.Error)}
       />
 
-      <div className="relative z-0 my-4 bg-white rounded-xl overflow-hidden">
-        <h3 className="text-xl text-gray-600 m-4">{t("event.map")}</h3>
+      <div
+        className={clsx(
+          "relative z-0 overflow-hidden",
+          !props.embedded && "my-3 sm:my-4 bg-white shadow-sm rounded-xl",
+        )}
+      >
+        {!props.embedded && (
+          <h3 className="text-lg sm:text-xl font-bold sm:font-normal text-gray-600 mx-4 mt-3.5 sm:m-4">
+            {t("event.map")}
+          </h3>
+        )}
 
-        <div ref={mapContainerRef} className="h-[450px] overflow-hidden rounded-2xl m-4 relative">
+        <div
+          ref={mapContainerRef}
+          className={clsx(
+            "h-[240px] sm:h-[340px] md:h-[450px] overflow-hidden rounded-xl sm:rounded-2xl relative",
+            props.embedded ? "mx-4 mt-4 mb-3" : "mx-3 my-2.5 sm:m-4",
+          )}
+        >
           <div
             className={clsx(
               "absolute inset-0 bg-gray-100/70 flex justify-center overflow-hidden transition duration-300",
@@ -148,7 +189,7 @@ export default function EventMapCard(props: EventMapCardProps) {
           )}
         </div>
 
-        <div className="flex items-center mt-2 mb-4 px-4">
+        <div className={clsx("flex items-center", props.embedded ? "mb-4 px-4" : "mt-2 mb-3.5 sm:mb-4 px-3 sm:px-4")}>
           <a
             target="_blank"
             rel="noreferrer"
@@ -162,7 +203,7 @@ export default function EventMapCard(props: EventMapCardProps) {
               });
             }}
             href={`https://uri.amap.com/marker?position=${longitude},${latitude}`}
-            className="px-2 py-2 border border-gray-300 text-sm rounded text-gray-700 hover:text-gray-900 hover:border-gray-400 transition duration-300"
+            className="w-full sm:w-auto text-center px-3 py-2 border border-gray-300 text-sm rounded-lg sm:rounded text-gray-700 hover:text-gray-900 hover:border-gray-400 active:bg-gray-50 transition duration-300"
           >
             {t("event.gotoGaoDe")}
           </a>

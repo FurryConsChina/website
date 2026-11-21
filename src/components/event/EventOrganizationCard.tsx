@@ -25,6 +25,8 @@ import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 type EventOrganizationCardProps = {
   event: EventItem;
   showDescriptionContainer: boolean;
+  embedded?: boolean;
+  className?: string;
 };
 
 export default function EventOrganizationCard(props: EventOrganizationCardProps) {
@@ -65,17 +67,18 @@ export default function EventOrganizationCard(props: EventOrganizationCardProps)
 
   return (
     <div
-      id="event-detail__right"
+      id={props.embedded ? undefined : "event-detail__right"}
       className={clsx(
-        "bg-white rounded-xl mb-4 lg:mb-0",
-        !props.showDescriptionContainer && "w-full",
-        props.showDescriptionContainer && "md:w-4/12",
+        !props.embedded && "bg-white shadow-sm rounded-xl",
+        !props.embedded && !props.showDescriptionContainer && "w-full",
+        !props.embedded && props.showDescriptionContainer && "md:w-4/12 shrink-0",
+        props.className,
       )}
     >
       <div className="p-4">
         {showOrgSwitcher && (
-          <div className="flex justify-between items-center mb-1">
-            <span className="text-lg font-bold text-gray-600">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-base sm:text-lg font-bold text-gray-600">
               {t("event.hostOrganizationCounter", { index: activeIndex + 1, total: orgList.length })}
             </span>
             <div
@@ -102,9 +105,9 @@ export default function EventOrganizationCard(props: EventOrganizationCardProps)
             </div>
           </div>
         )}
-        <div className="flex">
+        <div className="flex items-center sm:items-stretch">
           {organization.logoUrl && (
-            <div className="border rounded flex justify-center items-center p-2 w-[100px] h-[100px]">
+            <div className="border rounded-lg flex justify-center items-center p-2 w-20 h-20 sm:w-[100px] sm:h-[100px] shrink-0">
               <NextImage
                 className="object-contain"
                 alt={t("organization.logoAlt", { name: organization.name })}
@@ -115,16 +118,16 @@ export default function EventOrganizationCard(props: EventOrganizationCardProps)
               />
             </div>
           )}
-          <div className="ml-4 flex flex-col justify-between">
+          <div className={clsx("flex flex-col justify-between min-w-0", organization.logoUrl && "ml-3.5 sm:ml-4")}>
             <div>
               <Link
-                className="text-2xl font-bold text-gray-600"
+                className="text-xl sm:text-2xl font-bold text-gray-600 break-words"
                 href={organizationProfileHref}
                 onClick={trackOrganizationProfileClick}
               >
                 {organization.name}
               </Link>
-              <div className="flex items-center text-gray-500 mb-4">
+              <div className="flex items-center text-gray-500 mt-0.5 mb-2.5 sm:mb-4">
                 <span className="text-sm">
                   <OrganizationStatus status={organization.status || ""} />
                 </span>
@@ -134,7 +137,7 @@ export default function EventOrganizationCard(props: EventOrganizationCardProps)
             <Link href={organizationProfileHref} onClick={trackOrganizationProfileClick}>
               <button
                 type="button"
-                className="border rounded px-2 py-1 text-sm text-gray-500 hover:border-slate-400 hover:drop-shadow transition duration-200"
+                className="border rounded-lg sm:rounded px-2.5 py-1 text-xs sm:text-sm text-gray-500 hover:border-slate-400 hover:drop-shadow active:bg-gray-50 transition duration-200"
               >
                 {t("event.gotoOrganization")}
               </button>
@@ -144,8 +147,8 @@ export default function EventOrganizationCard(props: EventOrganizationCardProps)
 
         <div
           className={clsx(
-            "items-center text-gray-500 grid gap-4 mt-4",
-            !props.showDescriptionContainer && "lg:grid-cols-2",
+            "items-center text-gray-500 grid gap-2.5 sm:gap-4 mt-4",
+            !props.showDescriptionContainer && "sm:grid-cols-2",
           )}
         >
           {website && <WebsiteButton t={t} href={website} />}

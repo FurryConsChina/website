@@ -60,23 +60,23 @@ export default function EventSourceButton({ sources, eventName }: { sources: Eve
   };
 
   const mainButtonClass =
-    "block mt-8 px-16 py-4 bg-red-400 text-white font-bold rounded-md text-center transition duration-300 border-2 border-red-100 shadow-lg";
+    "block w-full mt-5 sm:mt-8 px-6 sm:px-12 py-3 sm:py-4 bg-red-400 active:bg-red-500 text-white font-bold rounded-lg sm:rounded-md text-center transition duration-300 border-2 border-red-100 shadow-lg";
 
   if (sources.length === 1) {
     return renderSourceAction(firstSource, mainButtonClass, getSourceActionText(firstSource));
   }
 
   return (
-    <Menu as="div" className="relative mt-8 flex w-full shadow-lg">
+    <Menu as="div" className="relative mt-5 sm:mt-8 flex w-full shadow-lg">
       {renderSourceAction(
         firstSource,
-        "flex-1 px-16 py-4 bg-red-400 text-white font-bold rounded-l-md text-center transition duration-300 border-2 border-r-0 border-red-100",
+        "flex-1 min-w-0 px-4 sm:px-12 py-3 sm:py-4 bg-red-400 active:bg-red-500 text-white font-bold rounded-l-lg sm:rounded-l-md text-center truncate transition duration-300 border-2 border-r-0 border-red-100",
         getSourceActionText(firstSource),
       )}
 
       <MenuButton
         aria-label={t("event.sourceList")}
-        className="group flex items-center justify-center px-4 bg-red-400 text-white rounded-r-md transition duration-300 border-2 border-red-100"
+        className="group flex items-center justify-center px-3.5 sm:px-4 bg-red-400 active:bg-red-500 text-white rounded-r-lg sm:rounded-r-md transition duration-300 border-2 border-red-100"
       >
         <IoChevronDown aria-hidden className="text-xl transition duration-200 group-data-[open]:rotate-180" />
       </MenuButton>

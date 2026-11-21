@@ -12,9 +12,10 @@ function AnnouncementSlider() {
   const asPath = router.asPath;
   const [emblaRef] = useEmblaCarousel({ loop: true, align: "start" }, [Autoplay({ delay: 3000 })]);
 
-  const defaultSliderClass = "px-4 py-4 bg-white border border-gray-200 rounded-xl text-red-400 text-sm md:text-base";
+  const defaultSliderClass =
+    "px-3.5 py-2.5 md:px-4 md:py-4 bg-white shadow-sm rounded-xl text-red-400 text-xs sm:text-sm md:text-base leading-relaxed";
   return (
-    <div className="overflow-hidden mt-2 md:mt-0 mb-6 mx-1 lg:mx-0" ref={emblaRef}>
+    <div className="overflow-hidden mt-2.5 md:mt-0 mb-3 md:mb-6 mx-2.5 sm:mx-4 xl:mx-0" ref={emblaRef}>
       <div className="embla__container flex">
         <div
           className={clsx(

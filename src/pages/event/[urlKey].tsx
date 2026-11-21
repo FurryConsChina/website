@@ -8,6 +8,7 @@ import NextImage from "@/components/Image";
 import PageviewTag from "@/components/PageviewHeatTag";
 import { EventStatus } from "@/constants/event";
 import type { EventItem } from "@/types/event";
+import { parseCoordinates } from "@/utils/coordinate";
 import { getEventOrganizations } from "@/utils/event";
 import { getEventCoverImgPath, imageUrl } from "@/utils/imageLoader";
 import { currentSupportLocale, formatLocale } from "@/utils/locale";
@@ -16,6 +17,7 @@ import { generateEventDetailStructuredData } from "@/utils/structuredData";
 import { getEventDetailUrl } from "@/utils/url";
 import clsx from "clsx";
 import { GetServerSidePropsContext } from "next";
+import { useState } from "react";
 import { useTranslation } from "next-i18next/pages";
 import { getLayoutProps } from "@/utils/layoutProps";
 import { BsCalendar2DateFill } from "react-icons/bs";
@@ -33,14 +35,21 @@ export default function EventDetail({ event, pageviewCount }: { event: EventItem
   const hostOrganizations = primaryOrganization ? [primaryOrganization, ...coOrganizations] : coOrganizations;
 
   const showDescriptionContainer = !!(event.detail || event.media?.images?.length);
+  const hasValidCoordinates = parseCoordinates(event.location.place?.latitude, event.location.place?.longitude).isValid;
+  const hasOrganization = hostOrganizations.length > 0;
+  const showMobileTabs = hasValidCoordinates && hasOrganization;
+  const [mobileTab, setMobileTab] = useState<"organization" | "map">("organization");
+  const mapKey = `${event.location.place?.latitude ?? ""}:${event.location.place?.longitude ?? ""}`;
 
   return (
     <>
-      <div className={clsx("relative z-20 flex border bg-white rounded-xl min-h-[500px]", "lg:flex-row flex-col")}>
+      <div
+        className={clsx("relative z-20 flex bg-white shadow-sm rounded-xl lg:min-h-[500px]", "lg:flex-row flex-col")}
+      >
         <div
           className={clsx(
             "event-detail__left",
-            "lg:w-7/12 w-full h-[500px] overflow-hidden rounded-t-xl lg:rounded-l-xl lg:rounded-tr-none",
+            "lg:w-7/12 w-full h-[280px] xs:h-[340px] sm:h-[420px] lg:h-[500px] overflow-hidden rounded-t-xl lg:rounded-l-xl lg:rounded-tr-none",
           )}
         >
           <div className={clsx("relative text-center h-full")}>
@@ -62,114 +71,218 @@ export default function EventDetail({ event, pageviewCount }: { event: EventItem
             />
           </div>
         </div>
-        <div
-          className={clsx(
-            "event-detail__right",
-            "p-6 bg-white z-10 flex",
-            "flex-col sm:flex-row sm:max-lg:items-end lg:flex-col",
-            "w-full lg:w-5/12",
-          )}
-        >
+        <div className={clsx("event-detail__right", "p-4 sm:p-6 bg-white z-10 flex flex-col", "w-full lg:w-5/12")}>
           <div className="flex-grow">
             {event.status === EventStatus.EventCancelled && (
-              <p className="inline-flex items-center bg-red-400 mb-2 px-4 py-2 text-white rounded-md">
-                <RiErrorWarningLine className="mr-2 text-lg" />
+              <p className="inline-flex items-center bg-red-400 mb-2 px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base text-white rounded-md">
+                <RiErrorWarningLine className="mr-1.5 sm:mr-2 text-lg shrink-0" />
                 {t("event.status.cancel")}
               </p>
             )}
 
             <div className="flex flex-wrap items-baseline gap-2 gap-y-1">
-              <h1 aria-label={t("event.aria.name")} className="font-bold text-3xl text-gray-700">
+              <h1
+                aria-label={t("event.aria.name")}
+                className="font-bold text-xl sm:text-2xl md:text-3xl text-gray-700 leading-snug"
+              >
                 {event.name}
               </h1>
             </div>
-            <h2 className="text-gray-600 text-sm flex items-center gap-2">
+            <h2 className="text-gray-600 text-xs sm:text-sm flex flex-wrap items-center gap-2 mt-1">
               {t("event.hostBy", {
                 hostName: hostOrganizations.map((organization) => organization.name).join("、"),
               })}
               <PageviewTag count={pageviewCount} />
             </h2>
 
-            <p aria-label={t("event.aria.location")} className="flex items-start text-gray-500 mt-4">
-              <IoLocation className="text-gray-500 shrink-0 mt-1 mr-2" />
-              <span className="min-w-0 break-words">
-                {`${event.location.region?.localName || t("event.unknown")} · ${
-                  event.location.place?.name || t("event.unknown")
-                }`}
-                {event.location.place?.address && event.location.place.address !== event.location.place.name && (
-                  <span className="block text-sm">{event.location.place.address}</span>
-                )}
-              </span>
-            </p>
-
-            <p aria-label={t("event.aria.time")} className="flex items-center text-gray-500">
-              <BsCalendar2DateFill className="text-gray-500 inline-block mr-2" />
-              <EventDate event={event} locale={i18n.language as currentSupportLocale} />
-            </p>
-
-            {!!event.type && !!event.location.type && (
-              <p aria-label={t("event.aria.venueType")} className="flex items-center text-gray-500">
-                <FaHotel className="text-gray-500 inline-block mr-2" />
-
-                {[
-                  event.location.type && t(`event.locationType.${event.location.type}`),
-                  event.type && t(`event.type.${event.type}`),
-                ]
-                  .filter(Boolean)
-                  .join(" ")}
+            <div className="mt-3 sm:mt-4 space-y-2 text-sm sm:text-base">
+              <p aria-label={t("event.aria.location")} className="flex items-start text-gray-500">
+                <IoLocation className="text-gray-500 shrink-0 mt-1 mr-2" />
+                <span className="min-w-0 break-words">
+                  {`${event.location.region?.localName || t("event.unknown")} · ${
+                    event.location.place?.name || t("event.unknown")
+                  }`}
+                  {event.location.place?.address && event.location.place.address !== event.location.place.name && (
+                    <span className="block text-xs sm:text-sm text-gray-400 mt-0.5">
+                      {event.location.place.address}
+                    </span>
+                  )}
+                </span>
               </p>
-            )}
 
-            <p aria-label={t("event.aria.scale")} className="flex items-center text-gray-500">
-              <FaPeoplePulling className="text-gray-500 inline-block mr-2" />
-              {t("event.scaleDes", { scale: t(`event.scale.${event.scale}`) })}
-            </p>
+              <p aria-label={t("event.aria.time")} className="flex items-start sm:items-center text-gray-500">
+                <BsCalendar2DateFill className="text-gray-500 shrink-0 mt-1 sm:mt-0 mr-2" />
+                <span>
+                  <EventDate event={event} locale={i18n.language as currentSupportLocale} />
+                </span>
+              </p>
+
+              {!!event.type && !!event.location.type && (
+                <p aria-label={t("event.aria.venueType")} className="flex items-center text-gray-500">
+                  <FaHotel className="text-gray-500 shrink-0 mr-2" />
+                  <span>
+                    {[
+                      event.location.type && t(`event.locationType.${event.location.type}`),
+                      event.type && t(`event.type.${event.type}`),
+                    ]
+                      .filter(Boolean)
+                      .join(" ")}
+                  </span>
+                </p>
+              )}
+
+              <p aria-label={t("event.aria.scale")} className="flex items-center text-gray-500">
+                <FaPeoplePulling className="text-gray-500 shrink-0 mr-2" />
+                <span>{t("event.scaleDes", { scale: t(`event.scale.${event.scale}`) })}</span>
+              </p>
+            </div>
           </div>
 
           <EventSourceButton sources={event.sources || []} eventName={event.name} />
         </div>
       </div>
 
-      <EventMapCard
-        key={`${event.location.place?.latitude ?? ""}:${event.location.place?.longitude ?? ""}`}
-        latitude={event.location.place?.latitude}
-        longitude={event.location.place?.longitude}
-      />
-
-      <div className="flex my-4 lg:items-start flex-col-reverse md:flex-row">
-        {showDescriptionContainer && (
-          <div id="event-detail__left" className="md:w-8/12">
-            {event.detail && (
-              <div className="bg-white rounded-xl flex-grow p-6 md:mr-4 mb-4">
-                <div
-                  className="text-gray-600 whitespace-pre-line break-words"
-                  dangerouslySetInnerHTML={{ __html: event.detail }}
-                />
+      {/* Mobile: 展商信息与展会地图合并卡片（文件夹/Chrome 风格顶部 Tab） */}
+      {(hasOrganization || hasValidCoordinates) && (
+        <div className="md:hidden my-3">
+          {showMobileTabs ? (
+            <div className="drop-shadow-sm">
+              <div className="grid grid-cols-2 select-none" role="tablist">
+                {(
+                  [
+                    { key: "organization", label: t("event.organization") },
+                    { key: "map", label: t("event.map") },
+                  ] as const
+                ).map(({ key, label }, index) => {
+                  const isActive = mobileTab === key;
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      role="tab"
+                      aria-selected={isActive}
+                      onClick={() => setMobileTab(key)}
+                      className={clsx(
+                        "relative flex items-center justify-center py-2.5 px-3 text-sm rounded-t-xl transition-colors",
+                        isActive
+                          ? "bg-white text-gray-800 font-bold z-10 -mb-px pb-[calc(0.625rem+1px)]"
+                          : "text-gray-500 font-medium active:text-gray-700",
+                      )}
+                    >
+                      {isActive && index === 0 && (
+                        <span
+                          aria-hidden
+                          className="pointer-events-none absolute -right-3 bottom-0 w-3 h-3"
+                          style={{
+                            background: "radial-gradient(circle at 100% 0, transparent 11.5px, #ffffff 12px)",
+                          }}
+                        />
+                      )}
+                      {isActive && index === 1 && (
+                        <span
+                          aria-hidden
+                          className="pointer-events-none absolute -left-3 bottom-0 w-3 h-3"
+                          style={{
+                            background: "radial-gradient(circle at 0 0, transparent 11.5px, #ffffff 12px)",
+                          }}
+                        />
+                      )}
+                      <span className="truncate">{label}</span>
+                    </button>
+                  );
+                })}
               </div>
-            )}
 
-            {!!event.media?.images?.length && (
-              <div className="bg-white rounded-xl flex-grow p-6 md:mr-4">
-                {event.media?.images?.map((cover, index) => (
-                  <div className="relative" key={cover.url}>
-                    <NextImage
-                      alt={t("event.detailImageAlt", {
-                        name: event.name,
-                        index: index + 1,
-                      })}
-                      src={cover.url}
-                      className="w-full"
-                      autoFormat
-                    />
-                  </div>
-                ))}
+              <div
+                className={clsx(
+                  "bg-white rounded-b-xl",
+                  mobileTab === "organization" ? "rounded-tr-xl" : "rounded-tl-xl",
+                )}
+              >
+                {mobileTab === "organization" ? (
+                  <EventOrganizationCard
+                    key={event.id}
+                    event={event}
+                    showDescriptionContainer={showDescriptionContainer}
+                    embedded
+                  />
+                ) : (
+                  <EventMapCard
+                    key={`mobile:${mapKey}`}
+                    latitude={event.location.place?.latitude}
+                    longitude={event.location.place?.longitude}
+                    embedded
+                  />
+                )}
               </div>
-            )}
-          </div>
-        )}
+            </div>
+          ) : hasOrganization ? (
+            <EventOrganizationCard key={event.id} event={event} showDescriptionContainer={showDescriptionContainer} />
+          ) : (
+            <EventMapCard
+              key={`mobile:${mapKey}`}
+              latitude={event.location.place?.latitude}
+              longitude={event.location.place?.longitude}
+            />
+          )}
+        </div>
+      )}
 
-        <EventOrganizationCard key={event.id} event={event} showDescriptionContainer={showDescriptionContainer} />
+      {/* Desktop: 保持原有独立地图卡片 */}
+      <div className="hidden md:block">
+        <EventMapCard
+          key={mapKey}
+          latitude={event.location.place?.latitude}
+          longitude={event.location.place?.longitude}
+        />
       </div>
+
+      {(showDescriptionContainer || hasOrganization) && (
+        <div
+          className={clsx(
+            "flex my-3 sm:my-4 md:items-start flex-col md:flex-row gap-3 sm:gap-4",
+            !showDescriptionContainer && "hidden md:flex",
+          )}
+        >
+          {showDescriptionContainer && (
+            <div id="event-detail__left" className="md:w-8/12 min-w-0 space-y-3 sm:space-y-4">
+              {event.detail && (
+                <div className="bg-white shadow-sm rounded-xl flex-grow p-4 sm:p-6">
+                  <div
+                    className="text-gray-600 text-sm sm:text-base leading-relaxed whitespace-pre-line break-words"
+                    dangerouslySetInnerHTML={{ __html: event.detail }}
+                  />
+                </div>
+              )}
+
+              {!!event.media?.images?.length && (
+                <div className="bg-white shadow-sm rounded-xl flex-grow p-2.5 sm:p-6 space-y-2">
+                  {event.media?.images?.map((cover, index) => (
+                    <div className="relative" key={cover.url}>
+                      <NextImage
+                        alt={t("event.detailImageAlt", {
+                          name: event.name,
+                          index: index + 1,
+                        })}
+                        src={cover.url}
+                        className="w-full"
+                        autoFormat
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          <EventOrganizationCard
+            key={event.id}
+            event={event}
+            showDescriptionContainer={showDescriptionContainer}
+            className="hidden md:block"
+          />
+        </div>
+      )}
     </>
   );
 }
