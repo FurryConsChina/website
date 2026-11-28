@@ -8,6 +8,7 @@ import AnnouncementSlider from "@/components/AnnouncementSlider";
 import { useRouter } from "next/router";
 import { Toaster } from "react-hot-toast";
 import Sidebar from "@/components/Sidebar";
+import type { FeedbackTarget } from "@/types/feedback";
 import { useTranslation } from "next-i18next/pages";
 import { IS_CN_REGION, PUBLIC_URL } from "@/utils/env";
 
@@ -31,9 +32,11 @@ export default function Layout({
   headMetas,
   structuredData,
   slogan,
+  feedbackTarget,
 }: {
   children: React.ReactNode;
   slogan?: string | null;
+  feedbackTarget?: FeedbackTarget;
   headMetas?: {
     title?: string;
     des?: string;
@@ -142,7 +145,7 @@ export default function Layout({
       <Header slogan={slogan} />
       <AnnouncementSlider />
       <div className="flex-grow mx-2.5 sm:mx-4 xl:mx-0">{children}</div>
-      <Sidebar />
+      <Sidebar feedbackTarget={feedbackTarget} pageTitle={headMetas?.title} />
       <Footer isCNRegion={IS_CN_REGION} />
     </div>
   );

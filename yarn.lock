@@ -194,6 +194,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@cap.js/widget@npm:^0.1.64":
+  version: 0.1.64
+  resolution: "@cap.js/widget@npm:0.1.64"
+  checksum: 10/d1bf1679ce01ee076626422a003146b30e17bce9713dbffa5f7701d4355e36c76becb6c520cf19baa025380b7e61815ad67ed576f8d4af318a99d007131de0b5
+  languageName: node
+  linkType: hard
+
 "@csstools/cascade-layer-name-parser@npm:^3.0.3":
   version: 3.0.3
   resolution: "@csstools/cascade-layer-name-parser@npm:3.0.3"
@@ -4411,6 +4418,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "furrycons-site@workspace:."
   dependencies:
+    "@cap.js/widget": "npm:^0.1.64"
     "@headlessui/react": "npm:^2.2.10"
     "@next/bundle-analyzer": "npm:^16.4.6"
     "@next/third-parties": "npm:^16.4.6"

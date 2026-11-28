@@ -15,6 +15,7 @@
     "webpack-analyze": "ANALYZE=true yarn build"
   },
   "dependencies": {
+    "@cap.js/widget": "^0.1.64",
     "@headlessui/react": "^2.2.10",
     "@next/third-parties": "^16.4.6",
     "@sentry/nextjs": "^10.78.0",
