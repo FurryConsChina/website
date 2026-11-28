@@ -20,6 +20,14 @@ export const EventStatusSchema = {
   [EventStatus.EventScheduled]: "https://schema.org/EventScheduled",
 };
 
+/** Sync with https://schema.org/ItemAvailability */
+export const OfferAvailabilitySchema = {
+  upcoming: "https://schema.org/PreOrder",
+  onSale: "https://schema.org/InStock",
+  soldOut: "https://schema.org/SoldOut",
+  ended: "https://schema.org/Discontinued",
+} as const;
+
 export const EventScale = {
   /** 小型聚会，个人举办的展会一般用这个。 */
   Cosy: "cosy",

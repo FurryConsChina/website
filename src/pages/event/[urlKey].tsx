@@ -1,6 +1,8 @@
 import { InfraAPI } from "@/api/infra";
 import { EventsAPI } from "@/api/events";
+import EventImageAnchors, { getEventImageAnchorId, getEventImageAnchors } from "@/components/event/EventImageAnchors";
 import EventMapCard from "@/components/event/EventMapCard";
+import EventOffersCard from "@/components/event/EventOffersCard";
 import EventOrganizationCard from "@/components/event/EventOrganizationCard";
 import EventSourceButton from "@/components/event/EventSourceButton";
 import { EventDate } from "@/components/EventCard";
@@ -9,7 +11,7 @@ import PageviewTag from "@/components/PageviewHeatTag";
 import { EventStatus } from "@/constants/event";
 import type { EventItem } from "@/types/event";
 import { parseCoordinates } from "@/utils/coordinate";
-import { getEventOrganizations } from "@/utils/event";
+import { getEventOfferPriceSummary, getEventOrganizations } from "@/utils/event";
 import { getEventCoverImgPath, imageUrl } from "@/utils/imageLoader";
 import { currentSupportLocale, formatLocale } from "@/utils/locale";
 import { eventDescriptionGenerator, keywordGenerator } from "@/utils/meta";
@@ -22,7 +24,7 @@ import { useTranslation } from "next-i18next/pages";
 import { getLayoutProps } from "@/utils/layoutProps";
 import { BsCalendar2DateFill } from "react-icons/bs";
 import { FaHotel, FaPeoplePulling } from "react-icons/fa6";
-import { IoLocation } from "react-icons/io5";
+import { IoLocation, IoTicket } from "react-icons/io5";
 import { RiErrorWarningLine } from "react-icons/ri";
 import * as z from "zod/v4";
 import axios from "axios";
@@ -40,6 +42,9 @@ export default function EventDetail({ event, pageviewCount }: { event: EventItem
   const showMobileTabs = hasValidCoordinates && hasOrganization;
   const [mobileTab, setMobileTab] = useState<"organization" | "map">("organization");
   const mapKey = `${event.location.place?.latitude ?? ""}:${event.location.place?.longitude ?? ""}`;
+  const priceSummary = getEventOfferPriceSummary(event.offers);
+  const imageAnchors = getEventImageAnchors(event.media?.images);
+  const hasDesktopSidebar = hasOrganization || imageAnchors.length > 0;
 
   return (
     <>
@@ -135,12 +140,33 @@ export default function EventDetail({ event, pageviewCount }: { event: EventItem
                 <FaPeoplePulling className="text-gray-500 shrink-0 mr-2" />
                 <span>{t("event.scaleDes", { scale: t(`event.scale.${event.scale}`) })}</span>
               </p>
+
+              {priceSummary && (
+                <p aria-label={t("event.aria.price")} className="flex items-center text-gray-500">
+                  <IoTicket className="text-gray-500 shrink-0 mr-2" />
+                  <a href="#event-offers" className="tabular-nums hover:text-gray-700 transition-colors">
+                    {priceSummary.formatted
+                      ? priceSummary.formatted.isFree
+                        ? priceSummary.hasRange
+                          ? t("event.offers.startingFrom", { price: t("event.offers.free") })
+                          : t("event.offers.free")
+                        : priceSummary.hasRange
+                          ? t("event.offers.startingFrom", { price: priceSummary.formatted.text })
+                          : priceSummary.formatted.text
+                      : t("event.offers.priceTbd")}
+                    {" · "}
+                    {t("event.offers.tierCount", { count: priceSummary.count })}
+                  </a>
+                </p>
+              )}
             </div>
           </div>
 
           <EventSourceButton sources={event.sources || []} eventName={event.name} />
         </div>
       </div>
+
+      <EventOffersCard key={`offers:${event.id}`} offers={event.offers} />
 
       {/* Mobile: 展商信息与展会地图合并卡片（文件夹/Chrome 风格顶部 Tab） */}
       {(hasOrganization || hasValidCoordinates) && (
@@ -257,30 +283,58 @@ export default function EventDetail({ event, pageviewCount }: { event: EventItem
 
               {!!event.media?.images?.length && (
                 <div className="bg-white shadow-sm rounded-xl flex-grow p-2.5 sm:p-6 space-y-2">
-                  {event.media?.images?.map((cover, index) => (
-                    <div className="relative" key={cover.url}>
-                      <NextImage
-                        alt={t("event.detailImageAlt", {
-                          name: event.name,
-                          index: index + 1,
-                        })}
-                        src={cover.url}
-                        className="w-full"
-                        autoFormat
-                      />
-                    </div>
-                  ))}
+                  <EventImageAnchors
+                    key={`bar:${event.id}`}
+                    anchors={imageAnchors}
+                    variant="bar"
+                    className="md:hidden"
+                  />
+
+                  {event.media?.images?.map((cover, index) => {
+                    const imageTitle = cover.title?.trim();
+                    return (
+                      <div
+                        className="relative scroll-mt-28 md:scroll-mt-4"
+                        id={imageTitle ? getEventImageAnchorId(index) : undefined}
+                        key={cover.url}
+                      >
+                        <NextImage
+                          alt={
+                            imageTitle
+                              ? `${event.name} - ${imageTitle}`
+                              : t("event.detailImageAlt", {
+                                  name: event.name,
+                                  index: index + 1,
+                                })
+                          }
+                          src={cover.url}
+                          className="w-full"
+                          autoFormat
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>
           )}
 
-          <EventOrganizationCard
-            key={event.id}
-            event={event}
-            showDescriptionContainer={showDescriptionContainer}
-            className="hidden md:block"
-          />
+          {hasDesktopSidebar && (
+            <div
+              className={clsx(
+                "hidden md:flex md:flex-col gap-4 md:self-stretch",
+                showDescriptionContainer ? "md:w-4/12 shrink-0" : "w-full",
+              )}
+            >
+              <EventOrganizationCard key={event.id} event={event} showDescriptionContainer={showDescriptionContainer} />
+              <EventImageAnchors
+                key={`sidebar:${event.id}`}
+                anchors={imageAnchors}
+                variant="sidebar"
+                className="sticky top-4"
+              />
+            </div>
+          )}
         </div>
       )}
     </>
