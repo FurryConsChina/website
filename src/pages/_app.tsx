@@ -34,7 +34,12 @@ function App({ Component, pageProps }: AppProps) {
         }
       `}</style>
       <NuqsAdapter>
-        <Layout headMetas={pageProps.headMetas} structuredData={pageProps.structuredData} slogan={pageProps.slogan}>
+        <Layout
+          headMetas={pageProps.headMetas}
+          structuredData={pageProps.structuredData}
+          slogan={pageProps.slogan}
+          feedbackTarget={pageProps.feedbackTarget}
+        >
           <Component {...pageProps} />
         </Layout>
       </NuqsAdapter>

@@ -54,4 +54,6 @@ interface Window {
   gtag?: (command: "event", eventName: string, eventValue?: TrackEventValue) => void;
   TMap?: TMapNamespace;
   umami?: AnalyticsTracker;
+  CAP_CUSTOM_WASM_URL?: string;
+  CAP_CUSTOM_HASHWX_URL?: string;
 }

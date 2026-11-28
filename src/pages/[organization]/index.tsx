@@ -632,6 +632,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         firstEventStartAt: data.firstEventStartAt,
         pageviewCount: pv,
         nowTimestamp: Date.now(),
+        feedbackTarget: { type: "organization", id: validOrganization.id },
         headMetas: {
           title: `${validOrganization?.name}`,
           des: organizationDetailDescriptionGenerator(

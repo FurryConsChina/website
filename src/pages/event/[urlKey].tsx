@@ -379,6 +379,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       props: {
         event: event,
         pageviewCount: pv,
+        feedbackTarget: { type: "event", id: event.id },
         headMetas: {
           title: `${event.name}-${primaryOrganization?.name ?? ""}`,
           keywords: keywordGenerator({
