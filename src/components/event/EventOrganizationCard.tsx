@@ -68,12 +68,7 @@ export default function EventOrganizationCard(props: EventOrganizationCardProps)
   return (
     <div
       id={props.embedded ? undefined : "event-detail__right"}
-      className={clsx(
-        !props.embedded && "bg-white shadow-sm rounded-xl",
-        !props.embedded && !props.showDescriptionContainer && "w-full",
-        !props.embedded && props.showDescriptionContainer && "md:w-4/12 shrink-0",
-        props.className,
-      )}
+      className={clsx(!props.embedded && "bg-white shadow-sm rounded-xl w-full", props.className)}
     >
       <div className="p-4">
         {showOrgSwitcher && (

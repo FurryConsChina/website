@@ -1,10 +1,10 @@
-import { EventStatus, EventStatusSchema } from "@/constants/event";
+import { EventStatus, EventStatusSchema, OfferAvailabilitySchema } from "@/constants/event";
 import type { EventItem } from "@/types/event";
 import { PUBLIC_URL } from "@/utils/env";
-import { getEventOrganizations } from "@/utils/event";
+import { getEventOrganizations, normalizeOfferPrice } from "@/utils/event";
 import { getEventCoverImgPath, imageUrl } from "@/utils/imageLoader";
 import { currentSupportLocale } from "@/utils/locale";
-import { getOrganizationDetailUrl } from "@/utils/url";
+import { getEventDetailUrl, getOrganizationDetailUrl } from "@/utils/url";
 
 export function generateEventDetailStructuredData({
   event,
@@ -26,6 +26,20 @@ export function generateEventDetailStructuredData({
     : null;
   const organizationName = primaryOrganization?.name ?? null;
   const placeAddress = event.location.place?.address ?? null;
+  const eventUrl = toAbsoluteUrl(getEventDetailUrl({ urlKey: event.urlKey, locale }));
+  const offers = event.offers.map((offer) => {
+    const normalizedPrice = normalizeOfferPrice(offer.price);
+    return {
+      "@type": "Offer",
+      name: offer.name,
+      ...(normalizedPrice !== null ? { price: normalizedPrice, priceCurrency: offer.currency } : {}),
+      availability: OfferAvailabilitySchema[offer.availability],
+      ...(eventUrl ? { url: eventUrl } : {}),
+      ...(offer.saleStartAt ? { validFrom: offer.saleStartAt } : {}),
+      ...(offer.saleEndAt ? { validThrough: offer.saleEndAt } : {}),
+      ...(offer.description ? { description: offer.description } : {}),
+    };
+  });
 
   return {
     breadcrumb: {
@@ -76,14 +90,7 @@ export function generateEventDetailStructuredData({
       },
       image: [imageUrl(getEventCoverImgPath(event))],
       description: event?.detail ?? null,
-      // offers: {
-      //   "@type": "Offer",
-      //   url: "https://www.example.com/event_offer/12345_201803180430",
-      //   price: "30",
-      //   priceCurrency: "USD",
-      //   availability: "https://schema.org/InStock",
-      //   validFrom: "2024-05-21T12:00",
-      // },
+      ...(offers.length > 0 ? { offers } : {}),
       // performer: {
       //   "@type": "PerformingGroup",
       //   name: "Kira and Morrison",

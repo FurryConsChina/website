@@ -148,9 +148,7 @@ export default function EventMapCard(props: EventMapCardProps) {
         )}
       >
         {!props.embedded && (
-          <h3 className="text-lg sm:text-xl font-bold sm:font-normal text-gray-600 mx-4 mt-3.5 sm:m-4">
-            {t("event.map")}
-          </h3>
+          <h3 className="text-lg sm:text-xl font-bold text-slate-800 mx-4 mt-3.5 sm:m-4">{t("event.map")}</h3>
         )}
 
         <div

@@ -50,6 +50,8 @@ const OfferSchema = z.object({
   ),
 });
 
+export type EventOffer = z.infer<typeof OfferSchema>;
+
 // 后端写入侧只约束 overrideOrganizationContact，JSONB 列里可能还有历史遗留的其他键。
 const EventExtraSchema = z.looseObject({
   overrideOrganizationContact: z
